@@ -1,0 +1,634 @@
+/**
+ * Client Onboarding Form Styles - Exact match to screenshot design
+ */
+
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* WordPress Theme Override */
+body .cob-form-container,
+.cob-form-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+}
+
+/* Override WordPress page/content containers */
+body .entry-content .cob-form-container,
+body .site-content .cob-form-container,
+body .content-area .cob-form-container,
+body .page-content .cob-form-container,
+.entry-content .cob-form-container,
+.site-content .cob-form-container,
+.content-area .cob-form-container,
+.page-content .cob-form-container {
+    max-width: none !important;
+    width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+}
+
+/* Header Styles */
+.cob-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
+    position: relative;
+    z-index: 10;
+}
+
+.cob-header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.cob-logo {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin: 0;
+}
+
+.cob-form-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: #888;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.cob-header-right {
+    display: flex;
+    gap: 15px;
+}
+
+.cob-exit-btn, .cob-save-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.cob-exit-btn {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #555;
+}
+
+.cob-exit-btn:hover {
+    background-color: #333;
+}
+
+.cob-save-btn {
+    background-color: #9dff00;
+    color: #000;
+}
+
+.cob-save-btn:hover {
+    background-color: #8ae600;
+}
+
+.cob-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form Wrapper */
+.cob-form-wrapper {
+    display: flex;
+    min-height: calc(100vh - 80px);
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Step Navigation */
+.cob-step-navigation {
+    width: 280px;
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-right: 1px solid #333;
+    min-height: calc(100vh - 80px);
+    position: fixed;
+    top: 80px;
+    left: 0;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.cob-step-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 15px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cob-step-item:hover {
+    background-color: #2a2a2a;
+}
+
+.cob-step-item.cob-step-active {
+    background-color: #9dff00;
+    color: #000;
+}
+
+.cob-step-item.cob-step-completed {
+    background-color: #333;
+}
+
+.cob-step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.cob-step-item.cob-step-active .cob-step-circle {
+    background-color: #000;
+    border-color: #000;
+    color: #9dff00;
+}
+
+.cob-step-item.cob-step-completed .cob-step-circle {
+    background-color: #555;
+    border-color: #555;
+    color: #fff;
+}
+
+.cob-step-number {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.cob-step-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+.cob-step-item.cob-step-active .cob-step-name {
+    color: #000;
+    font-weight: 600;
+}
+
+.cob-step-item.cob-step-completed .cob-step-name {
+    color: #ccc;
+}
+
+/* Form Content */
+.cob-form-content {
+    flex: 1;
+    padding: 40px;
+    background-color: #2a2a2a;
+    margin: 0;
+    margin-left: 280px;
+    border-radius: 0;
+    position: relative;
+    min-height: calc(100vh - 80px);
+}
+
+.cob-step-header {
+    margin-bottom: 40px;
+}
+
+.cob-step-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Form Styles */
+.cob-form {
+    max-width: 100%;
+}
+
+.cob-step-content {
+    display: none;
+}
+
+.cob-step-content.cob-step-active {
+    display: block;
+}
+
+.cob-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.cob-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cob-form-group-full {
+    grid-column: 1 / -1;
+}
+
+.cob-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.cob-input, .cob-textarea, .cob-select {
+    padding: 15px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.cob-input:focus, .cob-textarea:focus, .cob-select:focus {
+    outline: none;
+    border-color: #9dff00;
+    box-shadow: 0 0 0 2px rgba(157, 255, 0, 0.1);
+}
+
+.cob-input::placeholder, .cob-textarea::placeholder {
+    color: #666;
+}
+
+.cob-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.cob-select {
+    cursor: pointer;
+}
+
+.cob-select option {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+/* Radio Buttons */
+.cob-radio-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.cob-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.cob-radio {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #444;
+    border-radius: 50%;
+    position: relative;
+    background-color: transparent;
+    cursor: pointer;
+    appearance: none;
+}
+
+.cob-radio:checked {
+    border-color: #9dff00;
+}
+
+.cob-radio:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: #9dff00;
+    border-radius: 50%;
+}
+
+.cob-radio-label {
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* Checkboxes */
+.cob-checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.cob-checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.cob-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #444;
+    border-radius: 3px;
+    background-color: transparent;
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+}
+
+.cob-checkbox:checked {
+    background-color: #9dff00;
+    border-color: #9dff00;
+}
+
+.cob-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.cob-checkbox-label {
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/* Address Grid */
+.cob-address-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.cob-address-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+}
+
+/* Form Actions */
+.cob-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #444;
+}
+
+.cob-btn {
+    padding: 12px 30px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+}
+
+.cob-btn-secondary {
+    background-color: transparent !important;
+    color: #ffffff !important;
+    border: 1px solid #555 !important;
+}
+
+.cob-btn-secondary:hover {
+    background-color: #333 !important;
+    color: #ffffff !important;
+}
+
+.cob-btn-primary {
+    background-color: #9dff00 !important;
+    color: #000 !important;
+}
+
+.cob-btn-primary:hover {
+    background-color: #8ae600 !important;
+    color: #000 !important;
+}
+
+.cob-btn:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+/* Save Status */
+.cob-save-status {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* Error States */
+.cob-input.cob-error, .cob-textarea.cob-error, .cob-select.cob-error {
+    border-color: #ff6b6b;
+}
+
+.cob-error-message {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Loading States */
+.cob-loading {
+    position: relative;
+}
+
+.cob-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid #444;
+    border-top-color: #9dff00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cob-header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .cob-header-left {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .cob-form-wrapper {
+        flex-direction: column;
+    }
+
+    .cob-step-navigation {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        padding: 15px;
+        gap: 10px;
+        min-height: auto;
+    }
+
+    .cob-step-item {
+        flex-direction: column;
+        text-align: center;
+        min-width: 120px;
+        padding: 15px 10px;
+        margin-bottom: 0;
+        gap: 10px;
+    }
+
+    .cob-step-circle {
+        width: 35px;
+        height: 35px;
+    }
+
+    .cob-step-number {
+        font-size: 14px;
+    }
+
+    .cob-step-name {
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    .cob-form-content {
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .cob-form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .cob-radio-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .cob-checkbox-group {
+        grid-template-columns: 1fr;
+    }
+
+    .cob-address-row {
+        grid-template-columns: 1fr;
+    }
+
+    .cob-form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cob-btn {
+        width: 100%;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus indicators for keyboard navigation */
+.cob-step-item:focus,
+.cob-input:focus,
+.cob-textarea:focus,
+.cob-select:focus,
+.cob-radio:focus,
+.cob-checkbox:focus,
+.cob-btn:focus {
+    outline: 2px solid #9dff00;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .cob-form-container {
+        background-color: #000;
+    }
+    
+    .cob-form-content {
+        background-color: #111;
+    }
+    
+    .cob-input, .cob-textarea, .cob-select {
+        border-color: #999;
+    }
+}

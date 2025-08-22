@@ -1,0 +1,302 @@
+/**
+ * Admin Dashboard Styles for Client Onboarding Form Plugin
+ */
+
+/* Dashboard Stats Grid */
+.cob-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.cob-stat-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.cob-stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2271b1;
+    margin-bottom: 8px;
+}
+
+.cob-stat-label {
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Actions */
+.cob-quick-actions {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.cob-quick-actions h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.cob-action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Recent Submissions */
+.cob-recent-submissions {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.cob-recent-submissions h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Submission Status */
+.cob-status {
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.cob-status-submitted {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.cob-status-processing {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.cob-status-completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Submission Detail */
+.cob-submission-detail {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.cob-submission-meta {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 30px;
+}
+
+.cob-submission-meta p {
+    margin: 0 0 10px 0;
+}
+
+.cob-submission-meta p:last-child {
+    margin-bottom: 0;
+}
+
+.cob-section {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #eee;
+}
+
+.cob-section:last-child {
+    border-bottom: none;
+    margin-bottom: 20px;
+}
+
+.cob-section h2 {
+    color: #2271b1;
+    border-bottom: 2px solid #2271b1;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+}
+
+.cob-section h3 {
+    color: #555;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.cob-section address {
+    font-style: normal;
+    background: #f8f9fa;
+    padding: 15px;
+    border-left: 3px solid #2271b1;
+    margin: 10px 0;
+}
+
+.cob-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+/* Shortcode Info */
+.cob-shortcode-info {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.cob-shortcode-info h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.cob-shortcode-info code {
+    background: #f1f1f1;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+.cob-shortcode-info ul {
+    margin-left: 20px;
+}
+
+.cob-shortcode-info li {
+    margin-bottom: 8px;
+}
+
+/* Database Info */
+.cob-database-info {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+.cob-database-info h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Form Settings */
+.form-table th {
+    width: 200px;
+}
+
+/* Loading States */
+.cob-loading {
+    position: relative;
+    opacity: 0.7;
+}
+
+.cob-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ddd;
+    border-top-color: #2271b1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 782px) {
+    .cob-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cob-action-buttons {
+        flex-direction: column;
+    }
+    
+    .cob-action-buttons .button {
+        text-align: center;
+    }
+    
+    .cob-actions {
+        flex-direction: column;
+    }
+}
+
+/* WordPress Admin Color Scheme Integration */
+body.admin-color-fresh .cob-stat-number {
+    color: #2271b1;
+}
+
+body.admin-color-fresh .cob-section h2 {
+    color: #2271b1;
+    border-bottom-color: #2271b1;
+}
+
+body.admin-color-light .cob-stat-number {
+    color: #04a4cc;
+}
+
+body.admin-color-light .cob-section h2 {
+    color: #04a4cc;
+    border-bottom-color: #04a4cc;
+}
+
+body.admin-color-blue .cob-stat-number {
+    color: #096484;
+}
+
+body.admin-color-blue .cob-section h2 {
+    color: #096484;
+    border-bottom-color: #096484;
+}
+
+/* Accessibility */
+.cob-stat-card:focus,
+.button:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+    .cob-stat-card,
+    .cob-quick-actions,
+    .cob-recent-submissions,
+    .cob-shortcode-info,
+    .cob-database-info {
+        border-color: #000;
+    }
+    
+    .cob-section {
+        border-bottom-color: #000;
+    }
+}
