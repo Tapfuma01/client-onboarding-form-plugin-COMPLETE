@@ -364,13 +364,13 @@ if (!defined('ABSPATH')) {
 
                 <!-- Form Actions -->
                 <div class="cob-form-actions">
-                    <button type="button" class="cob-btn cob-btn-secondary" id="cob-previous-btn" style="display: none;">
+                    <button type="button" class="cob-btn cob-btn-secondary" id="cob-previous-btn">
                         PREVIOUS
                     </button>
                     <button type="button" class="cob-btn cob-btn-primary" id="cob-continue-btn">
                         CONTINUE
                     </button>
-                    <button type="submit" class="cob-btn cob-btn-primary" id="cob-submit-btn" style="display: none;">
+                    <button type="submit" class="cob-btn cob-btn-primary" id="cob-submit-btn">
                         SUBMIT FORM
                     </button>
                 </div>

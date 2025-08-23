@@ -21,6 +21,12 @@
             this.loadDraft();
             this.startAutoSave();
             this.updateStepDisplay();
+            
+            // Ensure button visibility is correct on initialization
+            setTimeout(() => {
+                this.updateButtonVisibility();
+                console.log('COB: Initial button visibility update completed');
+            }, 100);
         }
 
         bindEvents() {
@@ -123,25 +129,53 @@
             const isFirstStep = this.currentStep === 1;
             const isLastStep = this.currentStep === 4;
             
+            console.log('COB: Updating button visibility - Step:', this.currentStep, 'First:', isFirstStep, 'Last:', isLastStep);
+            
+            // Remove all visibility classes first
+            $('#cob-previous-btn').removeClass('cob-visible');
+            $('#cob-continue-btn').removeClass('cob-hidden');
+            $('#cob-submit-btn').removeClass('cob-visible');
+            
             // Previous button - show on all steps except first
             if (isFirstStep) {
-                $('#cob-previous-btn').hide();
+                $('#cob-previous-btn').removeClass('cob-visible');
+                console.log('COB: Previous button hidden (first step)');
             } else {
-                $('#cob-previous-btn').show();
+                $('#cob-previous-btn').addClass('cob-visible');
+                console.log('COB: Previous button shown (not first step)');
             }
             
             // Continue button - show on all steps except last
             if (isLastStep) {
-                $('#cob-continue-btn').hide();
+                $('#cob-continue-btn').addClass('cob-hidden');
+                console.log('COB: Continue button hidden (last step)');
             } else {
-                $('#cob-continue-btn').show();
+                $('#cob-continue-btn').removeClass('cob-hidden');
+                console.log('COB: Continue button shown (not last step)');
             }
             
             // Submit button - show only on last step
             if (isLastStep) {
-                $('#cob-submit-btn').show();
+                $('#cob-submit-btn').addClass('cob-visible');
+                console.log('COB: Submit button shown (last step)');
             } else {
-                $('#cob-submit-btn').hide();
+                $('#cob-submit-btn').removeClass('cob-visible');
+                console.log('COB: Submit button hidden (not last step)');
+            }
+            
+            // Also force with CSS to override any inline styles
+            if (isFirstStep) {
+                $('#cob-previous-btn').css('display', 'none !important');
+            } else {
+                $('#cob-previous-btn').css('display', 'inline-block !important');
+            }
+            
+            if (isLastStep) {
+                $('#cob-continue-btn').css('display', 'none !important');
+                $('#cob-submit-btn').css('display', 'inline-block !important');
+            } else {
+                $('#cob-continue-btn').css('display', 'inline-block !important');
+                $('#cob-submit-btn').css('display', 'none !important');
             }
         }
 
