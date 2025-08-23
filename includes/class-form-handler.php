@@ -338,13 +338,33 @@ class COB_Form_Handler {
     }
 
     private function safe_array_implode($value) {
-        if (is_array($value)) {
-            return implode(',', $value);
+        // Handle NULL or empty values
+        if (is_null($value) || $value === '') {
+            return '';
         }
+        
+        // Handle arrays
+        if (is_array($value)) {
+            // Filter out empty values and sanitize each element
+            $filtered_array = array_filter($value, function($item) {
+                return !is_null($item) && $item !== '';
+            });
+            
+            return implode(',', $filtered_array);
+        }
+        
+        // Handle strings (including when form data sends comma-separated values)
         if (is_string($value)) {
+            // If it's already a comma-separated string, return as is
+            if (strpos($value, ',') !== false) {
+                return $value;
+            }
+            // If it's a single value, return it as is
             return $value;
         }
-        return '';
+        
+        // For any other data types, convert to string
+        return (string) $value;
     }
 
     private function send_notifications($submission_data, $submission_id) {

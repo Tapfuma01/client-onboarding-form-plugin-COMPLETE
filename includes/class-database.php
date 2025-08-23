@@ -138,18 +138,24 @@ class COB_Database {
         // Calculate progress percentage based on completed fields
         $progress = self::calculate_progress($form_data, $current_step);
         
-        $result = $wpdb->replace(
-            $table_name,
-            [
-                'session_id' => $session_id,
-                'form_data' => wp_json_encode($form_data),
-                'current_step' => $current_step,
-                'progress_percentage' => $progress,
-                'client_email' => $client_email,
-                'last_saved' => current_time('mysql')
-            ],
-            ['%s', '%s', '%d', '%d', '%s', '%s']
-        );
+        // Use INSERT ... ON DUPLICATE KEY UPDATE to avoid deadlocks
+        $result = $wpdb->query($wpdb->prepare(
+            "INSERT INTO $table_name
+            (session_id, form_data, current_step, progress_percentage, client_email, last_saved)
+            VALUES (%s, %s, %d, %d, %s, %s)
+            ON DUPLICATE KEY UPDATE
+            form_data = VALUES(form_data),
+            current_step = VALUES(current_step),
+            progress_percentage = VALUES(progress_percentage),
+            client_email = VALUES(client_email),
+            last_saved = VALUES(last_saved)",
+            $session_id,
+            wp_json_encode($form_data),
+            $current_step,
+            $progress,
+            $client_email,
+            current_time('mysql')
+        ));
 
         if ($result !== false) {
             self::log_activity('draft_saved', null, $session_id);
