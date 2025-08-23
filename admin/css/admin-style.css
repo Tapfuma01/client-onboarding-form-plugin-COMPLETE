@@ -1,0 +1,604 @@
+/* FLUX ADMIN DASHBOARD STYLES */
+.flux-admin-dashboard {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    margin: 0;
+    padding: 0;
+}
+
+/* Flux Header */
+.flux-header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: white;
+    padding: 2rem 2rem 1.5rem;
+    margin: -20px -20px 2rem -20px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.flux-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.flux-logo {
+    background: white;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+}
+
+.flux-title h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #00FF88 0%, #00D4FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.flux-subtitle {
+    font-size: 1.1rem;
+    color: #a0a0a0;
+    font-weight: 500;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.flux-version {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+}
+
+.version-badge {
+    background: rgba(0, 255, 136, 0.2);
+    color: #00FF88;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+/* Dashboard Content */
+.flux-dashboard-content {
+    padding: 0 1rem;
+}
+
+/* Section Headers */
+.flux-section-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    padding-top: 2rem;
+}
+
+.flux-section-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+}
+
+.flux-section-header p {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Statistics Grid */
+.flux-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    align-items: stretch;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flux-stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px;
+    text-align: left;
+}
+
+.flux-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.flux-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.flux-stat-card.primary::before { background: #00FF88; }
+.flux-stat-card.secondary::before { background: #6366F1; }
+.flux-stat-card.tertiary::before { background: #F59E0B; }
+.flux-stat-card.accent::before { background: #EC4899; }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+.flux-stat-card.primary .stat-icon { 
+    background: rgba(0, 255, 136, 0.1); 
+    color: #00FF88;
+}
+
+.flux-stat-card.secondary .stat-icon { 
+    background: rgba(99, 102, 241, 0.1); 
+    color: #6366F1;
+}
+
+.flux-stat-card.tertiary .stat-icon { 
+    background: rgba(245, 158, 11, 0.1); 
+    color: #F59E0B;
+}
+
+.flux-stat-card.accent .stat-icon { 
+    background: rgba(236, 72, 153, 0.1); 
+    color: #EC4899;
+}
+
+.stat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.stat-trend {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+}
+
+.stat-trend.positive {
+    color: #059669;
+    background: rgba(5, 150, 105, 0.1);
+}
+
+.stat-trend.neutral {
+    color: #6B7280;
+    background: rgba(107, 114, 128, 0.1);
+}
+
+.stat-trend.negative {
+    color: #DC2626;
+    background: rgba(220, 38, 38, 0.1);
+}
+
+/* Actions Grid */
+.flux-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.flux-action-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+
+.flux-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    text-decoration: none;
+    color: inherit;
+}
+
+.flux-action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.flux-action-card.primary::before { background: #00FF88; }
+.flux-action-card.secondary::before { background: #6366F1; }
+.flux-action-card.tertiary::before { background: #F59E0B; }
+.flux-action-card.accent::before { background: #EC4899; }
+
+.action-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.flux-action-card.primary .action-icon { 
+    background: rgba(0, 255, 136, 0.1); 
+    color: #00FF88;
+}
+
+.flux-action-card.secondary .action-icon { 
+    background: rgba(99, 102, 241, 0.1); 
+    color: #6366F1;
+}
+
+.flux-action-card.tertiary .action-icon { 
+    background: rgba(245, 158, 11, 0.1); 
+    color: #F59E0B;
+}
+
+.flux-action-card.accent .action-icon { 
+    background: rgba(236, 72, 153, 0.1); 
+    color: #EC4899;
+}
+
+.action-content {
+    flex: 1;
+}
+
+.action-content h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+}
+
+.action-content p {
+    color: #666;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.action-arrow {
+    color: #999;
+    transition: all 0.3s ease;
+}
+
+.flux-action-card:hover .action-arrow {
+    color: var(--accent-color, #00FF88);
+    transform: translateX(4px);
+}
+
+/* Submissions Table */
+.flux-submissions-table {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.flux-table-header {
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.flux-table-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 1fr;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    align-items: center;
+}
+
+.flux-table-cell.header {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.flux-table-body .flux-table-row {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s ease;
+}
+
+.flux-table-body .flux-table-row:hover {
+    background-color: #f9fafb;
+}
+
+.business-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.25rem;
+}
+
+.business-email {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.contact-name {
+    font-weight: 500;
+    color: #374151;
+}
+
+.project-name {
+    font-weight: 500;
+    color: #374151;
+}
+
+.submission-date {
+    font-weight: 500;
+    color: #374151;
+}
+
+.submission-time {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    margin-top: 0.25rem;
+}
+
+.submission-id {
+    font-weight: 600;
+    color: #6366F1;
+    font-size: 0.875rem;
+}
+
+/* Status Badges */
+.flux-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.flux-status-submitted {
+    background: rgba(0, 255, 136, 0.1);
+    color: #059669;
+}
+
+.flux-status-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #D97706;
+}
+
+.flux-status-completed {
+    background: rgba(99, 102, 241, 0.1);
+    color: #7C3AED;
+}
+
+/* Action Buttons */
+.flux-action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.flux-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.flux-btn-primary {
+    background: #00FF88;
+    color: #000;
+    border: 1px solid #00FF88;
+}
+
+.flux-btn-primary:hover {
+    background: #00E676;
+    border-color: #00E676;
+    color: #000;
+    text-decoration: none;
+}
+
+.flux-btn-secondary {
+    background: #6366F1;
+    color: white;
+    border: 1px solid #6366F1;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+}
+
+.flux-btn-secondary:hover {
+    background: #5855EB;
+    border-color: #5855EB;
+    color: white;
+    text-decoration: none;
+}
+
+.flux-btn-danger {
+    background: #EF4444;
+    color: white;
+    border: 1px solid #EF4444;
+}
+
+.flux-btn-danger:hover {
+    background: #DC2626;
+    border-color: #DC2626;
+    color: white;
+    text-decoration: none;
+}
+
+.flux-btn-success {
+    background: #059669;
+    color: white;
+    border: 1px solid #059669;
+}
+
+/* Empty State */
+.flux-empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+    color: #D1D5DB;
+    margin-bottom: 1.5rem;
+}
+
+.flux-empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.75rem 0;
+}
+
+.flux-empty-state p {
+    color: #6B7280;
+    margin: 0 0 1.5rem 0;
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .flux-stats-grid,
+    .flux-actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .flux-table-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .flux-action-buttons {
+        flex-direction: column;
+    }
+    
+    .flux-btn {
+        justify-content: center;
+    }
+    
+    .flux-section-header {
+        padding-top: 1.5rem;
+    }
+}
+
+/* Test Email Button Specific Styling */
+.cob-test-notification {
+    background: #10B981 !important;
+    color: white !important;
+    border: 1px solid #10B981 !important;
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2) !important;
+}
+
+.cob-test-notification:hover {
+    background: #059669 !important;
+    border-color: #059669 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.cob-test-notification:disabled {
+    background: #9CA3AF !important;
+    border-color: #9CA3AF !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Global Test Notifications Button */
+#cob-test-notifications {
+    background: #8B5CF6 !important;
+    color: white !important;
+    border: 1px solid #8B5CF6 !important;
+    padding: 1rem 1.5rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2) !important;
+}
+
+#cob-test-notifications:hover {
+    background: #7C3AED !important;
+    border-color: #7C3AED !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(139, 92, 246, 0.3) !important;
+}
+
+#cob-test-notifications:disabled {
+    background: #9CA3AF !important;
+    border-color: #9CA3AF !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}

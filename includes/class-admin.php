@@ -110,7 +110,7 @@ class COB_Admin {
         if (strpos($hook, 'client-onboarding') !== false || strpos($hook, 'cob-') !== false) {
             wp_enqueue_style(
                 'cob-admin-style', 
-                COB_PLUGIN_URL . 'assets/css/admin-style.css', 
+                COB_PLUGIN_URL . 'admin/css/admin-style.css', 
                 [], 
                 COB_PLUGIN_VERSION
             );
