@@ -18,6 +18,15 @@ class COB_Admin {
         add_action('wp_ajax_cob_generate_share_link', [$this, 'handle_generate_share_link']);
         add_action('wp_ajax_cob_get_draft_details', [$this, 'handle_get_draft_details']);
         add_action('wp_ajax_cob_delete_draft', [$this, 'handle_delete_draft']);
+        
+        // Load email notifications class
+        $this->load_email_notifications();
+    }
+
+    private function load_email_notifications() {
+        if (!class_exists('COB_Email_Notifications')) {
+            require_once COB_PLUGIN_PATH . 'includes/class-email-notifications.php';
+        }
     }
 
     public function add_admin_menu() {
@@ -69,6 +78,15 @@ class COB_Admin {
 
         add_submenu_page(
             'client-onboarding',
+            __('Email Notifications', 'client-onboarding-form'),
+            __('Email Notifications', 'client-onboarding-form'),
+            'manage_options',
+            'cob-email-settings',
+            [$this, 'email_settings_page']
+        );
+
+        add_submenu_page(
+            'client-onboarding',
             __('Activity Logs', 'client-onboarding-form'),
             __('Activity Logs', 'client-onboarding-form'),
             'manage_options',
@@ -97,6 +115,11 @@ class COB_Admin {
                 COB_PLUGIN_VERSION, 
                 true
             );
+            
+            // Enqueue WordPress editor for email templates
+            if (strpos($hook, 'cob-email-settings') !== false) {
+                wp_enqueue_editor();
+            }
         }
     }
 
@@ -184,6 +207,45 @@ class COB_Admin {
         ]);
 
         include COB_PLUGIN_PATH . 'admin/views/settings.php';
+    }
+
+    public function email_settings_page() {
+        if (isset($_POST['submit'])) {
+            check_admin_referer('cob_email_settings_nonce');
+            
+            $settings = get_option('cob_settings', []);
+            
+            // Update email settings
+            $email_settings = [
+                'email_from_name' => sanitize_text_field($_POST['email_from_name'] ?? ''),
+                'email_from_email' => sanitize_email($_POST['email_from_email'] ?? ''),
+                'enable_admin_notification' => !empty($_POST['enable_admin_notification']),
+                'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
+                'additional_admin_emails' => sanitize_textarea_field($_POST['additional_admin_emails'] ?? ''),
+                'admin_email_cc' => sanitize_text_field($_POST['admin_email_cc'] ?? ''),
+                'admin_email_bcc' => sanitize_text_field($_POST['admin_email_bcc'] ?? ''),
+                'admin_email_subject' => sanitize_text_field($_POST['admin_email_subject'] ?? ''),
+                'admin_email_body' => wp_kses_post($_POST['admin_email_body'] ?? ''),
+                'enable_client_confirmation' => !empty($_POST['enable_client_confirmation']),
+                'client_email_subject' => sanitize_text_field($_POST['client_email_subject'] ?? ''),
+                'client_email_body' => wp_kses_post($_POST['client_email_body'] ?? ''),
+                'notify_technical_contact' => !empty($_POST['notify_technical_contact']),
+                'technical_email_subject' => sanitize_text_field($_POST['technical_email_subject'] ?? ''),
+                'technical_email_body' => wp_kses_post($_POST['technical_email_body'] ?? ''),
+                'notify_reporting_contact' => !empty($_POST['notify_reporting_contact']),
+                'reporting_email_subject' => sanitize_text_field($_POST['reporting_email_subject'] ?? ''),
+                'reporting_email_body' => wp_kses_post($_POST['reporting_email_body'] ?? ''),
+            ];
+            
+            // Merge with existing settings
+            $settings = array_merge($settings, $email_settings);
+            
+            update_option('cob_settings', $settings);
+            echo '<div class="notice notice-success"><p>Email settings saved successfully.</p></div>';
+        }
+
+        $settings = get_option('cob_settings', []);
+        include COB_PLUGIN_PATH . 'admin/views/email-settings.php';
     }
 
     public function logs_page() {
