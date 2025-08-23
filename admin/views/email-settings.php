@@ -14,8 +14,21 @@ $merge_tags = COB_Email_Notifications::get_available_merge_tags();
     <h1><?php _e('Email Notifications', 'client-onboarding-form'); ?></h1>
     <p class="description">Configure email notifications sent when forms are submitted. Similar to Gravity Forms email system.</p>
 
-    <form method="post" action="" id="cob-email-settings-form">
+    <?php
+    // Display success/error messages
+    if (isset($_GET['settings-updated'])) {
+        if ($_GET['settings-updated'] === 'true') {
+            echo '<div class="notice notice-success is-dismissible"><p>Email settings saved successfully!</p></div>';
+        } else {
+            echo '<div class="notice notice-error is-dismissible"><p>Failed to save email settings. Please try again.</p></div>';
+        }
+    }
+    ?>
+
+    <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" id="cob-email-settings-form">
         <?php wp_nonce_field('cob_email_settings_nonce'); ?>
+        <input type="hidden" name="action" value="cob_save_email_settings" />
+        <input type="hidden" name="cob_form_submitted" value="1" />
         
         <div class="cob-email-settings">
             <!-- Email Configuration Tabs -->
@@ -557,7 +570,32 @@ $merge_tags = COB_Email_Notifications::get_available_merge_tags();
 
 <script>
 jQuery(document).ready(function($) {
-    // Tab switching
+    // Debug form submission
+    $('#cob-email-settings-form').on('submit', function(e) {
+        console.log('COB: Form submit event triggered');
+        console.log('COB: Form data:', $(this).serialize());
+        
+        // Check if all required fields are filled
+        var requiredFields = $(this).find('[required]');
+        var missingFields = [];
+        
+        requiredFields.each(function() {
+            if (!$(this).val().trim()) {
+                missingFields.push($(this).attr('name'));
+            }
+        });
+        
+        if (missingFields.length > 0) {
+            console.log('COB: Missing required fields:', missingFields);
+            alert('Please fill in all required fields: ' + missingFields.join(', '));
+            e.preventDefault();
+            return false;
+        }
+        
+        console.log('COB: Form submission proceeding...');
+    });
+    
+    // Tab functionality
     $('.nav-tab').on('click', function(e) {
         e.preventDefault();
         

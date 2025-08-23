@@ -109,6 +109,35 @@ class COB_Database {
     }
 
     /**
+     * Check if share_token column exists and create it if it doesn't
+     */
+    public static function ensure_share_token_column() {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cob_drafts';
+        
+        // Check if share_token column exists
+        $column_exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'share_token'");
+        
+        if (empty($column_exists)) {
+            error_log('COB: Database: share_token column does not exist, creating it');
+            
+            $result = $wpdb->query("ALTER TABLE $table_name ADD COLUMN share_token VARCHAR(100) DEFAULT NULL");
+            
+            if ($result !== false) {
+                error_log('COB: Database: share_token column created successfully');
+                return true;
+            } else {
+                error_log('COB: Database: Failed to create share_token column');
+                return false;
+            }
+        } else {
+            error_log('COB: Database: share_token column already exists');
+            return true;
+        }
+    }
+
+    /**
      * Optimize database tables to reduce deadlock likelihood
      */
     public static function optimize_tables() {
@@ -195,8 +224,6 @@ class COB_Database {
         global $wpdb;
         
         $table_name = $wpdb->prefix . 'cob_drafts';
-        
-        // Calculate progress percentage based on completed fields
         $progress = self::calculate_progress($form_data, $current_step);
         
         // Use INSERT ... ON DUPLICATE KEY UPDATE to avoid deadlocks

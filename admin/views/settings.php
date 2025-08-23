@@ -11,8 +11,21 @@ if (!defined('ABSPATH')) {
 <div class="wrap">
     <h1><?php _e('Client Onboarding Settings', 'client-onboarding-form'); ?></h1>
 
-    <form method="post" action="">
+    <?php
+    // Display success/error messages
+    if (isset($_GET['settings-updated'])) {
+        if ($_GET['settings-updated'] === 'true') {
+            echo '<div class="notice notice-success is-dismissible"><p>Settings saved successfully!</p></div>';
+        } else {
+            echo '<div class="notice notice-error is-dismissible"><p>Failed to save settings. Please try again.</p></div>';
+        }
+    }
+    ?>
+
+    <form method="post" action="" id="cob-settings-form">
         <?php wp_nonce_field('cob_settings_nonce'); ?>
+        <input type="hidden" name="cob_form_submitted" value="1" />
+        <input type="hidden" name="submit" value="1" />
         
         <table class="form-table">
             <!-- Email Settings -->
@@ -108,7 +121,57 @@ if (!defined('ABSPATH')) {
         </ul>
 
         <?php submit_button(__('Save Settings', 'client-onboarding-form')); ?>
+        
+        <!-- Test button for debugging -->
+        <button type="button" id="cob-test-button" style="margin-left: 10px;">Test Form Data</button>
     </form>
+
+    <script>
+    jQuery(document).ready(function($) {
+        console.log('COB: Main settings page JavaScript loaded');
+        
+        // Test button to check form data
+        $('#cob-test-button').on('click', function() {
+            var formData = $('#cob-settings-form').serialize();
+            console.log('COB: Form data test:', formData);
+            alert('Form data: ' + formData);
+        });
+        
+        // Debug form submission
+        $('#cob-settings-form').on('submit', function(e) {
+            console.log('COB: Main settings form submit event triggered');
+            console.log('COB: Main settings form data:', $(this).serialize());
+            console.log('COB: Form action:', $(this).attr('action'));
+            console.log('COB: Form method:', $(this).attr('method'));
+            
+            // Check if all required fields are filled
+            var requiredFields = $(this).find('[required]');
+            var missingFields = [];
+            
+            requiredFields.each(function() {
+                if (!$(this).val().trim()) {
+                    missingFields.push($(this).attr('name'));
+                }
+            });
+            
+            if (missingFields.length > 0) {
+                console.log('COB: Missing required fields:', missingFields);
+                alert('Please fill in all required fields: ' + missingFields.join(', '));
+                e.preventDefault();
+                return false;
+            }
+            
+            console.log('COB: Main settings form submission proceeding...');
+        });
+        
+        // Monitor submit button click
+        $('input[type="submit"]').on('click', function(e) {
+            console.log('COB: Submit button clicked');
+            console.log('COB: Submit button value:', $(this).val());
+            console.log('COB: Submit button name:', $(this).attr('name'));
+        });
+    });
+    </script>
 
     <!-- Database Information -->
     <div class="cob-database-info">

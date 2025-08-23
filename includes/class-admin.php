@@ -18,6 +18,13 @@ class COB_Admin {
         add_action('wp_ajax_cob_generate_share_link', [$this, 'handle_generate_share_link']);
         add_action('wp_ajax_cob_get_draft_details', [$this, 'handle_get_draft_details']);
         add_action('wp_ajax_cob_delete_draft', [$this, 'handle_delete_draft']);
+        add_action('wp_ajax_cob_generate_share_token', [$this, 'handle_generate_share_token']);
+        
+        // Add admin-post handler for email settings
+        add_action('admin_post_cob_save_email_settings', [$this, 'handle_save_email_settings']);
+        
+        // Add admin-post handler for main settings
+        add_action('admin_post_cob_save_main_settings', [$this, 'handle_save_main_settings']);
         
         // Load email notifications class
         $this->load_email_notifications();
@@ -181,20 +188,55 @@ class COB_Admin {
     }
 
     public function settings_page() {
-        if (isset($_POST['submit'])) {
-            check_admin_referer('cob_settings_nonce');
+        // Debug: Check if form was submitted
+        if (!empty($_POST)) {
+            error_log('COB: Main settings form submitted - POST data detected');
+            error_log('COB: Main settings POST data received: ' . print_r($_POST, true));
+            error_log('COB: POST keys: ' . implode(', ', array_keys($_POST)));
             
-            $settings = [
-                'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
-                'company_name' => sanitize_text_field($_POST['company_name'] ?? ''),
-                'enable_notifications' => !empty($_POST['enable_notifications']),
-                'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
-                'webhook_url' => esc_url_raw($_POST['webhook_url'] ?? ''),
-                'enable_webhook' => !empty($_POST['enable_webhook'])
-            ];
-            
-            update_option('cob_settings', $settings);
-            echo '<div class="notice notice-success"><p>Settings saved successfully.</p></div>';
+            // Check if this is our form submission by looking for our specific fields
+            if (isset($_POST['_wpnonce']) && isset($_POST['admin_email'])) {
+                error_log('COB: This appears to be our form submission');
+                
+                // Check nonce
+                if (wp_verify_nonce($_POST['_wpnonce'], 'cob_settings_nonce')) {
+                    error_log('COB: Main settings nonce verified successfully');
+                    
+                    $settings = [
+                        'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
+                        'company_name' => sanitize_text_field($_POST['company_name'] ?? ''),
+                        'enable_notifications' => !empty($_POST['enable_notifications']),
+                        'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+                        'webhook_url' => esc_url_raw($_POST['webhook_url'] ?? ''),
+                        'enable_webhook' => !empty($_POST['enable_webhook'])
+                    ];
+                    
+                    error_log('COB: Main settings to save: ' . print_r($settings, true));
+                    
+                    // Save to database
+                    $result = update_option('cob_settings', $settings);
+                    
+                    if ($result) {
+                        error_log('COB: Main settings saved successfully');
+                        echo '<div class="notice notice-success"><p>Settings saved successfully.</p></div>';
+                    } else {
+                        error_log('COB: Failed to save main settings');
+                        echo '<div class="notice notice-error"><p>Failed to save settings. Please try again.</p></div>';
+                    }
+                } else {
+                    error_log('COB: Main settings nonce verification failed');
+                    error_log('COB: Expected nonce: cob_settings_nonce');
+                    error_log('COB: Received nonce: ' . ($_POST['_wpnonce'] ?? 'NOT SET'));
+                    echo '<div class="notice notice-error"><p>Security check failed. Please try again.</p></div>';
+                }
+            } else {
+                error_log('COB: POST data detected but not our form - missing required fields');
+                error_log('COB: _wpnonce present: ' . (isset($_POST['_wpnonce']) ? 'YES' : 'NO'));
+                error_log('COB: admin_email present: ' . (isset($_POST['admin_email']) ? 'YES' : 'NO'));
+            }
+        } else {
+            error_log('COB: No main settings form submission detected');
+            error_log('COB: Main settings POST data available: ' . print_r($_POST, true));
         }
 
         $settings = get_option('cob_settings', [
@@ -210,42 +252,195 @@ class COB_Admin {
     }
 
     public function email_settings_page() {
+        // Debug: Check if form was submitted
         if (isset($_POST['submit'])) {
-            check_admin_referer('cob_email_settings_nonce');
+            error_log('COB: Form submitted - submit button clicked');
+            error_log('COB: POST data received: ' . print_r($_POST, true));
             
-            $settings = get_option('cob_settings', []);
-            
-            // Update email settings
-            $email_settings = [
-                'email_from_name' => sanitize_text_field($_POST['email_from_name'] ?? ''),
-                'email_from_email' => sanitize_email($_POST['email_from_email'] ?? ''),
-                'enable_admin_notification' => !empty($_POST['enable_admin_notification']),
-                'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
-                'additional_admin_emails' => sanitize_textarea_field($_POST['additional_admin_emails'] ?? ''),
-                'admin_email_cc' => sanitize_text_field($_POST['admin_email_cc'] ?? ''),
-                'admin_email_bcc' => sanitize_text_field($_POST['admin_email_bcc'] ?? ''),
-                'admin_email_subject' => sanitize_text_field($_POST['admin_email_subject'] ?? ''),
-                'admin_email_body' => wp_kses_post($_POST['admin_email_body'] ?? ''),
-                'enable_client_confirmation' => !empty($_POST['enable_client_confirmation']),
-                'client_email_subject' => sanitize_text_field($_POST['client_email_subject'] ?? ''),
-                'client_email_body' => wp_kses_post($_POST['client_email_body'] ?? ''),
-                'notify_technical_contact' => !empty($_POST['notify_technical_contact']),
-                'technical_email_subject' => sanitize_text_field($_POST['technical_email_subject'] ?? ''),
-                'technical_email_body' => wp_kses_post($_POST['technical_email_body'] ?? ''),
-                'notify_reporting_contact' => !empty($_POST['notify_reporting_contact']),
-                'reporting_email_subject' => sanitize_text_field($_POST['reporting_email_subject'] ?? ''),
-                'reporting_email_body' => wp_kses_post($_POST['reporting_email_body'] ?? ''),
-            ];
-            
-            // Merge with existing settings
-            $settings = array_merge($settings, $email_settings);
-            
-            update_option('cob_settings', $settings);
-            echo '<div class="notice notice-success"><p>Email settings saved successfully.</p></div>';
+            // Check nonce
+            if (wp_verify_nonce($_POST['_wpnonce'], 'cob_email_settings_nonce')) {
+                error_log('COB: Nonce verified successfully');
+                
+                $settings = get_option('cob_settings', []);
+                
+                // Update email settings
+                $email_settings = [
+                    'email_from_name' => sanitize_text_field($_POST['email_from_name'] ?? ''),
+                    'email_from_email' => sanitize_email($_POST['email_from_email'] ?? ''),
+                    'enable_admin_notification' => !empty($_POST['enable_admin_notification']),
+                    'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
+                    'additional_admin_emails' => sanitize_textarea_field($_POST['additional_admin_emails'] ?? ''),
+                    'admin_email_cc' => sanitize_text_field($_POST['admin_email_cc'] ?? ''),
+                    'admin_email_bcc' => sanitize_text_field($_POST['admin_email_bcc'] ?? ''),
+                    'admin_email_subject' => sanitize_text_field($_POST['admin_email_subject'] ?? ''),
+                    'admin_email_body' => wp_kses_post($_POST['admin_email_body'] ?? ''),
+                    'enable_client_confirmation' => !empty($_POST['enable_client_confirmation']),
+                    'client_email_subject' => sanitize_text_field($_POST['client_email_subject'] ?? ''),
+                    'client_email_body' => wp_kses_post($_POST['client_email_body'] ?? ''),
+                    'notify_technical_contact' => !empty($_POST['notify_technical_contact']),
+                    'technical_email_subject' => sanitize_text_field($_POST['technical_email_subject'] ?? ''),
+                    'technical_email_body' => wp_kses_post($_POST['technical_email_body'] ?? ''),
+                    'notify_reporting_contact' => !empty($_POST['notify_reporting_contact']),
+                    'reporting_email_subject' => sanitize_text_field($_POST['reporting_email_subject'] ?? ''),
+                    'reporting_email_body' => wp_kses_post($_POST['reporting_email_body'] ?? ''),
+                ];
+                
+                // Debug: Log the settings being saved
+                error_log('COB: Email settings to save: ' . print_r($email_settings, true));
+                
+                // Merge with existing settings
+                $settings = array_merge($settings, $email_settings);
+                
+                // Save to database
+                $result = update_option('cob_settings', $settings);
+                
+                if ($result) {
+                    error_log('COB: Settings saved successfully');
+                    echo '<div class="notice notice-success"><p>Email settings saved successfully.</p></div>';
+                } else {
+                    error_log('COB: Failed to save settings');
+                    echo '<div class="notice notice-error"><p>Failed to save email settings. Please try again.</p></div>';
+                }
+            } else {
+                error_log('COB: Nonce verification failed');
+                error_log('COB: Expected nonce: cob_email_settings_nonce');
+                error_log('COB: Received nonce: ' . ($_POST['_wpnonce'] ?? 'NOT SET'));
+                echo '<div class="notice notice-error"><p>Security check failed. Please try again.</p></div>';
+            }
+        } else {
+            error_log('COB: No form submission detected');
+            error_log('COB: POST data available: ' . print_r($_POST, true));
         }
 
         $settings = get_option('cob_settings', []);
         include COB_PLUGIN_PATH . 'admin/views/email-settings.php';
+    }
+
+    /**
+     * Handle email settings form submission via admin-post.php
+     */
+    public function handle_save_email_settings() {
+        // Check nonce
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'cob_email_settings_nonce')) {
+            wp_die('Security check failed');
+        }
+        
+        // Check user capabilities
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized');
+        }
+        
+        error_log('COB: Processing email settings save via admin-post');
+        error_log('COB: POST data: ' . print_r($_POST, true));
+        
+        $settings = get_option('cob_settings', []);
+        
+        // Update email settings
+        $email_settings = [
+            'email_from_name' => sanitize_text_field($_POST['email_from_name'] ?? ''),
+            'email_from_email' => sanitize_email($_POST['email_from_email'] ?? ''),
+            'enable_admin_notification' => !empty($_POST['enable_admin_notification']),
+            'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
+            'additional_admin_emails' => sanitize_textarea_field($_POST['additional_admin_emails'] ?? ''),
+            'admin_email_cc' => sanitize_text_field($_POST['admin_email_cc'] ?? ''),
+            'admin_email_bcc' => sanitize_text_field($_POST['admin_email_bcc'] ?? ''),
+            'admin_email_subject' => sanitize_text_field($_POST['admin_email_subject'] ?? ''),
+            'admin_email_body' => wp_kses_post($_POST['admin_email_body'] ?? ''),
+            'enable_client_confirmation' => !empty($_POST['enable_client_confirmation']),
+            'client_email_subject' => sanitize_text_field($_POST['client_email_subject'] ?? ''),
+            'client_email_body' => wp_kses_post($_POST['client_email_body'] ?? ''),
+            'notify_technical_contact' => !empty($_POST['notify_technical_contact']),
+            'technical_email_subject' => sanitize_text_field($_POST['technical_email_subject'] ?? ''),
+            'technical_email_body' => wp_kses_post($_POST['technical_email_body'] ?? ''),
+            'notify_reporting_contact' => !empty($_POST['notify_reporting_contact']),
+            'reporting_email_subject' => sanitize_text_field($_POST['reporting_email_subject'] ?? ''),
+            'reporting_email_body' => wp_kses_post($_POST['reporting_email_body'] ?? ''),
+        ];
+        
+        // Merge with existing settings
+        $settings = array_merge($settings, $email_settings);
+        
+        // Save to database
+        $result = update_option('cob_settings', $settings);
+        
+        if ($result) {
+            error_log('COB: Email settings saved successfully via admin-post');
+            // Redirect back with success message
+            wp_redirect(add_query_arg('settings-updated', 'true', admin_url('admin.php?page=cob-email-settings')));
+            exit;
+        } else {
+            error_log('COB: Failed to save email settings via admin-post');
+            // Redirect back with error message
+            wp_redirect(add_query_arg('settings-updated', 'false', admin_url('admin.php?page=cob-email-settings')));
+            exit;
+        }
+    }
+
+    /**
+     * Handle main settings form submission via admin-post.php
+     */
+    public function handle_save_main_settings() {
+        // Check nonce
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'cob_settings_nonce')) {
+            wp_die('Security check failed');
+        }
+        
+        // Check user capabilities
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized');
+        }
+        
+        error_log('COB: Processing main settings save via admin-post');
+        error_log('COB: Main settings POST data: ' . print_r($_POST, true));
+        
+        $settings = [
+            'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
+            'company_name' => sanitize_text_field($_POST['company_name'] ?? ''),
+            'enable_notifications' => !empty($_POST['enable_notifications']),
+            'auto_save_interval' => intval($_POST['auto_save_interval'] ?? 30),
+            'webhook_url' => esc_url_raw($_POST['webhook_url'] ?? ''),
+            'enable_webhook' => !empty($_POST['enable_webhook'])
+        ];
+        
+        // Save to database
+        $result = update_option('cob_settings', $settings);
+        
+        if ($result) {
+            error_log('COB: Main settings saved successfully via admin-post');
+            // Redirect back with success message
+            wp_redirect(add_query_arg('settings-updated', 'true', admin_url('admin.php?page=cob-settings')));
+            exit;
+        } else {
+            error_log('COB: Failed to save main settings via admin-post');
+            // Redirect back with error message
+            wp_redirect(add_query_arg('settings-updated', 'false', admin_url('admin.php?page=cob-settings')));
+            exit;
+        }
+    }
+
+    /**
+     * Handle AJAX request to generate share token
+     */
+    public function handle_generate_share_token() {
+        // Check nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'cob_admin_nonce')) {
+            wp_send_json_error('Security check failed');
+        }
+        
+        $session_id = sanitize_text_field($_POST['session_id'] ?? '');
+        
+        if (empty($session_id)) {
+            wp_send_json_error('Session ID is required');
+        }
+        
+        // Generate share token
+        $token = COB_Database::generate_share_token($session_id);
+        
+        if ($token) {
+            wp_send_json_success(['token' => $token]);
+        } else {
+            wp_send_json_error('Failed to generate share token');
+        }
     }
 
     public function logs_page() {

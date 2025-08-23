@@ -92,23 +92,20 @@
 
         updateStepDisplay() {
             // Update step navigation
-            $('.cob-step-item').each((index, item) => {
-                const $item = $(item);
-                const stepNum = $item.data('step');
-                
-                $item.removeClass('cob-step-active cob-step-completed');
-                
-                if (stepNum === this.currentStep) {
-                    $item.addClass('cob-step-active');
-                } else if (stepNum < this.currentStep) {
-                    $item.addClass('cob-step-completed');
+            $('.cob-step-item').removeClass('cob-step-active cob-step-completed');
+            
+            for (let i = 1; i <= this.currentStep; i++) {
+                if (i === this.currentStep) {
+                    $(`.cob-step-item[data-step="${i}"]`).addClass('cob-step-active');
+                } else {
+                    $(`.cob-step-item[data-step="${i}"]`).addClass('cob-step-completed');
                 }
-            });
-
+            }
+            
             // Update step content
             $('.cob-step-content').removeClass('cob-step-active');
             $(`.cob-step-content[data-step="${this.currentStep}"]`).addClass('cob-step-active');
-
+            
             // Update step title
             const stepTitles = [
                 'CLIENT INFORMATION',
@@ -117,19 +114,35 @@
                 'MARKETING INFORMATION'
             ];
             $('#cob-current-step-title').text(stepTitles[this.currentStep - 1]);
+            
+            // Update button visibility based on step
+            this.updateButtonVisibility();
+        }
 
-            // Update navigation buttons
-            $('#cob-previous-btn').toggle(this.currentStep > 1);
-            if (this.currentStep === this.totalSteps) {
+        updateButtonVisibility() {
+            const isFirstStep = this.currentStep === 1;
+            const isLastStep = this.currentStep === 4;
+            
+            // Previous button - show on all steps except first
+            if (isFirstStep) {
+                $('#cob-previous-btn').hide();
+            } else {
+                $('#cob-previous-btn').show();
+            }
+            
+            // Continue button - show on all steps except last
+            if (isLastStep) {
                 $('#cob-continue-btn').hide();
-                $('#cob-submit-btn').show();
             } else {
                 $('#cob-continue-btn').show();
+            }
+            
+            // Submit button - show only on last step
+            if (isLastStep) {
+                $('#cob-submit-btn').show();
+            } else {
                 $('#cob-submit-btn').hide();
             }
-
-            // Scroll to top
-            $('.cob-form-content').scrollTop(0);
         }
 
         validateCurrentStep() {
@@ -256,6 +269,8 @@
                         if (data.success) {
                             if (showMessage) {
                                 this.showSaveStatus(cob_ajax.messages.draft_saved);
+                                // Generate share token and ask if client wants to complete later
+                                this.generateShareTokenAndAsk();
                             }
                             this.updateSaveStatus(data.last_saved);
                         } else if (data.retry_after && retryCount < maxRetries) {
@@ -297,7 +312,7 @@
                         alert('Failed to save draft. Please try again.');
                     }
                 }).always(() => {
-                    if (showMessage && retryCount >= maxRetries) {
+                    if (showMessage) {
                         $('#cob-save-draft').removeClass('cob-loading').prop('disabled', false);
                     }
                 });
@@ -306,13 +321,200 @@
             return saveWithRetry();
         }
 
+        generateShareTokenAndAsk() {
+            // Generate share token via AJAX
+            $.ajax({
+                url: cob_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'cob_generate_share_token',
+                    nonce: cob_ajax.nonce,
+                    session_id: this.sessionId
+                }
+            }).done((response) => {
+                try {
+                    const data = typeof response === 'string' ? JSON.parse(response) : response;
+                    if (data.success && data.token) {
+                        console.log('COB: Share token generated successfully:', data.token);
+                        this.askForCompletionLink(data.token);
+                    } else {
+                        console.error('COB: Failed to generate share token:', data.message);
+                        // Fallback: ask without token
+                        this.askForCompletionLink(this.sessionId);
+                    }
+                } catch (e) {
+                    console.error('COB: Error generating share token:', e);
+                    // Fallback: ask without token
+                    this.askForCompletionLink(this.sessionId);
+                }
+            }).fail((xhr, status, error) => {
+                console.error('COB: Failed to generate share token:', status, error);
+                // Fallback: ask without token
+                this.askForCompletionLink(this.sessionId);
+            });
+        }
+
+        askForCompletionLink(sessionId) {
+            const modal = $(`
+                <div class="cob-completion-modal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                ">
+                    <div class="cob-modal-content" style="
+                        background: #2a2a2a;
+                        padding: 40px;
+                        border-radius: 12px;
+                        max-width: 500px;
+                        text-align: center;
+                        border: 1px solid #555;
+                    ">
+                        <h3 style="color: #9dff00; margin-bottom: 20px; font-size: 24px;">Draft Saved Successfully!</h3>
+                        <p style="color: #fff; margin-bottom: 30px; line-height: 1.6;">
+                            Your form progress has been saved. Would you like to complete the form later?
+                        </p>
+                        <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center;">
+                            <button class="cob-btn cob-btn-secondary" style="
+                                background: #555;
+                                color: #fff;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-weight: 600;
+                            ">Continue Now</button>
+                            <button class="cob-btn cob-btn-primary" style="
+                                background: #9dff00;
+                                color: #000;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-weight: 600;
+                            ">Get Completion Link</button>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            $('body').append(modal);
+
+            // Handle button clicks
+            modal.find('.cob-btn-secondary').on('click', () => {
+                modal.remove();
+            });
+
+            modal.find('.cob-btn-primary').on('click', () => {
+                this.generateCompletionLink(sessionId);
+                modal.remove();
+            });
+        }
+
+        generateCompletionLink(sessionId) {
+            // Generate the completion link using the share token
+            const currentUrl = window.location.origin + window.location.pathname;
+            const completionLink = `${currentUrl}?cob_share=${sessionId}`;
+            
+            const linkModal = $(`
+                <div class="cob-link-modal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                ">
+                    <div class="cob-modal-content" style="
+                        background: #2a2a2a;
+                        padding: 40px;
+                        border-radius: 12px;
+                        max-width: 600px;
+                        text-align: center;
+                        border: 1px solid #555;
+                    ">
+                        <h3 style="color: #9dff00; margin-bottom: 20px; font-size: 24px;">Your Completion Link</h3>
+                        <p style="color: #fff; margin-bottom: 20px; line-height: 1.6;">
+                            Use this link to return and complete your form later. The link will take you directly to where you left off.
+                        </p>
+                        <div class="cob-link-display" style="
+                            background: #1a1a1a;
+                            padding: 15px;
+                            border-radius: 6px;
+                            margin: 20px 0;
+                            border: 1px solid #555;
+                        ">
+                            <input type="text" value="${completionLink}" readonly style="
+                                width: 100%;
+                                background: transparent;
+                                border: none;
+                                color: #9dff00;
+                                font-family: monospace;
+                                font-size: 14px;
+                                text-align: center;
+                            ">
+                        </div>
+                        <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center;">
+                            <button class="cob-btn cob-btn-copy" style="
+                                background: #9dff00;
+                                color: #000;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-weight: 600;
+                            ">Copy Link</button>
+                            <button class="cob-btn cob-btn-close" style="
+                                background: #555;
+                                color: #fff;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-weight: 600;
+                            ">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            $('body').append(linkModal);
+
+            // Handle copy button
+            linkModal.find('.cob-btn-copy').on('click', () => {
+                navigator.clipboard.writeText(completionLink).then(() => {
+                    const copyBtn = linkModal.find('.cob-btn-copy');
+                    const originalText = copyBtn.text();
+                    copyBtn.text('Copied!').css('background', '#4CAF50');
+                    setTimeout(() => {
+                        copyBtn.text(originalText).css('background', '#9dff00');
+                    }, 2000);
+                });
+            });
+
+            // Handle close button
+            linkModal.find('.cob-btn-close').on('click', () => {
+                linkModal.remove();
+            });
+        }
+
         loadDraft() {
             // Check for shared draft token in URL
             const urlParams = new URLSearchParams(window.location.search);
             const shareToken = urlParams.get('cob_share');
             
             if (shareToken) {
-                this.loadSharedDraft(shareToken);
+                this.loadSharedDraft();
                 return;
             }
             
@@ -411,9 +613,14 @@
             $('.cob-form-content').html(successHtml);
         }
 
-        showSaveStatus(message) {
-            $('#cob-save-text').text(message);
-            $('#cob-save-status').show().delay(3000).fadeOut();
+        showSaveStatus(message, type = 'success') {
+            const statusElement = $('#cob-save-status');
+            statusElement.removeClass('cob-error cob-success').addClass(type);
+            statusElement.text(message);
+            statusElement.show();
+            setTimeout(() => {
+                statusElement.fadeOut();
+            }, 3000);
         }
 
         updateSaveStatus(timestamp) {
@@ -424,45 +631,75 @@
             }
         }
 
-        loadSharedDraft(token) {
-            $.ajax({
-                url: cob_ajax.ajax_url,
-                type: 'GET',
-                data: {
-                    action: 'cob_get_shared_draft',
-                    nonce: cob_ajax.nonce,
-                    token: token
-                }
-            }).done((response) => {
-                try {
-                    const data = typeof response === 'string' ? JSON.parse(response) : response;
-                    
-                    if (data.success) {
-                        // Use the shared session ID
-                        this.sessionId = data.session_id;
-                        
-                        // Load form data
-                        if (data.form_data && Object.keys(data.form_data).length > 0) {
-                            this.setFormData(data.form_data);
-                        }
-                        
-                        // Set current step
-                        if (data.current_step) {
-                            this.currentStep = data.current_step;
-                            this.updateStepDisplay();
-                        }
-                        
-                        // Show success message
-                        this.showSaveStatus('Draft loaded successfully from shared link');
-                    } else {
-                        alert('Failed to load shared draft: ' + (data.message || 'Unknown error'));
+        loadSharedDraft() {
+            // Check for shared draft token in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const shareToken = urlParams.get('cob_share');
+            
+            if (shareToken) {
+                console.log('COB: Loading shared draft with token:', shareToken);
+                
+                // Load the draft using the share token
+                $.ajax({
+                    url: cob_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'cob_load_shared_draft',
+                        nonce: cob_ajax.nonce,
+                        share_token: shareToken
                     }
-                } catch (e) {
-                    console.error('Error loading shared draft:', e);
-                    alert('Failed to load shared draft. Please check the link and try again.');
+                }).done((response) => {
+                    try {
+                        const data = typeof response === 'string' ? JSON.parse(response) : response;
+                        
+                        if (data.success && data.draft) {
+                            console.log('COB: Shared draft loaded successfully:', data.draft);
+                            
+                            // Set the session ID from the shared draft
+                            this.sessionId = data.draft.session_id;
+                            
+                            // Load the form data
+                            this.loadFormData(data.draft.form_data);
+                            
+                            // Set the current step
+                            this.currentStep = data.draft.current_step;
+                            this.updateStepDisplay();
+                            
+                            // Show success message
+                            this.showSaveStatus('Shared draft loaded successfully! You can continue from where you left off.');
+                            
+                            // Clean up the URL
+                            const newUrl = window.location.pathname;
+                            window.history.replaceState({}, document.title, newUrl);
+                            
+                        } else {
+                            console.error('COB: Failed to load shared draft:', data.message);
+                            this.showSaveStatus('Failed to load shared draft: ' + (data.message || 'Unknown error'), 'error');
+                        }
+                    } catch (e) {
+                        console.error('COB: Error parsing shared draft response:', e);
+                        this.showSaveStatus('Failed to load shared draft: Invalid response', 'error');
+                    }
+                }).fail((xhr, status, error) => {
+                    console.error('COB: Failed to load shared draft:', status, error);
+                    this.showSaveStatus('Failed to load shared draft: Network error', 'error');
+                });
+            }
+        }
+
+        loadFormData(formData) {
+            // Populate form fields with the loaded data
+            Object.keys(formData).forEach(fieldName => {
+                const field = $(`[name="${fieldName}"]`);
+                if (field.length) {
+                    if (field.attr('type') === 'checkbox') {
+                        field.prop('checked', formData[fieldName] === true || formData[fieldName] === '1');
+                    } else if (field.attr('type') === 'radio') {
+                        field.filter(`[value="${formData[fieldName]}"]`).prop('checked', true);
+                    } else {
+                        field.val(formData[fieldName]);
+                    }
                 }
-            }).fail(() => {
-                alert('Failed to load shared draft. Please check your connection and try again.');
             });
         }
 

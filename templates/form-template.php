@@ -27,35 +27,35 @@ if (!defined('ABSPATH')) {
 
     <div class="cob-form-wrapper">
         <!-- Step Navigation Sidebar -->
-        <nav class="cob-step-navigation">
-            <div class="cob-step-item cob-step-active" data-step="1">
-                <div class="cob-step-circle">
-                    <span class="cob-step-number">1</span>
+        <nav class="cob-step-navigation cob-nav-enhanced">
+            <div class="cob-step-item cob-nav-item-enhanced cob-step-active" data-step="1">
+                <div class="cob-step-circle cob-circle-enhanced">
+                    <span class="cob-step-number cob-number-enhanced">1</span>
                 </div>
-                <span class="cob-step-name">CLIENT INFORMATION</span>
+                <span class="cob-step-name cob-name-enhanced">CLIENT INFORMATION</span>
             </div>
-            <div class="cob-step-item" data-step="2">
-                <div class="cob-step-circle">
-                    <span class="cob-step-number">2</span>
+            <div class="cob-step-item cob-nav-item-enhanced" data-step="2">
+                <div class="cob-step-circle cob-circle-enhanced">
+                    <span class="cob-step-number cob-number-enhanced">2</span>
                 </div>
-                <span class="cob-step-name">TECHNICAL INFORMATION</span>
+                <span class="cob-step-name cob-name-enhanced">TECHNICAL INFORMATION</span>
             </div>
-            <div class="cob-step-item" data-step="3">
-                <div class="cob-step-circle">
-                    <span class="cob-step-number">3</span>
+            <div class="cob-step-item cob-nav-item-enhanced" data-step="3">
+                <div class="cob-step-circle cob-circle-enhanced">
+                    <span class="cob-step-number cob-number-enhanced">3</span>
                 </div>
-                <span class="cob-step-name">REPORTING INFORMATION</span>
+                <span class="cob-step-name cob-name-enhanced">REPORTING INFORMATION</span>
             </div>
-            <div class="cob-step-item" data-step="4">
-                <div class="cob-step-circle">
-                    <span class="cob-step-number">4</span>
+            <div class="cob-step-item cob-nav-item-enhanced" data-step="4">
+                <div class="cob-step-circle cob-circle-enhanced">
+                    <span class="cob-step-number cob-number-enhanced">4</span>
                 </div>
-                <span class="cob-step-name">MARKETING INFORMATION</span>
+                <span class="cob-step-name cob-name-enhanced">MARKETING INFORMATION</span>
             </div>
         </nav>
 
         <!-- Main Form Content -->
-        <main class="cob-form-content">
+        <main class="cob-form-content cob-content-enhanced">
             <div class="cob-step-header">
                 <h2 id="cob-current-step-title">CLIENT INFORMATION</h2>
             </div>
