@@ -103,6 +103,67 @@ class COB_Database {
         dbDelta($sql);
         dbDelta($drafts_sql);
         dbDelta($logs_sql);
+        
+        // Optimize tables after creation to reduce deadlock likelihood
+        self::optimize_tables();
+    }
+
+    /**
+     * Optimize database tables to reduce deadlock likelihood
+     */
+    public static function optimize_tables() {
+        global $wpdb;
+        
+        try {
+            // Optimize drafts table
+            $drafts_table = $wpdb->prefix . 'cob_drafts';
+            $wpdb->query("OPTIMIZE TABLE $drafts_table");
+            
+            // Analyze table to update statistics
+            $wpdb->query("ANALYZE TABLE $drafts_table");
+            
+            // Check and repair table if needed
+            $wpdb->query("CHECK TABLE $drafts_table");
+            
+            self::log_activity('table_optimization', null, null, 'Tables optimized successfully');
+            
+        } catch (Exception $e) {
+            self::log_activity('table_optimization_error', null, null, 'Table optimization failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Check for and resolve table locks
+     */
+    public static function check_table_locks() {
+        global $wpdb;
+        
+        try {
+            // Check for running processes that might be causing locks
+            $processes = $wpdb->get_results("SHOW PROCESSLIST");
+            $locked_processes = [];
+            
+            foreach ($processes as $process) {
+                if (strpos($process->Info ?? '', 'wp_cob_drafts') !== false && 
+                    $process->State === 'Locked') {
+                    $locked_processes[] = $process->Id;
+                }
+            }
+            
+            if (!empty($locked_processes)) {
+                self::log_activity('table_locks_detected', null, null, 'Locks detected on processes: ' . implode(', ', $locked_processes));
+                
+                // Kill locked processes (use with caution)
+                foreach ($locked_processes as $process_id) {
+                    $wpdb->query("KILL $process_id");
+                }
+                
+                self::log_activity('table_locks_resolved', null, null, 'Locks resolved by killing processes');
+            }
+            
+        } catch (Exception $e) {
+            self::log_activity('table_lock_check_error', null, null, 'Lock check failed: ' . $e->getMessage());
+        }
     }
 
     public static function save_submission($data) {
@@ -139,29 +200,138 @@ class COB_Database {
         $progress = self::calculate_progress($form_data, $current_step);
         
         // Use INSERT ... ON DUPLICATE KEY UPDATE to avoid deadlocks
-        $result = $wpdb->query($wpdb->prepare(
-            "INSERT INTO $table_name
-            (session_id, form_data, current_step, progress_percentage, client_email, last_saved)
-            VALUES (%s, %s, %d, %d, %s, %s)
-            ON DUPLICATE KEY UPDATE
-            form_data = VALUES(form_data),
-            current_step = VALUES(current_step),
-            progress_percentage = VALUES(progress_percentage),
-            client_email = VALUES(client_email),
-            last_saved = VALUES(last_saved)",
-            $session_id,
-            wp_json_encode($form_data),
-            $current_step,
-            $progress,
-            $client_email,
-            current_time('mysql')
-        ));
-
-        if ($result !== false) {
-            self::log_activity('draft_saved', null, $session_id);
-            return true;
+        // Add retry logic for deadlock situations
+        $max_retries = 3;
+        $retry_count = 0;
+        
+        while ($retry_count < $max_retries) {
+            try {
+                // Start transaction for better consistency
+                $wpdb->query('START TRANSACTION');
+                
+                $result = $wpdb->query($wpdb->prepare(
+                    "INSERT INTO $table_name
+                    (session_id, form_data, current_step, progress_percentage, client_email, last_saved)
+                    VALUES (%s, %s, %d, %d, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                    form_data = VALUES(form_data),
+                    current_step = VALUES(current_step),
+                    progress_percentage = VALUES(progress_percentage),
+                    client_email = VALUES(client_email),
+                    last_saved = VALUES(last_saved)",
+                    $session_id,
+                    wp_json_encode($form_data),
+                    $current_step,
+                    $progress,
+                    $client_email,
+                    current_time('mysql')
+                ));
+                
+                if ($result !== false) {
+                    // Commit transaction
+                    $wpdb->query('COMMIT');
+                    self::log_activity('draft_saved', null, $session_id);
+                    return true;
+                } else {
+                    // Rollback transaction
+                    $wpdb->query('ROLLBACK');
+                    $retry_count++;
+                    
+                    if ($retry_count >= $max_retries) {
+                        self::log_activity('draft_save_failed', null, $session_id, 'Max retries exceeded');
+                        return false;
+                    }
+                    
+                    // Wait before retry (exponential backoff)
+                    usleep(pow(2, $retry_count) * 100000); // 100ms, 200ms, 400ms
+                    continue;
+                }
+                
+            } catch (Exception $e) {
+                // Rollback transaction on error
+                $wpdb->query('ROLLBACK');
+                
+                // Check if it's a deadlock error
+                if (strpos($e->getMessage(), 'Deadlock') !== false || 
+                    strpos($e->getMessage(), 'try restarting transaction') !== false) {
+                    
+                    $retry_count++;
+                    
+                    if ($retry_count >= $max_retries) {
+                        self::log_activity('draft_save_deadlock', null, $session_id, 'Deadlock after ' . $retry_count . ' retries');
+                        return false;
+                    }
+                    
+                    // Wait before retry (exponential backoff)
+                    usleep(pow(2, $retry_count) * 100000);
+                    continue;
+                } else {
+                    // Non-deadlock error, log and return false
+                    self::log_activity('draft_save_error', null, $session_id, 'Exception: ' . $e->getMessage());
+                    return false;
+                }
+            }
         }
+        
+        // If all retries failed, try fallback method
+        return self::save_draft_fallback($session_id, $form_data, $current_step, $client_email, $progress);
+    }
 
+    /**
+     * Fallback method for saving drafts when the main method fails
+     */
+    private static function save_draft_fallback($session_id, $form_data, $current_step, $client_email, $progress) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cob_drafts';
+        
+        try {
+            // Check if draft exists
+            $existing_draft = $wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM $table_name WHERE session_id = %s",
+                $session_id
+            ));
+            
+            if ($existing_draft) {
+                // Update existing draft
+                $result = $wpdb->update(
+                    $table_name,
+                    [
+                        'form_data' => wp_json_encode($form_data),
+                        'current_step' => $current_step,
+                        'progress_percentage' => $progress,
+                        'client_email' => $client_email,
+                        'last_saved' => current_time('mysql')
+                    ],
+                    ['session_id' => $session_id],
+                    ['%s', '%d', '%d', '%s', '%s'],
+                    ['%s']
+                );
+            } else {
+                // Insert new draft
+                $result = $wpdb->insert(
+                    $table_name,
+                    [
+                        'session_id' => $session_id,
+                        'form_data' => wp_json_encode($form_data),
+                        'current_step' => $current_step,
+                        'progress_percentage' => $progress,
+                        'client_email' => $client_email,
+                        'last_saved' => current_time('mysql')
+                    ],
+                    ['%s', '%s', '%d', '%d', '%s', '%s']
+                );
+            }
+            
+            if ($result !== false) {
+                self::log_activity('draft_saved_fallback', null, $session_id, 'Draft saved using fallback method');
+                return true;
+            }
+            
+        } catch (Exception $e) {
+            self::log_activity('draft_save_fallback_error', null, $session_id, 'Fallback method failed: ' . $e->getMessage());
+        }
+        
         return false;
     }
 
