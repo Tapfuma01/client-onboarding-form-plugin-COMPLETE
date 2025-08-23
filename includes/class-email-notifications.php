@@ -35,14 +35,40 @@ class COB_Email_Notifications {
         $this->submission_id = $submission_id;
         $this->submission_data = $submission_data;
 
+        // Debug logging
+        if (class_exists('COB_Database')) {
+            COB_Database::log_activity('email_notification_started', $submission_id, $submission_data['session_id'], 
+                'Settings: ' . json_encode($this->settings));
+        }
+
         // Send admin notification
         if ($this->should_send_admin_notification()) {
+            if (class_exists('COB_Database')) {
+                COB_Database::log_activity('admin_notification_triggered', $submission_id, $submission_data['session_id'], 
+                    'Admin email: ' . ($this->settings['admin_email'] ?? 'NOT_SET'));
+            }
             $this->send_admin_notification();
+        } else {
+            if (class_exists('COB_Database')) {
+                COB_Database::log_activity('admin_notification_skipped', $submission_id, $submission_data['session_id'], 
+                    'enable_admin_notification: ' . ($this->settings['enable_admin_notification'] ?? 'NOT_SET') . 
+                    ', admin_email: ' . ($this->settings['admin_email'] ?? 'NOT_SET'));
+            }
         }
 
         // Send client confirmation
         if ($this->should_send_client_confirmation()) {
+            if (class_exists('COB_Database')) {
+                COB_Database::log_activity('client_notification_triggered', $submission_id, $submission_data['session_id'], 
+                    'Client email: ' . $submission_data['primary_contact_email']);
+            }
             $this->send_client_confirmation();
+        } else {
+            if (class_exists('COB_Database')) {
+                COB_Database::log_activity('client_notification_skipped', $submission_id, $submission_data['session_id'], 
+                    'enable_client_confirmation: ' . ($this->settings['enable_client_confirmation'] ?? 'NOT_SET') . 
+                    ', client_email: ' . ($submission_data['primary_contact_email'] ?? 'NOT_SET'));
+            }
         }
 
         // Send additional notifications if configured
@@ -53,8 +79,15 @@ class COB_Email_Notifications {
      * Check if admin notification should be sent
      */
     private function should_send_admin_notification() {
-        return !empty($this->settings['enable_admin_notification']) && 
-               !empty($this->settings['admin_email']);
+        // Check if admin notifications are enabled
+        if (empty($this->settings['enable_admin_notification'])) {
+            return false;
+        }
+        
+        // Use custom admin email if set, otherwise fall back to WordPress admin email
+        $admin_email = $this->settings['admin_email'] ?? get_option('admin_email');
+        
+        return !empty($admin_email);
     }
 
     /**
@@ -174,15 +207,16 @@ class COB_Email_Notifications {
     private function get_admin_email_recipients() {
         $recipients = [];
         
-        // Primary admin email
-        if (!empty($this->settings['admin_email'])) {
-            $recipients[] = $this->settings['admin_email'];
+        // Primary admin email - use custom if set, otherwise fall back to WordPress admin email
+        $admin_email = $this->settings['admin_email'] ?? get_option('admin_email');
+        if (!empty($admin_email)) {
+            $recipients[] = $admin_email;
         }
 
         // Additional admin emails
         if (!empty($this->settings['additional_admin_emails'])) {
             $additional = array_map('trim', explode(',', $this->settings['additional_admin_emails']));
-            $recipients = array_merge($recipients, array_filter($additional, 'is_email'));
+            $recipients = array_unique(array_merge($recipients, array_filter($additional, 'is_email')));
         }
 
         return array_unique($recipients);
@@ -264,49 +298,114 @@ class COB_Email_Notifications {
             'site_url' => home_url(),
             'admin_email' => get_option('admin_email'),
             
-            // Client information
-            'business_name' => $this->submission_data['business_name'] ?? '',
+            // Step 1: Client Information
             'project_name' => $this->submission_data['project_name'] ?? '',
+            'business_name' => $this->submission_data['business_name'] ?? '',
             'primary_contact_name' => $this->submission_data['primary_contact_name'] ?? '',
             'primary_contact_email' => $this->submission_data['primary_contact_email'] ?? '',
-            'primary_contact_phone' => $this->submission_data['primary_contact_phone'] ?? '',
-            'milestone_approver' => $this->submission_data['milestone_approver'] ?? '',
+            'primary_contact_number' => $this->submission_data['primary_contact_number'] ?? '',
+            'main_approver' => $this->submission_data['main_approver'] ?? '',
             'billing_email' => $this->submission_data['billing_email'] ?? '',
+            'vat_number' => $this->submission_data['vat_number'] ?? '',
             'preferred_contact_method' => $this->submission_data['preferred_contact_method'] ?? '',
+            'address_line_1' => $this->submission_data['address_line_1'] ?? '',
+            'address_line_2' => $this->submission_data['address_line_2'] ?? '',
+            'city' => $this->submission_data['city'] ?? '',
+            'country' => $this->submission_data['country'] ?? '',
+            'postal_code' => $this->submission_data['postal_code'] ?? '',
             
-            // Technical information
-            'current_website' => $this->submission_data['current_website'] ?? '',
-            'hosting_provider' => $this->submission_data['hosting_provider'] ?? '',
-            'technical_contact_name' => $this->submission_data['technical_contact_name'] ?? '',
-            'technical_contact_email' => $this->submission_data['technical_contact_email'] ?? '',
-            'preferred_cms' => $this->submission_data['preferred_cms'] ?? '',
-            'technology_stack' => $this->submission_data['technology_stack'] ?? '',
+            // Step 2: Technical Information
+            'current_cms' => $this->submission_data['current_cms'] ?? '',
+            'website_hosting_company' => $this->submission_data['website_hosting_company'] ?? '',
+            'website_contact_email' => $this->submission_data['website_contact_email'] ?? '',
+            'domain_hosting_company' => $this->submission_data['domain_hosting_company'] ?? '',
+            'domain_contact_email' => $this->submission_data['domain_contact_email'] ?? '',
+            'cms_link' => $this->submission_data['cms_link'] ?? '',
+            'cms_username' => $this->submission_data['cms_username'] ?? '',
+            'cms_password' => $this->submission_data['cms_password'] ?? '',
+            'current_crm' => $this->submission_data['current_crm'] ?? '',
+            'third_party_integrations' => $this->submission_data['third_party_integrations'] ?? '',
+            'third_party_name' => $this->submission_data['third_party_name'] ?? '',
+            'third_party_contact_number' => $this->submission_data['third_party_contact_number'] ?? '',
+            'third_party_contact_email' => $this->submission_data['third_party_contact_email'] ?? '',
+            'booking_engine_name' => $this->submission_data['booking_engine_name'] ?? '',
+            'booking_engine_username' => $this->submission_data['booking_engine_username'] ?? '',
+            'booking_engine_password' => $this->submission_data['booking_engine_password'] ?? '',
+            'booking_engine_contact_email' => $this->submission_data['booking_engine_contact_email'] ?? '',
+            'technical_objective' => $this->submission_data['technical_objective'] ?? '',
             
-            // Reporting information
-            'reporting_frequency' => $this->submission_data['reporting_frequency'] ?? '',
-            'reporting_contact_name' => $this->submission_data['reporting_contact_name'] ?? '',
-            'reporting_contact_email' => $this->submission_data['reporting_contact_email'] ?? '',
-            'key_metrics' => $this->submission_data['key_metrics'] ?? '',
+            // Step 3: Reporting Information
+            'google_analytics_account' => $this->submission_data['google_analytics_account'] ?? '',
+            'google_analytics_account_id' => $this->submission_data['google_analytics_account_id'] ?? '',
+            'google_tag_manager_account' => $this->submission_data['google_tag_manager_account'] ?? '',
+            'google_tag_manager_admin' => $this->submission_data['google_tag_manager_admin'] ?? '',
+            'google_ads_account' => $this->submission_data['google_ads_account'] ?? '',
+            'google_ads_admin' => $this->submission_data['google_ads_admin'] ?? '',
+            'google_ads_customer_id' => $this->submission_data['google_ads_customer_id'] ?? '',
+            'meta_business_manager_account' => $this->submission_data['meta_business_manager_account'] ?? '',
+            'meta_business_manager_admin' => $this->submission_data['meta_business_manager_admin'] ?? '',
+            'meta_business_manager_id' => $this->submission_data['meta_business_manager_id'] ?? '',
+            'paid_media_history' => $this->submission_data['paid_media_history'] ?? '',
+            'paid_media_history_other' => $this->submission_data['paid_media_history_other'] ?? '',
+            'current_paid_media' => $this->submission_data['current_paid_media'] ?? '',
+            'current_paid_media_other' => $this->submission_data['current_paid_media_other'] ?? '',
             
-            // Marketing information
-            'target_audience' => $this->submission_data['target_audience'] ?? '',
-            'marketing_goals' => $this->submission_data['marketing_goals'] ?? '',
-            'marketing_budget' => $this->submission_data['marketing_budget'] ?? '',
-            'current_marketing_channels' => $this->submission_data['current_marketing_channels'] ?? '',
+            // Step 4: Marketing Information
+            'main_objective' => $this->submission_data['main_objective'] ?? '',
+            'brand_focus' => $this->submission_data['brand_focus'] ?? '',
+            'commercial_objective' => $this->submission_data['commercial_objective'] ?? '',
+            'push_impact' => $this->submission_data['push_impact'] ?? '',
+            'founder_inspiration' => $this->submission_data['founder_inspiration'] ?? '',
+            'brand_tone_mission' => $this->submission_data['brand_tone_mission'] ?? '',
+            'brand_perception' => $this->submission_data['brand_perception'] ?? '',
+            'global_team_introduction' => $this->submission_data['global_team_introduction'] ?? '',
+            'service_introduction' => $this->submission_data['service_introduction'] ?? '',
+            'brand_line_1' => $this->submission_data['brand_line_1'] ?? '',
+            'mission_1' => $this->submission_data['mission_1'] ?? '',
+            'brand_line_2' => $this->submission_data['brand_line_2'] ?? '',
+            'mission_2' => $this->submission_data['mission_2'] ?? '',
+            'brand_line_3' => $this->submission_data['brand_line_3'] ?? '',
+            'mission_3' => $this->submission_data['mission_3'] ?? '',
+            'brand_guidelines_upload' => $this->submission_data['brand_guidelines_upload'] ?? '',
+            'brand_guidelines_files' => $this->submission_data['brand_guidelines_files'] ?? '',
+            'communication_tone' => $this->submission_data['communication_tone'] ?? '',
+            'casual_tone_explanation' => $this->submission_data['casual_tone_explanation'] ?? '',
+            'formal_tone_explanation' => $this->submission_data['formal_tone_explanation'] ?? '',
+            'brand_accounts' => $this->submission_data['brand_accounts'] ?? '',
+            'facebook_page' => $this->submission_data['facebook_page'] ?? '',
+            'instagram_username' => $this->submission_data['instagram_username'] ?? '',
+            'industry_entities' => $this->submission_data['industry_entities'] ?? '',
+            'industry_entities_other' => $this->submission_data['industry_entities_other'] ?? '',
+            'industry_status' => $this->submission_data['industry_status'] ?? '',
+            'market_insights' => $this->submission_data['market_insights'] ?? '',
+            'content_social_media' => $this->submission_data['content_social_media'] ?? '',
+            'business_focus_elements' => $this->submission_data['business_focus_elements'] ?? '',
+            'social_media_accounts' => $this->submission_data['social_media_accounts'] ?? '',
+            'facebook_accounts_url' => $this->submission_data['facebook_accounts_url'] ?? '',
+            'facebook_page_url' => $this->submission_data['facebook_page_url'] ?? '',
+            'twitter_accounts_url' => $this->submission_data['twitter_accounts_url'] ?? '',
+            'instagram_page_url' => $this->submission_data['instagram_page_url'] ?? '',
+            'ideal_customer_description' => $this->submission_data['ideal_customer_description'] ?? '',
+            'potential_client_view' => $this->submission_data['potential_client_view'] ?? '',
+            'target_age_range' => $this->submission_data['target_age_range'] ?? '',
+            'problems_solved' => $this->submission_data['problems_solved'] ?? '',
+            'business_challenges' => $this->submission_data['business_challenges'] ?? '',
+            'tracking_accounting' => $this->submission_data['tracking_accounting'] ?? '',
+            'additional_information' => $this->submission_data['additional_information'] ?? '',
             
             // Links
             'view_submission_link' => admin_url('admin.php?page=cob-submissions&view=' . $this->submission_id),
             'admin_dashboard_link' => admin_url('admin.php?page=client-onboarding'),
         ];
 
-        // Add billing address
-        if (!empty($this->submission_data['billing_address_line1'])) {
+        // Add billing address (for backward compatibility)
+        if (!empty($this->submission_data['address_line_1'])) {
             $address_parts = array_filter([
-                $this->submission_data['billing_address_line1'],
-                $this->submission_data['billing_address_line2'],
-                $this->submission_data['billing_address_city'],
-                $this->submission_data['billing_address_country'],
-                $this->submission_data['billing_address_postal_code']
+                $this->submission_data['address_line_1'],
+                $this->submission_data['address_line_2'],
+                $this->submission_data['city'],
+                $this->submission_data['country'],
+                $this->submission_data['postal_code']
             ]);
             $tags['billing_address'] = implode(', ', $address_parts);
         } else {
