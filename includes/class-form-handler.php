@@ -10,6 +10,9 @@ if (!defined('ABSPATH')) {
 class COB_Form_Handler {
 
     public function __construct() {
+        // Load email notifications class
+        $this->load_email_notifications();
+        
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action('wp_ajax_cob_save_draft', [$this, 'ajax_save_draft']);
         add_action('wp_ajax_nopriv_cob_save_draft', [$this, 'ajax_save_draft']);
@@ -22,6 +25,13 @@ class COB_Form_Handler {
         
         // Ensure database class is loaded for AJAX requests
         $this->load_dependencies();
+    }
+
+    private function load_email_notifications() {
+        if (!class_exists('COB_Email_Notifications')) {
+            require_once COB_PLUGIN_PATH . 'includes/class-email-notifications.php';
+        }
+        new COB_Email_Notifications();
     }
 
     private function load_dependencies() {
@@ -205,12 +215,8 @@ class COB_Form_Handler {
                     // Don't fail submission if draft deletion fails
                 }
 
-                // Send notifications if enabled
-                try {
-                    $this->send_notifications($submission_data, $submission_id);
-                } catch (Exception $e) {
-                    // Don't fail submission if notification fails
-                }
+                // Trigger email notifications
+                do_action('cob_after_submission', $submission_id, $submission_data);
 
                 COB_Database::log_activity('submission_completed', $submission_id, $session_id, 
                     'Form submitted successfully');
@@ -292,7 +298,7 @@ class COB_Form_Handler {
         }
     }
 
-    private function prepare_submission_data($form_data, $session_id) {
+    public function prepare_submission_data($form_data, $session_id) {
         return [
             'session_id' => $session_id,
             'business_name' => $form_data['business_name'] ?? '',
@@ -347,51 +353,4 @@ class COB_Form_Handler {
         return '';
     }
 
-    private function send_notifications($submission_data, $submission_id) {
-        $settings = get_option('cob_settings', []);
-        
-        if (!empty($settings['enable_notifications']) && !empty($settings['admin_email'])) {
-            $subject = sprintf(
-                __('New Client Onboarding Submission - %s', 'client-onboarding-form'),
-                $submission_data['business_name']
-            );
-            
-            $message = $this->get_notification_email_content($submission_data, $submission_id);
-            
-            wp_mail(
-                $settings['admin_email'],
-                $subject,
-                $message,
-                ['Content-Type: text/html; charset=UTF-8']
-            );
-        }
-    }
-
-    private function get_notification_email_content($data, $submission_id) {
-        ob_start();
-        ?>
-        <h2>New Client Onboarding Submission</h2>
-        <p><strong>Submission ID:</strong> <?php echo esc_html($submission_id); ?></p>
-        <p><strong>Submitted:</strong> <?php echo esc_html($data['submitted_at']); ?></p>
-        
-        <h3>Business Information</h3>
-        <p><strong>Business Name:</strong> <?php echo esc_html($data['business_name']); ?></p>
-        <p><strong>Project Name:</strong> <?php echo esc_html($data['project_name']); ?></p>
-        <p><strong>Primary Contact:</strong> <?php echo esc_html($data['primary_contact_name']); ?></p>
-        <p><strong>Email:</strong> <?php echo esc_html($data['primary_contact_email']); ?></p>
-        <p><strong>Phone:</strong> <?php echo esc_html($data['primary_contact_phone']); ?></p>
-        
-        <h3>Technical Information</h3>
-        <p><strong>Current Website:</strong> <?php echo esc_html($data['current_website']); ?></p>
-        <p><strong>Technical Contact:</strong> <?php echo esc_html($data['technical_contact_name']); ?></p>
-        <p><strong>Preferred CMS:</strong> <?php echo esc_html($data['preferred_cms']); ?></p>
-        
-        <h3>Marketing Information</h3>
-        <p><strong>Target Audience:</strong> <?php echo esc_html($data['target_audience']); ?></p>
-        <p><strong>Marketing Goals:</strong> <?php echo esc_html($data['marketing_goals']); ?></p>
-        
-        <p><a href="<?php echo admin_url('admin.php?page=cob-submissions&view=' . $submission_id); ?>">View Full Submission</a></p>
-        <?php
-        return ob_get_clean();
-    }
 }
