@@ -417,7 +417,7 @@ class COB_Email_Notifications {
      */
     private function get_default_admin_email_template() {
         return '
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
+        <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
             <div style="background-color: #1a1a1a; color: #ffffff; padding: 20px; text-align: center;">
                 <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px;">FLUX</h1>
                 <p style="margin: 10px 0 0 0; color: #9dff00; font-size: 14px; letter-spacing: 1px;">NEW CLIENT ONBOARDING SUBMISSION</p>
@@ -435,34 +435,6 @@ class COB_Email_Notifications {
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Submitted:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{submission_date}</td>
                     </tr>
-                    <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Business Name:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{business_name}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Project Name:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{project_name}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Primary Contact:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{primary_contact_name}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Email:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="mailto:{primary_contact_email}">{primary_contact_email}</a></td>
-                    </tr>
-                    {if:primary_contact_phone}
-                    <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Phone:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{primary_contact_phone}</td>
-                    </tr>
-                    {/if}
-                    {if:current_website}
-                    <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Current Website:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{current_website}" target="_blank">{current_website}</a></td>
-                    </tr>
-                    {/if}
                 </table>
 
                 <div style="background-color: #9dff00; padding: 15px; border-radius: 4px; margin: 20px 0;">
@@ -473,24 +445,295 @@ class COB_Email_Notifications {
                     </p>
                 </div>
 
-                <h3 style="color: #1a1a1a;">Quick Summary</h3>
-                <ul style="line-height: 1.6;">
-                    <li><strong>Technical Contact:</strong> {technical_contact_name} ({technical_contact_email})</li>
-                    <li><strong>Reporting Contact:</strong> {reporting_contact_name} ({reporting_contact_email})</li>
-                    <li><strong>Preferred CMS:</strong> {preferred_cms}</li>
-                    <li><strong>Reporting Frequency:</strong> {reporting_frequency}</li>
-                    {if:marketing_budget}<li><strong>Marketing Budget:</strong> {marketing_budget}</li>{/if}
-                </ul>
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 1: CLIENT INFORMATION</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Project Name:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{project_name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Business Name:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{business_name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Primary Contact Name:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{primary_contact_name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Primary Contact Email:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="mailto:{primary_contact_email}">{primary_contact_email}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Primary Contact Number:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{primary_contact_number}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Main Approver of Milestones:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{main_approver}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Billing Email Address:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="mailto:{billing_email}">{billing_email}</a></td>
+                    </tr>
+                    {if:vat_number}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>VAT Number:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{vat_number}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Preferred Contact Method:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{preferred_contact_method}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Address Line 1:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{address_line_1}</td>
+                    </tr>
+                    {if:address_line_2}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Address Line 2:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{address_line_2}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>City:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{city}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Country:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{country}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Postal Code:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{postal_code}</td>
+                    </tr>
+                </table>
 
-                {if:target_audience}
-                <h3 style="color: #1a1a1a;">Target Audience</h3>
-                <p style="background-color: #f8f9fa; padding: 15px; border-left: 3px solid #9dff00; margin: 10px 0;">{target_audience}</p>
-                {/if}
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 2: TECHNICAL INFORMATION</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    {if:current_cms}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Current CMS:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{current_cms}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Website Hosting Company:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{website_hosting_company}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Website Contact Email:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="mailto:{website_contact_email}">{website_contact_email}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Domain Hosting Company:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{domain_hosting_company}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Domain Contact Email:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="mailto:{domain_contact_email}">{domain_contact_email}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>CMS Backend Link:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{cms_link}" target="_blank">{cms_link}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>CMS Username:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{cms_username}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>CMS Password:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">[PROTECTED]</td>
+                    </tr>
+                    {if:current_crm}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Current CRM:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{current_crm}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>3rd Party Integrations:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_integrations}</td>
+                    </tr>
+                    {if:third_party_integrations:yes}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>3rd Party Name:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>3rd Party Contact:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_contact_number} / {third_party_contact_email}</td>
+                    </tr>
+                    {/if}
+                    {if:booking_engine_name}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Booking Engine:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{booking_engine_name}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Technical Objective:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{technical_objective}</td>
+                    </tr>
+                </table>
 
-                {if:marketing_goals}
-                <h3 style="color: #1a1a1a;">Marketing Goals</h3>
-                <p style="background-color: #f8f9fa; padding: 15px; border-left: 3px solid #9dff00; margin: 10px 0;">{marketing_goals}</p>
-                {/if}
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 3: REPORTING INFORMATION</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Analytics Account:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_analytics_account}</td>
+                    </tr>
+                    {if:google_analytics_account:yes}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>GA Account ID:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_analytics_account_id}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Tag Manager Account:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_tag_manager_account}</td>
+                    </tr>
+                    {if:google_tag_manager_account:yes}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>GTM Admin:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_tag_manager_admin}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Ads Account:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_account}</td>
+                    </tr>
+                    {if:google_ads_account:yes}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Ads Admin:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_admin}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Ads Customer ID:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_customer_id}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Meta Business Manager:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_account}</td>
+                    </tr>
+                    {if:meta_business_manager_account:yes}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Meta BM Admin:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_admin}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Meta BM ID:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_id}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Paid Media History:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{paid_media_history}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Current Paid Media:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{current_paid_media}</td>
+                    </tr>
+                </table>
+
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 4: MARKETING INFORMATION</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Main Objective:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{main_objective}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Focus:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_focus}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Commercial Objective:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{commercial_objective}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Push Impact:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{push_impact}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Founder Inspiration:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{founder_inspiration}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Tone & Mission:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_tone_mission}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Perception:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_perception}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Global Team Intro:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{global_team_introduction}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Service Introduction:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{service_introduction}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Lines & Missions:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <strong>1:</strong> {brand_line_1} - {mission_1}<br>
+                            <strong>2:</strong> {brand_line_2} - {mission_2}<br>
+                            <strong>3:</strong> {brand_line_3} - {mission_3}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Guidelines Upload:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_guidelines_upload}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Communication Tone:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{communication_tone}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Accounts:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_accounts}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry Entities:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{industry_entities}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Market Insights:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{market_insights}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Content/Social Media:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{content_social_media}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Business Focus Elements:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{business_focus_elements}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Target Age Range:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{target_age_range}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Problems Solved:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{problems_solved}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Business Challenges:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{business_challenges}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Tracking/Accounting:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{tracking_accounting}</td>
+                    </tr>
+                    {if:additional_information}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Additional Information:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{additional_information}</td>
+                    </tr>
+                    {/if}
+                </table>
             </div>
             
             <div style="background-color: #1a1a1a; color: #888; padding: 20px; text-align: center; font-size: 12px;">

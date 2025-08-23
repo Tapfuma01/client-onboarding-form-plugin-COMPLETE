@@ -97,26 +97,25 @@ class ClientOnboardingForm {
         // Create database tables
         if (class_exists('COB_Database')) {
             COB_Database::create_tables();
-            
-            // Ensure share_token column exists
-            if (method_exists('COB_Database', 'ensure_share_token_column')) {
-                COB_Database::ensure_share_token_column();
-            }
-            
-            // Optimize tables
-            if (method_exists('COB_Database', 'optimize_tables')) {
-                COB_Database::optimize_tables();
-            }
+            COB_Database::ensure_share_token_column();
+            COB_Database::update_database_schema();
         }
         
         // Schedule cron jobs
         if (!wp_next_scheduled('cob_database_maintenance')) {
             wp_schedule_event(time(), 'daily', 'cob_database_maintenance');
         }
-        
         if (!wp_next_scheduled('cob_cleanup_drafts')) {
             wp_schedule_event(time(), 'daily', 'cob_cleanup_drafts');
         }
+        
+        // Optimize tables
+        if (method_exists('COB_Database', 'optimize_tables')) {
+            COB_Database::optimize_tables();
+        }
+        
+        // Flush rewrite rules
+        flush_rewrite_rules();
     }
 
     public function deactivate() {

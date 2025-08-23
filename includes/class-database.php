@@ -19,43 +19,103 @@ class COB_Database {
         $sql = "CREATE TABLE $table_name (
             id int(11) NOT NULL AUTO_INCREMENT,
             session_id varchar(100) NOT NULL,
-            business_name varchar(255) NOT NULL,
+            
+            -- Step 1: Client Information
             project_name varchar(255) NOT NULL,
+            business_name varchar(255) NOT NULL,
             primary_contact_name varchar(255) NOT NULL,
             primary_contact_email varchar(255) NOT NULL,
-            primary_contact_phone varchar(50),
-            milestone_approver varchar(255),
-            billing_email varchar(255),
+            primary_contact_number varchar(50) NOT NULL,
+            main_approver varchar(255) NOT NULL,
+            billing_email varchar(255) NOT NULL,
             vat_number varchar(100),
             preferred_contact_method varchar(20) DEFAULT 'email',
-            billing_address_line1 varchar(255),
-            billing_address_line2 varchar(255),
-            billing_address_city varchar(100),
-            billing_address_country varchar(100),
-            billing_address_postal_code varchar(20),
-            current_website varchar(255),
-            hosting_provider varchar(255),
-            domain_provider varchar(255),
-            technical_contact_name varchar(255),
-            technical_contact_email varchar(255),
-            preferred_cms varchar(100),
-            integration_requirements text,
-            technology_stack text,
-            reporting_frequency varchar(50),
-            reporting_format varchar(50),
-            key_metrics text,
-            reporting_contact_name varchar(255),
-            reporting_contact_email varchar(255),
-            dashboard_access varchar(50),
-            additional_reporting_requirements text,
-            target_audience text,
-            marketing_goals text,
-            marketing_budget varchar(50),
-            current_marketing_channels text,
-            brand_guidelines text,
-            competitor_analysis text,
-            marketing_challenges text,
-            success_metrics text,
+            address_line_1 varchar(255) NOT NULL,
+            address_line_2 varchar(255),
+            city varchar(100) NOT NULL,
+            country varchar(100) NOT NULL,
+            postal_code varchar(20) NOT NULL,
+            
+            -- Step 2: Technical Information
+            current_cms varchar(255),
+            website_hosting_company varchar(255) NOT NULL,
+            website_contact_email varchar(255) NOT NULL,
+            domain_hosting_company varchar(255) NOT NULL,
+            domain_contact_email varchar(255) NOT NULL,
+            cms_link varchar(500) NOT NULL,
+            cms_username varchar(255) NOT NULL,
+            cms_password varchar(255) NOT NULL,
+            current_crm varchar(255),
+            third_party_integrations varchar(10) NOT NULL,
+            third_party_name varchar(255),
+            third_party_contact_number varchar(50),
+            third_party_contact_email varchar(255),
+            booking_engine_name varchar(255),
+            booking_engine_username varchar(255),
+            booking_engine_password varchar(255),
+            booking_engine_contact_email varchar(255),
+            technical_objective text NOT NULL,
+            
+            -- Step 3: Reporting Information
+            google_analytics_account varchar(10) NOT NULL,
+            google_analytics_account_id varchar(255),
+            google_tag_manager_account varchar(10) NOT NULL,
+            google_tag_manager_admin varchar(255),
+            google_ads_account varchar(10) NOT NULL,
+            google_ads_admin varchar(255),
+            google_ads_customer_id varchar(255),
+            meta_business_manager_account varchar(10) NOT NULL,
+            meta_business_manager_admin varchar(255),
+            meta_business_manager_id varchar(255),
+            paid_media_history text NOT NULL,
+            paid_media_history_other varchar(255),
+            current_paid_media text NOT NULL,
+            current_paid_media_other varchar(255),
+            
+            -- Step 4: Marketing Information
+            main_objective text NOT NULL,
+            brand_focus text NOT NULL,
+            commercial_objective text NOT NULL,
+            push_impact text NOT NULL,
+            founder_inspiration text NOT NULL,
+            brand_tone_mission text NOT NULL,
+            brand_perception text NOT NULL,
+            global_team_introduction text NOT NULL,
+            service_introduction text NOT NULL,
+            brand_line_1 varchar(255) NOT NULL,
+            mission_1 text NOT NULL,
+            brand_line_2 varchar(255) NOT NULL,
+            mission_2 text NOT NULL,
+            brand_line_3 varchar(255) NOT NULL,
+            mission_3 text NOT NULL,
+            brand_guidelines_upload varchar(10) NOT NULL,
+            brand_guidelines_files text,
+            communication_tone varchar(20) NOT NULL,
+            casual_tone_explanation text,
+            formal_tone_explanation text,
+            brand_accounts varchar(10) NOT NULL,
+            facebook_page varchar(255),
+            instagram_username varchar(255),
+            industry_entities text NOT NULL,
+            industry_entities_other varchar(255),
+            industry_status text,
+            market_insights varchar(10) NOT NULL,
+            content_social_media varchar(10) NOT NULL,
+            business_focus_elements varchar(10) NOT NULL,
+            social_media_accounts varchar(500),
+            facebook_accounts_url varchar(500),
+            facebook_page_url varchar(500),
+            twitter_accounts_url varchar(500),
+            instagram_page_url varchar(500),
+            ideal_customer_description text NOT NULL,
+            potential_client_view text NOT NULL,
+            target_age_range text NOT NULL,
+            problems_solved text NOT NULL,
+            business_challenges varchar(10) NOT NULL,
+            tracking_accounting varchar(10) NOT NULL,
+            additional_information text,
+            
+            -- System Fields
             status varchar(20) DEFAULT 'submitted',
             submitted_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
@@ -113,17 +173,11 @@ class COB_Database {
      */
     public static function ensure_share_token_column() {
         global $wpdb;
-        
         $table_name = $wpdb->prefix . 'cob_drafts';
-        
-        // Check if share_token column exists
         $column_exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'share_token'");
-        
         if (empty($column_exists)) {
             error_log('COB: Database: share_token column does not exist, creating it');
-            
             $result = $wpdb->query("ALTER TABLE $table_name ADD COLUMN share_token VARCHAR(100) DEFAULT NULL");
-            
             if ($result !== false) {
                 error_log('COB: Database: share_token column created successfully');
                 return true;
@@ -135,6 +189,129 @@ class COB_Database {
             error_log('COB: Database: share_token column already exists');
             return true;
         }
+    }
+
+    /**
+     * Update database schema to include new fields
+     */
+    public static function update_database_schema() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'cob_submissions';
+        
+        // List of new fields to add
+        $new_fields = [
+            'primary_contact_number' => 'VARCHAR(50) NOT NULL DEFAULT ""',
+            'main_approver' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'address_line_1' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'address_line_2' => 'VARCHAR(255)',
+            'city' => 'VARCHAR(100) NOT NULL DEFAULT ""',
+            'country' => 'VARCHAR(100) NOT NULL DEFAULT ""',
+            'postal_code' => 'VARCHAR(20) NOT NULL DEFAULT ""',
+            'current_cms' => 'VARCHAR(255)',
+            'website_hosting_company' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'website_contact_email' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'domain_hosting_company' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'domain_contact_email' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'cms_link' => 'VARCHAR(500) NOT NULL DEFAULT ""',
+            'cms_username' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'cms_password' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'current_crm' => 'VARCHAR(255)',
+            'third_party_integrations' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'third_party_name' => 'VARCHAR(255)',
+            'third_party_contact_number' => 'VARCHAR(50)',
+            'third_party_contact_email' => 'VARCHAR(255)',
+            'booking_engine_name' => 'VARCHAR(255)',
+            'booking_engine_username' => 'VARCHAR(255)',
+            'booking_engine_password' => 'VARCHAR(255)',
+            'booking_engine_contact_email' => 'VARCHAR(255)',
+            'technical_objective' => 'TEXT NOT NULL',
+            'google_analytics_account' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'google_analytics_account_id' => 'VARCHAR(255)',
+            'google_tag_manager_account' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'google_tag_manager_admin' => 'VARCHAR(255)',
+            'google_ads_account' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'google_ads_admin' => 'VARCHAR(255)',
+            'google_ads_customer_id' => 'VARCHAR(255)',
+            'meta_business_manager_account' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'meta_business_manager_admin' => 'VARCHAR(255)',
+            'meta_business_manager_id' => 'VARCHAR(255)',
+            'paid_media_history' => 'TEXT NOT NULL',
+            'paid_media_history_other' => 'VARCHAR(255)',
+            'current_paid_media' => 'TEXT NOT NULL',
+            'current_paid_media_other' => 'VARCHAR(255)',
+            'main_objective' => 'TEXT NOT NULL',
+            'brand_focus' => 'TEXT NOT NULL',
+            'commercial_objective' => 'TEXT NOT NULL',
+            'push_impact' => 'TEXT NOT NULL',
+            'founder_inspiration' => 'TEXT NOT NULL',
+            'brand_tone_mission' => 'TEXT NOT NULL',
+            'brand_perception' => 'TEXT NOT NULL',
+            'global_team_introduction' => 'TEXT NOT NULL',
+            'service_introduction' => 'TEXT NOT NULL',
+            'brand_line_1' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'mission_1' => 'TEXT NOT NULL',
+            'brand_line_2' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'mission_2' => 'TEXT NOT NULL',
+            'brand_line_3' => 'VARCHAR(255) NOT NULL DEFAULT ""',
+            'mission_3' => 'TEXT NOT NULL',
+            'brand_guidelines_upload' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'brand_guidelines_files' => 'TEXT',
+            'communication_tone' => 'VARCHAR(20) NOT NULL DEFAULT "formal"',
+            'casual_tone_explanation' => 'TEXT',
+            'formal_tone_explanation' => 'TEXT',
+            'brand_accounts' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'facebook_page' => 'VARCHAR(255)',
+            'instagram_username' => 'VARCHAR(255)',
+            'industry_entities' => 'TEXT NOT NULL',
+            'industry_entities_other' => 'VARCHAR(255)',
+            'industry_status' => 'TEXT',
+            'market_insights' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'content_social_media' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'business_focus_elements' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'social_media_accounts' => 'VARCHAR(500)',
+            'facebook_accounts_url' => 'VARCHAR(500)',
+            'facebook_page_url' => 'VARCHAR(500)',
+            'twitter_accounts_url' => 'VARCHAR(500)',
+            'instagram_page_url' => 'VARCHAR(500)',
+            'ideal_customer_description' => 'TEXT NOT NULL',
+            'potential_client_view' => 'TEXT NOT NULL',
+            'target_age_range' => 'TEXT NOT NULL',
+            'problems_solved' => 'TEXT NOT NULL',
+            'business_challenges' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
+            'tracking_accounting' => 'VARCHAR(10) NOT NULL DEFAULT "low"',
+            'additional_information' => 'TEXT'
+        ];
+
+        // Check and add each new field
+        foreach ($new_fields as $field_name => $field_definition) {
+            $column_exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$field_name'");
+            if (empty($column_exists)) {
+                error_log("COB: Database: Adding new field: $field_name");
+                $result = $wpdb->query("ALTER TABLE $table_name ADD COLUMN $field_name $field_definition");
+                if ($result !== false) {
+                    error_log("COB: Database: Successfully added field: $field_name");
+                } else {
+                    error_log("COB: Database: Failed to add field: $field_name");
+                }
+            }
+        }
+
+        // Update existing records with default values for required fields
+        $wpdb->query("UPDATE $table_name SET 
+            primary_contact_number = COALESCE(primary_contact_phone, '') WHERE primary_contact_number = '' OR primary_contact_number IS NULL");
+        $wpdb->query("UPDATE $table_name SET 
+            main_approver = COALESCE(milestone_approver, '') WHERE main_approver = '' OR main_approver IS NULL");
+        $wpdb->query("UPDATE $table_name SET 
+            address_line_1 = COALESCE(billing_address_line1, '') WHERE address_line_1 = '' OR address_line_1 IS NULL");
+        $wpdb->query("UPDATE $table_name SET 
+            city = COALESCE(billing_address_city, '') WHERE city = '' OR city IS NULL");
+        $wpdb->query("UPDATE $table_name SET 
+            country = COALESCE(billing_address_country, '') WHERE country = '' OR country IS NULL");
+        $wpdb->query("UPDATE $table_name SET 
+            postal_code = COALESCE(billing_address_postal_code, '') WHERE postal_code = '' OR postal_code IS NULL");
+
+        error_log('COB: Database: Schema update completed');
+        return true;
     }
 
     /**

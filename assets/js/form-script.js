@@ -53,6 +53,9 @@
                 this.clearFieldError($(event.target));
             });
 
+            // Handle conditional fields
+            this.bindConditionalFields();
+
             // Prevent form submission on enter
             $('#cob-onboarding-form').on('keypress', (e) => {
                 if (e.which === 13 && e.target.type !== 'textarea') {
@@ -62,6 +65,66 @@
                     } else {
                         this.submitForm();
                     }
+                }
+            });
+        }
+
+        bindConditionalFields() {
+            // Handle radio button changes for conditional fields
+            $('input[type="radio"]').on('change', (e) => {
+                const name = $(e.target).attr('name');
+                const value = $(e.target).val();
+                this.toggleConditionalFields(name, value);
+            });
+
+            // Handle checkbox changes for conditional fields
+            $('input[type="checkbox"]').on('change', (e) => {
+                const name = $(e.target).attr('name');
+                const isChecked = $(e.target).is(':checked');
+                const value = $(e.target).val();
+                
+                // Check if this checkbox affects conditional fields
+                if (value === 'other') {
+                    this.toggleConditionalFields(name, isChecked ? 'other' : '');
+                }
+            });
+
+            // Initialize conditional fields on page load
+            this.initializeConditionalFields();
+        }
+
+        toggleConditionalFields(fieldName, fieldValue) {
+            $(`.cob-conditional-fields[data-show-when="${fieldName}"]`).each((index, element) => {
+                const $element = $(element);
+                const showValue = $element.attr('data-show-value');
+                
+                if (fieldValue === showValue) {
+                    $element.show();
+                    // Make required fields actually required when shown
+                    $element.find('[required]').prop('required', true);
+                } else {
+                    $element.hide();
+                    // Remove required attribute when hidden to prevent validation errors
+                    $element.find('[required]').prop('required', false);
+                }
+            });
+        }
+
+        initializeConditionalFields() {
+            // Set initial state of conditional fields based on current form values
+            $('input[type="radio"]:checked').each((index, element) => {
+                const name = $(element).attr('name');
+                const value = $(element).val();
+                this.toggleConditionalFields(name, value);
+            });
+
+            // Handle checkbox arrays for "other" options
+            $('input[type="checkbox"]:checked').each((index, element) => {
+                const name = $(element).attr('name');
+                const value = $(element).val();
+                
+                if (value === 'other') {
+                    this.toggleConditionalFields(name, 'other');
                 }
             });
         }
@@ -184,6 +247,10 @@
             const requiredFields = currentStepElement.find('input[required], textarea[required], select[required]');
             let isValid = true;
 
+            // Clear previous errors
+            currentStepElement.find('.cob-error').removeClass('cob-error');
+            currentStepElement.find('.cob-error-message').remove();
+
             requiredFields.each((index, field) => {
                 const $field = $(field);
                 const value = $field.val().trim();
@@ -197,6 +264,23 @@
                 } else if ($field.attr('type') === 'url' && !this.isValidUrl(value)) {
                     this.showFieldError($field, 'Please enter a valid URL');
                     isValid = false;
+                }
+            });
+
+            // Validate checkbox arrays that require at least one selection
+            const checkboxArrayFields = [
+                'paid_media_history', 'current_paid_media', 'industry_entities', 'target_age_range'
+            ];
+
+            checkboxArrayFields.forEach(fieldName => {
+                const $checkboxes = currentStepElement.find(`input[name="${fieldName}[]"]`);
+                if ($checkboxes.length > 0) {
+                    const checkedBoxes = $checkboxes.filter(':checked');
+                    if (checkedBoxes.length === 0) {
+                        // Show error on the first checkbox
+                        this.showFieldError($checkboxes.first(), `Please select at least one option for ${fieldName.replace(/_/g, ' ')}`);
+                        isValid = false;
+                    }
                 }
             });
 
@@ -240,17 +324,20 @@
                 
                 if (!name) return;
 
+                // Remove array brackets from field names for consistent handling
+                const cleanName = name.replace(/\[\]$/, '');
+
                 if ($field.attr('type') === 'checkbox') {
-                    if (!formData[name]) formData[name] = [];
+                    if (!formData[cleanName]) formData[cleanName] = [];
                     if ($field.is(':checked')) {
-                        formData[name].push($field.val());
+                        formData[cleanName].push($field.val());
                     }
                 } else if ($field.attr('type') === 'radio') {
                     if ($field.is(':checked')) {
-                        formData[name] = $field.val();
+                        formData[cleanName] = $field.val();
                     }
                 } else {
-                    formData[name] = $field.val();
+                    formData[cleanName] = $field.val();
                 }
             });
 
@@ -260,7 +347,9 @@
         setFormData(data) {
             Object.keys(data).forEach(name => {
                 const value = data[name];
-                const $fields = $(`[name="${name}"]`);
+                
+                // Try both with and without array brackets for field selection
+                const $fields = $(`[name="${name}"], [name="${name}[]"]`);
 
                 $fields.each((index, field) => {
                     const $field = $(field);
@@ -602,6 +691,13 @@
             $('#cob-submit-btn').addClass('cob-loading').prop('disabled', true).text('SUBMITTING...');
 
             const formData = this.getFormData();
+            
+            // Debug logging for problematic fields
+            const debugFields = ['paid_media_history', 'current_paid_media', 'industry_entities', 'target_age_range'];
+            debugFields.forEach(field => {
+                const value = formData[field];
+                console.log(`COB Debug - Field: ${field}, Value:`, value, 'Type:', typeof value, 'Is Array:', Array.isArray(value));
+            });
 
             $.ajax({
                 url: cob_ajax.ajax_url,

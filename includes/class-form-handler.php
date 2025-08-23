@@ -177,16 +177,79 @@ class COB_Form_Handler {
 
             // Validate required fields
             $required_fields = [
-                'business_name', 'project_name', 'primary_contact_name', 
-                'primary_contact_email', 'technical_contact_name', 
-                'technical_contact_email', 'reporting_contact_name', 
-                'reporting_contact_email'
+                // Step 1: Client Information
+                'project_name', 'business_name', 'primary_contact_name', 
+                'primary_contact_email', 'primary_contact_number', 'main_approver',
+                'billing_email', 'preferred_contact_method', 'address_line_1',
+                'city', 'country', 'postal_code',
+                
+                // Step 2: Technical Information
+                'website_hosting_company', 'website_contact_email',
+                'domain_hosting_company', 'domain_contact_email',
+                'cms_link', 'cms_username', 'cms_password',
+                'third_party_integrations', 'technical_objective',
+                
+                // Step 3: Reporting Information
+                'google_analytics_account', 'google_tag_manager_account',
+                'google_ads_account', 'meta_business_manager_account',
+                'paid_media_history', 'current_paid_media',
+                
+                // Step 4: Marketing Information
+                'main_objective', 'brand_focus', 'commercial_objective',
+                'push_impact', 'founder_inspiration', 'brand_tone_mission',
+                'brand_perception', 'global_team_introduction', 'service_introduction',
+                'brand_line_1', 'mission_1', 'brand_line_2', 'mission_2',
+                'brand_line_3', 'mission_3', 'brand_guidelines_upload',
+                'communication_tone', 'brand_accounts', 'industry_entities',
+                'market_insights', 'content_social_media', 'business_focus_elements',
+                'ideal_customer_description', 'potential_client_view',
+                'target_age_range', 'problems_solved', 'business_challenges',
+                'tracking_accounting'
             ];
+
+            // Debug logging for problematic fields
+            $debug_fields = ['paid_media_history', 'current_paid_media', 'industry_entities', 'target_age_range'];
+            foreach ($debug_fields as $debug_field) {
+                if (class_exists('COB_Database')) {
+                    $field_value = $form_data[$debug_field] ?? 'NOT_SET';
+                    $field_type = is_array($field_value) ? 'ARRAY' : 'STRING';
+                    $field_content = is_array($field_value) ? json_encode($field_value) : $field_value;
+                    COB_Database::log_activity('field_debug', null, $session_id, 
+                        "Field: $debug_field, Type: $field_type, Value: $field_content");
+                }
+            }
 
             $missing_fields = [];
             foreach ($required_fields as $field) {
-                if (empty(trim($form_data[$field] ?? ''))) {
-                    $missing_fields[] = $field;
+                $field_value = $form_data[$field] ?? '';
+                
+                // Handle array fields (checkboxes, radio buttons)
+                if (is_array($field_value)) {
+                    if (empty($field_value) || (count($field_value) === 1 && empty($field_value[0]))) {
+                        $missing_fields[] = $field;
+                    }
+                } else {
+                    // Handle string fields
+                    if (empty(trim($field_value))) {
+                        $missing_fields[] = $field;
+                    }
+                }
+            }
+
+            // Additional validation for specific checkbox array fields
+            $checkbox_array_fields = [
+                'paid_media_history' => 'Paid Media History',
+                'current_paid_media' => 'Current Paid Media',
+                'industry_entities' => 'Industry Entities',
+                'target_age_range' => 'Target Age Range'
+            ];
+
+            foreach ($checkbox_array_fields as $field => $display_name) {
+                $field_value = $form_data[$field] ?? '';
+                if (!is_array($field_value) || empty($field_value) || (count($field_value) === 1 && empty($field_value[0]))) {
+                    if (!in_array($field, $missing_fields)) {
+                        $missing_fields[] = $field;
+                    }
                 }
             }
 
@@ -203,7 +266,11 @@ class COB_Form_Handler {
             }
 
             // Validate email addresses
-            $email_fields = ['primary_contact_email', 'technical_contact_email', 'reporting_contact_email'];
+            $email_fields = [
+                'primary_contact_email', 'billing_email', 'website_contact_email',
+                'domain_contact_email', 'third_party_contact_email',
+                'booking_engine_contact_email'
+            ];
             foreach ($email_fields as $field) {
                 if (!empty($form_data[$field]) && !is_email($form_data[$field])) {
                     if (class_exists('COB_Database')) {
