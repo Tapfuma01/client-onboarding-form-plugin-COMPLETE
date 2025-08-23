@@ -38,15 +38,20 @@ if (!defined('ABSPATH')) {
             
             <tr>
                 <th scope="row">
-                    <?php _e('Email Notifications', 'client-onboarding-form'); ?>
+                    <?php _e('Legacy Email Notifications', 'client-onboarding-form'); ?>
                 </th>
                 <td>
                     <fieldset>
-                        <legend class="screen-reader-text"><?php _e('Email Notifications', 'client-onboarding-form'); ?></legend>
+                        <legend class="screen-reader-text"><?php _e('Legacy Email Notifications', 'client-onboarding-form'); ?></legend>
                         <label for="enable_notifications">
                             <input type="checkbox" id="enable_notifications" name="enable_notifications" value="1" <?php checked($settings['enable_notifications']); ?> />
-                            <?php _e('Send email notifications when new forms are submitted', 'client-onboarding-form'); ?>
+                            <?php _e('Enable legacy email notifications (deprecated - use Email Notifications page instead)', 'client-onboarding-form'); ?>
                         </label>
+                        <p class="description">
+                            <strong>Note:</strong> This setting is deprecated. Please use the new 
+                            <a href="<?php echo admin_url('admin.php?page=cob-email-settings'); ?>">Email Notifications</a> 
+                            page for advanced email configuration.
+                        </p>
                     </fieldset>
                 </td>
             </tr>

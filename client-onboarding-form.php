@@ -50,6 +50,7 @@ class ClientOnboardingForm {
         require_once COB_PLUGIN_PATH . 'includes/class-form-handler.php';
         require_once COB_PLUGIN_PATH . 'includes/class-admin.php';
         require_once COB_PLUGIN_PATH . 'includes/class-database.php';
+        require_once COB_PLUGIN_PATH . 'includes/class-email-notifications.php';
     }
 
     public function activate() {
@@ -63,8 +64,11 @@ class ClientOnboardingForm {
         add_option('cob_settings', [
             'admin_email' => get_option('admin_email'),
             'company_name' => get_bloginfo('name'),
-            'enable_notifications' => true,
-            'auto_save_interval' => 30
+            'auto_save_interval' => 30,
+            'enable_admin_notification' => true,
+            'enable_client_confirmation' => true,
+            'email_from_name' => get_bloginfo('name'),
+            'email_from_email' => get_option('admin_email')
         ]);
     }
 

@@ -11,6 +11,12 @@ if (!defined('ABSPATH')) {
 <div class="wrap">
     <h1 class="wp-heading-inline"><?php _e('Form Submissions', 'client-onboarding-form'); ?></h1>
     
+    <div class="cob-submissions-actions" style="margin: 20px 0;">
+        <button type="button" class="button" id="cob-test-notifications">
+            Test Email Notifications
+        </button>
+    </div>
+    
     <?php if (!empty($submissions)): ?>
         <table class="wp-list-table widefat fixed striped">
             <thead>
@@ -60,6 +66,10 @@ if (!defined('ABSPATH')) {
                                onclick="return confirm('<?php _e('Are you sure you want to delete this submission?', 'client-onboarding-form'); ?>')">
                                 <?php _e('Delete', 'client-onboarding-form'); ?>
                             </a>
+                            <button type="button" class="button button-small cob-test-notification" 
+                                    data-submission-id="<?php echo $submission->id; ?>">
+                                Test Email
+                            </button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -74,3 +84,41 @@ if (!defined('ABSPATH')) {
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+jQuery(document).ready(function($) {
+    // Test notification for specific submission
+    $('.cob-test-notification').on('click', function() {
+        var submissionId = $(this).data('submission-id');
+        var button = $(this);
+        var originalText = button.text();
+        
+        if (!confirm('Send test notification using this submission data?')) {
+            return;
+        }
+        
+        button.prop('disabled', true).text('Sending...');
+        
+        $.post(ajaxurl, {
+            action: 'cob_send_test_notification',
+            nonce: '<?php echo wp_create_nonce('cob_admin_nonce'); ?>',
+            submission_id: submissionId
+        }).done(function(response) {
+            if (response.success) {
+                alert('Test notification sent successfully!');
+            } else {
+                alert('Failed to send test notification: ' + response.data);
+            }
+        }).fail(function() {
+            alert('Failed to send test notification. Please try again.');
+        }).always(function() {
+            button.prop('disabled', false).text(originalText);
+        });
+    });
+    
+    // General test notifications button
+    $('#cob-test-notifications').on('click', function() {
+        window.open('<?php echo admin_url('admin.php?page=cob-email-settings#general'); ?>', '_blank');
+    });
+});
+</script>

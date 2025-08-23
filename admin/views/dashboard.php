@@ -38,6 +38,9 @@ if (!defined('ABSPATH')) {
                 <a href="<?php echo admin_url('admin.php?page=cob-settings'); ?>" class="button">
                     <?php _e('Plugin Settings', 'client-onboarding-form'); ?>
                 </a>
+                <a href="<?php echo admin_url('admin.php?page=cob-email-settings'); ?>" class="button">
+                    <?php _e('Email Settings', 'client-onboarding-form'); ?>
+                </a>
                 <button type="button" class="button" onclick="window.open('<?php echo home_url(); ?>?cob_preview=1')">
                     <?php _e('Preview Form', 'client-onboarding-form'); ?>
                 </button>
