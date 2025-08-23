@@ -85,8 +85,23 @@ class COB_Form_Handler {
                 wp_die(json_encode(['success' => false, 'message' => 'Invalid session ID']));
             }
 
+            // Check database connection
+            global $wpdb;
+            if (!$wpdb->check_connection()) {
+                COB_Database::log_activity('draft_save_failed', null, $session_id, 'Database connection failed');
+                wp_die(json_encode(['success' => false, 'message' => 'Database connection error. Please try again.']));
+            }
+
+            // Check for table locks before attempting to save
+            COB_Database::check_table_locks();
+
             // Sanitize form data
             $sanitized_data = $this->sanitize_form_data($form_data);
+
+            // Add a small delay to reduce concurrent access
+            if (function_exists('usleep')) {
+                usleep(rand(10000, 50000)); // 10-50ms random delay
+            }
 
             $result = COB_Database::save_draft($session_id, $sanitized_data, $current_step, $client_email);
 
@@ -97,12 +112,26 @@ class COB_Form_Handler {
                     'last_saved' => current_time('mysql')
                 ]));
             } else {
-                COB_Database::log_activity('draft_save_failed', null, $session_id, 'Database error');
-                wp_die(json_encode(['success' => false, 'message' => 'Failed to save draft']));
+                // Check if it's a deadlock issue
+                $last_error = $wpdb->last_error;
+                if (strpos($last_error, 'Deadlock') !== false || 
+                    strpos($last_error, 'try restarting transaction') !== false) {
+                    
+                    COB_Database::log_activity('draft_save_deadlock', null, $session_id, 'Deadlock detected in AJAX handler');
+                    
+                    wp_die(json_encode([
+                        'success' => false, 
+                        'message' => 'Temporary database issue. Please try again in a moment.',
+                        'retry_after' => 2
+                    ]));
+                } else {
+                    COB_Database::log_activity('draft_save_failed', null, $session_id, 'Database error: ' . $last_error);
+                    wp_die(json_encode(['success' => false, 'message' => 'Failed to save draft. Please try again.']));
+                }
             }
         } catch (Exception $e) {
             COB_Database::log_activity('draft_save_error', null, $session_id ?? '', 'Exception: ' . $e->getMessage());
-            wp_die(json_encode(['success' => false, 'message' => 'Server error occurred']));
+            wp_die(json_encode(['success' => false, 'message' => 'Server error occurred. Please try again.']));
         }
     }
 

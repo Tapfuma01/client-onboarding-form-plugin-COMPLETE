@@ -237,39 +237,73 @@
                 $('#cob-save-draft').addClass('cob-loading').prop('disabled', true);
             }
 
-            return $.ajax({
-                url: cob_ajax.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'cob_save_draft',
-                    nonce: cob_ajax.nonce,
-                    session_id: this.sessionId,
-                    form_data: formData,
-                    current_step: this.currentStep,
-                    client_email: clientEmail
-                }
-            }).done((response) => {
-                try {
-                    const data = typeof response === 'string' ? JSON.parse(response) : response;
-                    
-                    if (data.success) {
-                        if (showMessage) {
-                            this.showSaveStatus(cob_ajax.messages.draft_saved);
-                        }
-                        this.updateSaveStatus(data.last_saved);
+            const saveWithRetry = (retryCount = 0, maxRetries = 3) => {
+                return $.ajax({
+                    url: cob_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'cob_save_draft',
+                        nonce: cob_ajax.nonce,
+                        session_id: this.sessionId,
+                        form_data: formData,
+                        current_step: this.currentStep,
+                        client_email: clientEmail
                     }
-                } catch (e) {
-                    console.error('Error parsing save response:', e);
-                }
-            }).fail(() => {
-                if (showMessage) {
-                    alert('Failed to save draft. Please try again.');
-                }
-            }).always(() => {
-                if (showMessage) {
-                    $('#cob-save-draft').removeClass('cob-loading').prop('disabled', false);
-                }
-            });
+                }).done((response) => {
+                    try {
+                        const data = typeof response === 'string' ? JSON.parse(response) : response;
+                        
+                        if (data.success) {
+                            if (showMessage) {
+                                this.showSaveStatus(cob_ajax.messages.draft_saved);
+                            }
+                            this.updateSaveStatus(data.last_saved);
+                        } else if (data.retry_after && retryCount < maxRetries) {
+                            // Handle deadlock retry
+                            console.log(`Deadlock detected, retrying in ${data.retry_after} seconds... (attempt ${retryCount + 1}/${maxRetries})`);
+                            
+                            setTimeout(() => {
+                                saveWithRetry(retryCount + 1, maxRetries);
+                            }, data.retry_after * 1000);
+                            
+                            return; // Don't show error message yet
+                        } else {
+                            // Show error message
+                            if (showMessage) {
+                                alert(data.message || 'Failed to save draft. Please try again.');
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error parsing save response:', e);
+                        if (showMessage) {
+                            alert('Error processing response. Please try again.');
+                        }
+                    }
+                }).fail((xhr, status, error) => {
+                    console.error('Save draft failed:', status, error);
+                    
+                    // Retry on network errors
+                    if (retryCount < maxRetries && (status === 'timeout' || status === 'error')) {
+                        console.log(`Network error, retrying... (attempt ${retryCount + 1}/${maxRetries})`);
+                        
+                        setTimeout(() => {
+                            saveWithRetry(retryCount + 1, maxRetries);
+                        }, 1000 * (retryCount + 1)); // Exponential backoff
+                        
+                        return;
+                    }
+                    
+                    if (showMessage) {
+                        alert('Failed to save draft. Please try again.');
+                    }
+                }).always(() => {
+                    if (showMessage && retryCount >= maxRetries) {
+                        $('#cob-save-draft').removeClass('cob-loading').prop('disabled', false);
+                    }
+                });
+            };
+
+            return saveWithRetry();
         }
 
         loadDraft() {
