@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUX Client Onboarding Form Demo</title>
+    <link rel="stylesheet" href="assets/css/form-style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <?php include_once 'templates/form-template.php'; ?>
+    
+    <script>
+        // Mock AJAX object for demo purposes
+        window.cob_ajax = {
+            ajax_url: '#',
+            nonce: 'demo_nonce',
+            messages: {
+                exit_confirm: 'Are you sure you want to exit? Your progress will be saved as a draft.',
+                submit_error: 'An error occurred while submitting the form. Please try again.'
+            }
+        };
+    </script>
+    <script src="assets/js/form-script.js"></script>
+</body>
+</html>
+

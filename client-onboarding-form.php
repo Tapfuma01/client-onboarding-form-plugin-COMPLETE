@@ -61,6 +61,10 @@ class ClientOnboardingForm {
         // Load form handler
         require_once COB_PLUGIN_PATH . 'includes/class-form-handler.php';
         new COB_Form_Handler();
+        
+        // Add AJAX action for manual database update
+        add_action('wp_ajax_cob_update_database', [$this, 'handle_database_update']);
+        add_action('wp_ajax_nopriv_cob_update_database', [$this, 'handle_database_update']);
     }
 
     /**
@@ -130,6 +134,11 @@ class ClientOnboardingForm {
             COB_Database::ensure_share_token_column();
         }
         
+        // Ensure database schema is up to date
+        if (class_exists('COB_Database') && method_exists('COB_Database', 'update_database_schema')) {
+            COB_Database::update_database_schema();
+        }
+        
         $atts = shortcode_atts([
             'theme' => 'dark',
             'show_progress' => true,
@@ -139,6 +148,27 @@ class ClientOnboardingForm {
         ob_start();
         include COB_PLUGIN_PATH . 'templates/form-template.php';
         return ob_get_clean();
+    }
+    
+    /**
+     * Handle AJAX request to update database schema
+     */
+    public function handle_database_update() {
+        // Check nonce for security
+        if (!wp_verify_nonce($_POST['nonce'], 'cob_admin_nonce')) {
+            wp_send_json_error('Security check failed');
+        }
+        
+        if (class_exists('COB_Database') && method_exists('COB_Database', 'update_database_schema')) {
+            try {
+                COB_Database::update_database_schema();
+                wp_send_json_success('Database schema updated successfully');
+            } catch (Exception $e) {
+                wp_send_json_error('Database update failed: ' . $e->getMessage());
+            }
+        } else {
+            wp_send_json_error('Database class not available');
+        }
     }
 
     /**

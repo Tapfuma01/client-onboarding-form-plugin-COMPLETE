@@ -315,7 +315,11 @@ class COB_Email_Notifications {
             'postal_code' => $this->submission_data['postal_code'] ?? '',
             
             // Step 2: Technical Information
-            'current_cms' => $this->submission_data['current_cms'] ?? '',
+            'has_website' => $this->submission_data['has_website'] ?? '',
+            'has_google_analytics' => $this->submission_data['has_google_analytics'] ?? '',
+            'has_search_console' => $this->submission_data['has_search_console'] ?? '',
+            'reporting_frequency' => $this->submission_data['reporting_frequency'] ?? '',
+            'current_content_management_system' => $this->submission_data['current_content_management_system'] ?? '',
             'website_hosting_company' => $this->submission_data['website_hosting_company'] ?? '',
             'website_contact_email' => $this->submission_data['website_contact_email'] ?? '',
             'domain_hosting_company' => $this->submission_data['domain_hosting_company'] ?? '',
@@ -323,11 +327,11 @@ class COB_Email_Notifications {
             'cms_link' => $this->submission_data['cms_link'] ?? '',
             'cms_username' => $this->submission_data['cms_username'] ?? '',
             'cms_password' => $this->submission_data['cms_password'] ?? '',
-            'current_crm' => $this->submission_data['current_crm'] ?? '',
-            'third_party_integrations' => $this->submission_data['third_party_integrations'] ?? '',
-            'third_party_name' => $this->submission_data['third_party_name'] ?? '',
-            'third_party_contact_number' => $this->submission_data['third_party_contact_number'] ?? '',
-            'third_party_contact_email' => $this->submission_data['third_party_contact_email'] ?? '',
+            'crm_integration' => $this->submission_data['crm_integration'] ?? '',
+            'third_party_integrations_radio' => $this->submission_data['third_party_integrations_radio'] ?? '',
+            'third_party_integration_name' => $this->submission_data['third_party_integration_name'] ?? '',
+            'third_party_primary_contact_number' => $this->submission_data['third_party_primary_contact_number'] ?? '',
+            'third_party_primary_contact_email' => $this->submission_data['third_party_primary_contact_email'] ?? '',
             'booking_engine_name' => $this->submission_data['booking_engine_name'] ?? '',
             'booking_engine_username' => $this->submission_data['booking_engine_username'] ?? '',
             'booking_engine_password' => $this->submission_data['booking_engine_password'] ?? '',
@@ -335,20 +339,20 @@ class COB_Email_Notifications {
             'technical_objective' => $this->submission_data['technical_objective'] ?? '',
             
             // Step 3: Reporting Information
+            'google_analytics_radio' => $this->submission_data['google_analytics_radio'] ?? '',
             'google_analytics_account' => $this->submission_data['google_analytics_account'] ?? '',
-            'google_analytics_account_id' => $this->submission_data['google_analytics_account_id'] ?? '',
+            'google_tag_manager_radio' => $this->submission_data['google_tag_manager_radio'] ?? '',
             'google_tag_manager_account' => $this->submission_data['google_tag_manager_account'] ?? '',
-            'google_tag_manager_admin' => $this->submission_data['google_tag_manager_admin'] ?? '',
+            'google_ads_radio' => $this->submission_data['google_ads_radio'] ?? '',
             'google_ads_account' => $this->submission_data['google_ads_account'] ?? '',
-            'google_ads_admin' => $this->submission_data['google_ads_admin'] ?? '',
             'google_ads_customer_id' => $this->submission_data['google_ads_customer_id'] ?? '',
+            'meta_business_manager_radio' => $this->submission_data['meta_business_manager_radio'] ?? '',
             'meta_business_manager_account' => $this->submission_data['meta_business_manager_account'] ?? '',
-            'meta_business_manager_admin' => $this->submission_data['meta_business_manager_admin'] ?? '',
             'meta_business_manager_id' => $this->submission_data['meta_business_manager_id'] ?? '',
             'paid_media_history' => $this->submission_data['paid_media_history'] ?? '',
-            'paid_media_history_other' => $this->submission_data['paid_media_history_other'] ?? '',
+            'other_paid_media_specify' => $this->submission_data['other_paid_media_specify'] ?? '',
             'current_paid_media' => $this->submission_data['current_paid_media'] ?? '',
-            'current_paid_media_other' => $this->submission_data['current_paid_media_other'] ?? '',
+            'other_current_paid_media_specify' => $this->submission_data['other_current_paid_media_specify'] ?? '',
             
             // Step 4: Marketing Information
             'main_objective' => $this->submission_data['main_objective'] ?? '',
@@ -366,20 +370,20 @@ class COB_Email_Notifications {
             'mission_2' => $this->submission_data['mission_2'] ?? '',
             'brand_line_3' => $this->submission_data['brand_line_3'] ?? '',
             'mission_3' => $this->submission_data['mission_3'] ?? '',
+            'current_website' => $this->submission_data['current_website'] ?? '',
+            'brand_guidelines_upload_radio' => $this->submission_data['brand_guidelines_upload_radio'] ?? '',
             'brand_guidelines_upload' => $this->submission_data['brand_guidelines_upload'] ?? '',
-            'brand_guidelines_files' => $this->submission_data['brand_guidelines_files'] ?? '',
-            'communication_tone' => $this->submission_data['communication_tone'] ?? '',
+            'communication_tone_radio' => $this->submission_data['communication_tone_radio'] ?? '',
             'casual_tone_explanation' => $this->submission_data['casual_tone_explanation'] ?? '',
             'formal_tone_explanation' => $this->submission_data['formal_tone_explanation'] ?? '',
-            'brand_accounts' => $this->submission_data['brand_accounts'] ?? '',
+            'brand_accounts_radio' => $this->submission_data['brand_accounts_radio'] ?? '',
             'facebook_page' => $this->submission_data['facebook_page'] ?? '',
             'instagram_username' => $this->submission_data['instagram_username'] ?? '',
+            'industry' => $this->submission_data['industry'] ?? '',
             'industry_entities' => $this->submission_data['industry_entities'] ?? '',
-            'industry_entities_other' => $this->submission_data['industry_entities_other'] ?? '',
-            'industry_status' => $this->submission_data['industry_status'] ?? '',
-            'market_insights' => $this->submission_data['market_insights'] ?? '',
-            'content_social_media' => $this->submission_data['content_social_media'] ?? '',
-            'business_focus_elements' => $this->submission_data['business_focus_elements'] ?? '',
+            'market_insights_radio' => $this->submission_data['market_insights_radio'] ?? '',
+            'content_social_media_radio' => $this->submission_data['content_social_media_radio'] ?? '',
+            'business_focus_elements_radio' => $this->submission_data['business_focus_elements_radio'] ?? '',
             'social_media_accounts' => $this->submission_data['social_media_accounts'] ?? '',
             'facebook_accounts_url' => $this->submission_data['facebook_accounts_url'] ?? '',
             'facebook_page_url' => $this->submission_data['facebook_page_url'] ?? '',
@@ -388,6 +392,9 @@ class COB_Email_Notifications {
             'ideal_customer_description' => $this->submission_data['ideal_customer_description'] ?? '',
             'potential_client_view' => $this->submission_data['potential_client_view'] ?? '',
             'target_age_range' => $this->submission_data['target_age_range'] ?? '',
+            'gender_purchase_decision' => $this->submission_data['gender_purchase_decision'] ?? '',
+            'lead_source_markets' => $this->submission_data['lead_source_markets'] ?? '',
+            'lead_times' => $this->submission_data['lead_times'] ?? '',
             'problems_solved' => $this->submission_data['problems_solved'] ?? '',
             'business_challenges' => $this->submission_data['business_challenges'] ?? '',
             'tracking_accounting' => $this->submission_data['tracking_accounting'] ?? '',
@@ -610,10 +617,26 @@ class COB_Email_Notifications {
 
                 <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 2: TECHNICAL INFORMATION</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    {if:current_cms}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Has Website:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{has_website}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Has Google Analytics:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{has_google_analytics}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Has Search Console:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{has_search_console}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Reporting Frequency:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{reporting_frequency}</td>
+                    </tr>
+                    {if:current_content_management_system}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Current CMS:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{current_cms}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{current_content_management_system}</td>
                     </tr>
                     {/if}
                     <tr>
@@ -644,24 +667,24 @@ class COB_Email_Notifications {
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>CMS Password:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">[PROTECTED]</td>
                     </tr>
-                    {if:current_crm}
+                    {if:crm_integration}
                     <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Current CRM:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{current_crm}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>CRM Integration:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{crm_integration}</td>
                     </tr>
                     {/if}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>3rd Party Integrations:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_integrations}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_integrations_radio}</td>
                     </tr>
-                    {if:third_party_integrations:yes}
+                    {if:third_party_integration_name}
                     <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>3rd Party Name:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_name}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>3rd Party Integration Name:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_integration_name}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>3rd Party Contact:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_contact_number} / {third_party_contact_email}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{third_party_primary_contact_number} / {third_party_primary_contact_email}</td>
                     </tr>
                     {/if}
                     {if:booking_engine_name}
@@ -679,34 +702,40 @@ class COB_Email_Notifications {
                 <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 3: REPORTING INFORMATION</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                     <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Analytics Account:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_analytics_account}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Main Objective:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{main_objective}</td>
                     </tr>
-                    {if:google_analytics_account:yes}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Analytics Account:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_analytics_radio}</td>
+                    </tr>
+                    {if:google_analytics_account}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>GA Account ID:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_analytics_account_id}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_analytics_account}</td>
                     </tr>
                     {/if}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Tag Manager Account:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_tag_manager_account}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_tag_manager_radio}</td>
                     </tr>
-                    {if:google_tag_manager_account:yes}
+                    {if:google_tag_manager_account}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>GTM Admin:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_tag_manager_admin}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_tag_manager_account}</td>
                     </tr>
                     {/if}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Ads Account:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_account}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_radio}</td>
                     </tr>
-                    {if:google_ads_account:yes}
+                    {if:google_ads_account}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Ads Admin:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_admin}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_account}</td>
                     </tr>
+                    {/if}
+                    {if:google_ads_customer_id}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Google Ads Customer ID:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{google_ads_customer_id}</td>
@@ -714,13 +743,15 @@ class COB_Email_Notifications {
                     {/if}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Meta Business Manager:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_account}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_radio}</td>
                     </tr>
-                    {if:meta_business_manager_account:yes}
+                    {if:meta_business_manager_account}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Meta BM Admin:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_admin}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_account}</td>
                     </tr>
+                    {/if}
+                    {if:meta_business_manager_id}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Meta BM ID:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{meta_business_manager_id}</td>
@@ -783,16 +814,42 @@ class COB_Email_Notifications {
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Guidelines Upload:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_guidelines_upload}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Current Website:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{current_website}" target="_blank">{current_website}</a></td>
                     </tr>
                     <tr>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Communication Tone:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{communication_tone}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Guidelines Upload:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_guidelines_upload_radio}</td>
                     </tr>
+                    {if:brand_guidelines_upload}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Guidelines Files:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_guidelines_upload}</td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Communication Tone:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{communication_tone_radio}</td>
+                    </tr>
+                    {if:casual_tone_explanation}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Casual Tone Explanation:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{casual_tone_explanation}</td>
+                    </tr>
+                    {/if}
+                    {if:formal_tone_explanation}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Formal Tone Explanation:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{formal_tone_explanation}</td>
+                    </tr>
+                    {/if}
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Brand Accounts:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{brand_accounts}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{industry}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry Entities:</strong></td>
@@ -800,19 +857,31 @@ class COB_Email_Notifications {
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Market Insights:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{market_insights}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{market_insights_radio}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Content/Social Media:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{content_social_media}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{content_social_media_radio}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Business Focus Elements:</strong></td>
-                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{business_focus_elements}</td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{business_focus_elements_radio}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Target Age Range:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{target_age_range}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Gender Purchase Decision:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{gender_purchase_decision}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Lead Source Markets:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{lead_source_markets}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Lead Times:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{lead_times}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Problems Solved:</strong></td>
@@ -830,6 +899,58 @@ class COB_Email_Notifications {
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Additional Information:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{additional_information}</td>
+                    </tr>
+                    {/if}
+                </table>
+
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">SOCIAL MEDIA ACCOUNTS</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    {if:facebook_page_url}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Facebook Page URL:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{facebook_page_url}" target="_blank">{facebook_page_url}</a></td>
+                    </tr>
+                    {/if}
+                    {if:instagram_account_url}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Instagram Account URL:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{instagram_account_url}" target="_blank">{instagram_account_url}</a></td>
+                    </tr>
+                    {/if}
+                    {if:linkedin_page_url}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>LinkedIn Page URL:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{linkedin_page_url}" target="_blank">{linkedin_page_url}</a></td>
+                    </tr>
+                    {/if}
+                    {if:tiktok_account_url}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>TikTok Account URL:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{tiktok_account_url}" target="_blank">{tiktok_account_url}</a></td>
+                    </tr>
+                    {/if}
+                    {if:pinterest_page_url}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Pinterest Page URL:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{pinterest_page_url}" target="_blank">{pinterest_page_url}</a></td>
+                    </tr>
+                    {/if}
+                    {if:twitter_accounts_url}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Twitter Account URL:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{twitter_accounts_url}" target="_blank">{twitter_accounts_url}</a></td>
+                    </tr>
+                    {/if}
+                    {if:youtube_channel_url}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>YouTube Channel URL:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><a href="{youtube_channel_url}" target="_blank">{youtube_channel_url}</a></td>
+                    </tr>
+                    {/if}
+                    {if:other_social_media_platforms}
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Other Social Media Platforms:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{other_social_media_platforms}</td>
                     </tr>
                     {/if}
                 </table>

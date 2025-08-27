@@ -19,8 +19,6 @@ class COB_Database {
         $sql = "CREATE TABLE $table_name (
             id int(11) NOT NULL AUTO_INCREMENT,
             session_id varchar(100) NOT NULL,
-            
-            -- Step 1: Client Information
             project_name varchar(255) NOT NULL,
             business_name varchar(255) NOT NULL,
             primary_contact_name varchar(255) NOT NULL,
@@ -35,14 +33,12 @@ class COB_Database {
             city varchar(100) NOT NULL,
             country varchar(100) NOT NULL,
             postal_code varchar(20) NOT NULL,
-            
-            -- Step 2: Technical Information
             current_cms varchar(255),
             website_hosting_company varchar(255) NOT NULL,
             website_contact_email varchar(255) NOT NULL,
             domain_hosting_company varchar(255) NOT NULL,
             domain_contact_email varchar(255) NOT NULL,
-            cms_link varchar(500) NOT NULL,
+            cms_link text NOT NULL,
             cms_username varchar(255) NOT NULL,
             cms_password varchar(255) NOT NULL,
             current_crm varchar(255),
@@ -55,8 +51,6 @@ class COB_Database {
             booking_engine_password varchar(255),
             booking_engine_contact_email varchar(255),
             technical_objective text NOT NULL,
-            
-            -- Step 3: Reporting Information
             google_analytics_account varchar(10) NOT NULL,
             google_analytics_account_id varchar(255),
             google_tag_manager_account varchar(10) NOT NULL,
@@ -71,8 +65,6 @@ class COB_Database {
             paid_media_history_other varchar(255),
             current_paid_media text NOT NULL,
             current_paid_media_other varchar(255),
-            
-            -- Step 4: Marketing Information
             main_objective text NOT NULL,
             brand_focus text NOT NULL,
             commercial_objective text NOT NULL,
@@ -102,11 +94,11 @@ class COB_Database {
             market_insights varchar(10) NOT NULL,
             content_social_media varchar(10) NOT NULL,
             business_focus_elements varchar(10) NOT NULL,
-            social_media_accounts varchar(500),
-            facebook_accounts_url varchar(500),
-            facebook_page_url varchar(500),
-            twitter_accounts_url varchar(500),
-            instagram_page_url varchar(500),
+            social_media_accounts text,
+            facebook_accounts_url text,
+            facebook_page_url text,
+            twitter_accounts_url text,
+            instagram_page_url text,
             ideal_customer_description text NOT NULL,
             potential_client_view text NOT NULL,
             target_age_range text NOT NULL,
@@ -114,8 +106,6 @@ class COB_Database {
             business_challenges varchar(10) NOT NULL,
             tracking_accounting varchar(10) NOT NULL,
             additional_information text,
-            
-            -- System Fields
             status varchar(20) DEFAULT 'submitted',
             submitted_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
@@ -212,7 +202,7 @@ class COB_Database {
             'website_contact_email' => 'VARCHAR(255) NOT NULL DEFAULT ""',
             'domain_hosting_company' => 'VARCHAR(255) NOT NULL DEFAULT ""',
             'domain_contact_email' => 'VARCHAR(255) NOT NULL DEFAULT ""',
-            'cms_link' => 'VARCHAR(500) NOT NULL DEFAULT ""',
+            'cms_link' => 'TEXT NOT NULL',
             'cms_username' => 'VARCHAR(255) NOT NULL DEFAULT ""',
             'cms_password' => 'VARCHAR(255) NOT NULL DEFAULT ""',
             'current_crm' => 'VARCHAR(255)',
@@ -268,11 +258,11 @@ class COB_Database {
             'market_insights' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
             'content_social_media' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
             'business_focus_elements' => 'VARCHAR(10) NOT NULL DEFAULT "no"',
-            'social_media_accounts' => 'VARCHAR(500)',
-            'facebook_accounts_url' => 'VARCHAR(500)',
-            'facebook_page_url' => 'VARCHAR(500)',
-            'twitter_accounts_url' => 'VARCHAR(500)',
-            'instagram_page_url' => 'VARCHAR(500)',
+            'social_media_accounts' => 'TEXT',
+            'facebook_accounts_url' => 'TEXT',
+            'facebook_page_url' => 'TEXT',
+            'twitter_accounts_url' => 'TEXT',
+            'instagram_page_url' => 'TEXT',
             'ideal_customer_description' => 'TEXT NOT NULL',
             'potential_client_view' => 'TEXT NOT NULL',
             'target_age_range' => 'TEXT NOT NULL',
@@ -725,12 +715,23 @@ class COB_Database {
     }
 
     public static function calculate_progress($form_data, $current_step) {
-        // Define required fields for each step
+        // Define required fields for each step - only the ones actually marked as required in the form
         $required_fields = [
-            1 => ['project_name', 'business_name', 'primary_contact_name', 'primary_contact_email'],
-            2 => ['current_website', 'technical_contact_name', 'technical_contact_email'],
-            3 => ['reporting_frequency', 'reporting_contact_name', 'reporting_contact_email'],
-            4 => ['target_audience', 'marketing_goals']
+            1 => [
+                'project_name', 'business_name', 'primary_contact_name', 'primary_contact_email',
+                'primary_contact_number', 'main_approver', 'billing_email', 'preferred_contact_method',
+                'address_line_1', 'city', 'country', 'postal_code', 'has_website'
+            ],
+            2 => [
+                'has_google_analytics', 'has_search_console', 'reporting_frequency'
+            ],
+            3 => [
+                'main_objective'
+            ],
+            4 => [
+                'business_description', 'target_audience', 'main_competitors',
+                'unique_value_proposition', 'marketing_budget', 'start_timeline'
+            ]
         ];
         
         $total_required = 0;
@@ -741,8 +742,18 @@ class COB_Database {
             if (isset($required_fields[$step])) {
                 foreach ($required_fields[$step] as $field) {
                     $total_required++;
-                    if (isset($form_data[$field]) && !empty(trim($form_data[$field]))) {
-                        $completed++;
+                    if (isset($form_data[$field])) {
+                        $value = $form_data[$field];
+                        // Handle array values (checkboxes, multiple selects)
+                        if (is_array($value)) {
+                            if (!empty(array_filter($value))) {
+                                $completed++;
+                            }
+                        } else {
+                            if (!empty(trim($value))) {
+                                $completed++;
+                            }
+                        }
                     }
                 }
             }

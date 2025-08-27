@@ -21,6 +21,10 @@
             this.loadDraft();
             this.startAutoSave();
             this.updateStepDisplay();
+            this.initSaveStatus();
+            
+            // Handle initial responsive behavior
+            this.handleResize();
             
             // Ensure button visibility is correct on initialization
             setTimeout(() => {
@@ -30,8 +34,20 @@
         }
 
         bindEvents() {
+            // Start page button
+            $('#cob-start-form').on('click', () => this.showFormPage());
+
+            // Thank you page button
+            $('#cob-visit-cx-platform').on('click', () => this.visitCXPlatform());
+
             // Step navigation
             $('.cob-step-item').on('click', (e) => {
+                const step = parseInt($(e.currentTarget).data('step'));
+                this.goToStep(step);
+            });
+
+            // Mobile tab navigation
+            $('.cob-mobile-tab').on('click', (e) => {
                 const step = parseInt($(e.currentTarget).data('step'));
                 this.goToStep(step);
             });
@@ -67,6 +83,9 @@
                     }
                 }
             });
+
+            // Handle window resize for responsive behavior
+            $(window).on('resize', () => this.handleResize());
         }
 
         bindConditionalFields() {
@@ -184,8 +203,28 @@
             ];
             $('#cob-current-step-title').text(stepTitles[this.currentStep - 1]);
             
+            // Update mobile tabs
+            this.updateMobileTabs();
+            
             // Update button visibility based on step
             this.updateButtonVisibility();
+        }
+
+        updateMobileTabs() {
+            // Update mobile tab states
+            $('.cob-mobile-tab').removeClass('active completed');
+            
+            for (let i = 1; i <= this.currentStep; i++) {
+                if (i === this.currentStep) {
+                    $(`.cob-mobile-tab[data-step="${i}"]`).addClass('active');
+                } else {
+                    $(`.cob-mobile-tab[data-step="${i}"]`).addClass('completed');
+                }
+            }
+            
+            // Update progress bar
+            const progressPercentage = (this.currentStep / this.totalSteps) * 100;
+            $('.cob-mobile-progress-fill').css('width', progressPercentage + '%');
         }
 
         updateButtonVisibility() {
@@ -669,7 +708,14 @@
         startAutoSave() {
             // Auto-save every 30 seconds
             this.autoSaveInterval = setInterval(() => {
-                this.saveDraft();
+                this.saveDraft().done((response) => {
+                    // Update save status even for auto-saves
+                    if (response && response.last_saved) {
+                        this.updateSaveStatus(response.last_saved);
+                    } else {
+                        this.updateSaveStatus();
+                    }
+                });
             }, 30000);
         }
 
@@ -731,16 +777,25 @@
         }
 
         showSuccessMessage(submissionId) {
-            const successHtml = `
-                <div class="cob-success-message">
-                    <h2>Thank You!</h2>
-                    <p>Your client onboarding form has been submitted successfully.</p>
-                    <p><strong>Submission ID:</strong> ${submissionId}</p>
-                    <p>We'll be in touch with you soon to discuss your project.</p>
-                </div>
-            `;
-            
-            $('.cob-form-content').html(successHtml);
+            // Show thank you page instead of inline success message
+            this.showThankYouPage();
+        }
+
+        showFormPage() {
+            // Hide start page and show form page
+            $('#cob-start-page').removeClass('cob-page-active').hide();
+            $('#cob-form-page').addClass('cob-page-active').show();
+        }
+
+        showThankYouPage() {
+            // Hide the form and show thank you page
+            $('.cob-form-wrapper').hide();
+            $('#cob-thank-you-page').addClass('cob-page-active').show();
+        }
+
+        visitCXPlatform() {
+            // Open CX platform in new tab/window
+            window.open('https://fluxcx.com', '_blank');
         }
 
         showSaveStatus(message, type = 'success') {
@@ -748,6 +803,10 @@
             statusElement.removeClass('cob-error cob-success').addClass(type);
             statusElement.text(message);
             statusElement.show();
+            
+            // Update the header save status with current time
+            this.updateSaveStatus();
+            
             setTimeout(() => {
                 statusElement.fadeOut();
             }, 3000);
@@ -757,8 +816,18 @@
             if (timestamp) {
                 const date = new Date(timestamp);
                 $('#cob-save-text').text(`Last saved: ${date.toLocaleTimeString()}`);
-                $('#cob-save-status').show();
+            } else {
+                // Show current time if no timestamp provided
+                const now = new Date();
+                $('#cob-save-text').text(`Last saved: ${now.toLocaleTimeString()}`);
             }
+            $('#cob-save-status').show();
+        }
+
+        // Initialize save status on page load
+        initSaveStatus() {
+            // Show current time as initial save status
+            this.updateSaveStatus();
         }
 
         loadSharedDraft() {
@@ -838,6 +907,21 @@
                 this.saveDraft().always(() => {
                     window.close();
                 });
+            }
+        }
+
+        handleResize() {
+            // Handle responsive behavior
+            const windowWidth = $(window).width();
+            
+            if (windowWidth <= 768) {
+                // Mobile view - ensure mobile tabs are visible
+                $('.cob-mobile-tabs').show();
+                $('.cob-step-navigation').hide();
+            } else {
+                // Desktop view - ensure desktop navigation is visible
+                $('.cob-mobile-tabs').hide();
+                $('.cob-step-navigation').show();
             }
         }
     }

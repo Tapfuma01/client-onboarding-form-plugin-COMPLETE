@@ -175,40 +175,33 @@ class COB_Form_Handler {
                 COB_Database::log_activity('submission_attempt', null, $session_id, 'Form submission started');
             }
 
-            // Validate required fields
+            // Validate required fields - only the ones actually marked as required in the form
             $required_fields = [
                 // Step 1: Client Information
                 'project_name', 'business_name', 'primary_contact_name', 
                 'primary_contact_email', 'primary_contact_number', 'main_approver',
                 'billing_email', 'preferred_contact_method', 'address_line_1',
-                'city', 'country', 'postal_code',
+                'city', 'country', 'postal_code', 'has_website',
                 
                 // Step 2: Technical Information
-                'website_hosting_company', 'website_contact_email',
-                'domain_hosting_company', 'domain_contact_email',
-                'cms_link', 'cms_username', 'cms_password',
-                'third_party_integrations', 'technical_objective',
+                'has_google_analytics', 'has_search_console', 'reporting_frequency',
                 
                 // Step 3: Reporting Information
-                'google_analytics_account', 'google_tag_manager_account',
-                'google_ads_account', 'meta_business_manager_account',
-                'paid_media_history', 'current_paid_media',
+                'main_objective',
                 
                 // Step 4: Marketing Information
-                'main_objective', 'brand_focus', 'commercial_objective',
-                'push_impact', 'founder_inspiration', 'brand_tone_mission',
-                'brand_perception', 'global_team_introduction', 'service_introduction',
-                'brand_line_1', 'mission_1', 'brand_line_2', 'mission_2',
-                'brand_line_3', 'mission_3', 'brand_guidelines_upload',
-                'communication_tone', 'brand_accounts', 'industry_entities',
-                'market_insights', 'content_social_media', 'business_focus_elements',
-                'ideal_customer_description', 'potential_client_view',
-                'target_age_range', 'problems_solved', 'business_challenges',
-                'tracking_accounting'
+                'business_description', 'target_audience', 'main_competitors',
+                'unique_value_proposition', 'marketing_budget', 'start_timeline',
+                
+                // Additional required fields
+                'current_website', 'brand_guidelines_upload_radio', 'communication_tone_radio', 
+                'brand_accounts_radio', 'industry_entities', 'market_insights_radio', 
+                'content_social_media_radio', 'business_focus_elements_radio',
+                'target_age_range', 'gender_purchase_decision', 'lead_source_markets', 'lead_times'
             ];
 
             // Debug logging for problematic fields
-            $debug_fields = ['paid_media_history', 'current_paid_media', 'industry_entities', 'target_age_range'];
+            $debug_fields = ['marketing_goals', 'industry', 'social_media_platforms'];
             foreach ($debug_fields as $debug_field) {
                 if (class_exists('COB_Database')) {
                     $field_value = $form_data[$debug_field] ?? 'NOT_SET';
@@ -236,12 +229,15 @@ class COB_Form_Handler {
                 }
             }
 
-            // Additional validation for specific checkbox array fields
+            // Additional validation for specific checkbox array fields that are required
             $checkbox_array_fields = [
-                'paid_media_history' => 'Paid Media History',
-                'current_paid_media' => 'Current Paid Media',
+                'marketing_goals' => 'Marketing Goals',
+                'industry' => 'Industry',
                 'industry_entities' => 'Industry Entities',
-                'target_age_range' => 'Target Age Range'
+                'target_age_range' => 'Target Age Range',
+                'gender_purchase_decision' => 'Gender Purchase Decision',
+                'paid_media_history' => 'Paid Media History',
+                'current_paid_media' => 'Current Paid Media'
             ];
 
             foreach ($checkbox_array_fields as $field => $display_name) {

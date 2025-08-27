@@ -12,9 +12,6 @@ if (!defined('ABSPATH')) {
     <!-- Flux Header -->
     <div class="flux-header">
         <div class="flux-brand">
-            <div class="flux-logo">
-                <h1 style="color: white; margin: 0; font-size: 2rem; font-weight: 800;">FLUX</h1>
-            </div>
             <div class="flux-title">
                 <h1>FLUX</h1>
                 <span class="flux-subtitle">Client Onboarding Dashboard</span>

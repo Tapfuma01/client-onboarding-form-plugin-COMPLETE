@@ -233,24 +233,6 @@ body .page-content .cob-form-container,
     color: #ccc;
 }
 
-/* Step Content Visibility */
-.cob-step-content {
-    display: none;
-}
-
-.cob-step-content.cob-step-active {
-    display: block;
-}
-
-/* Button Visibility Classes */
-.cob-visible {
-    display: inline-block !important;
-}
-
-.cob-hidden {
-    display: none !important;
-}
-
 /* Form Content */
 .cob-form-content {
     flex: 1;
@@ -292,10 +274,6 @@ body .page-content .cob-form-container,
 
 .cob-form-group {
     margin-bottom: 25px;
-}
-
-.cob-form-group-full {
-    grid-column: 1 / -1;
 }
 
 .cob-label {
