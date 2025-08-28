@@ -725,7 +725,7 @@ if (!defined('ABSPATH')) {
 
                             <!-- Communication Tone -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">COMMUNICATION TONE</label>
+                                <label class="cob-label">COMMUNICATION TONE *</label>
                                 <textarea name="communication_tone" class="cob-textarea" placeholder="Describe your preferred communication tone"></textarea>
                             </div>
 
@@ -801,20 +801,20 @@ if (!defined('ABSPATH')) {
                         <div class="cob-form-grid">
                             <!-- Current Website -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">CURRENT WEBSITE</label>
-                                <input type="url" name="current_website" class="cob-input" placeholder="Enter your current website URL">
+                                <label class="cob-label">CURRENT WEBSITE *</label>
+                                <input type="url" name="current_website" class="cob-input" placeholder="Enter your current website URL" required>
                             </div>
 
                             <!-- Brand Guidelines Upload -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">DO YOU HAVE YOUR BRAND GUIDELINES/STYLE GUIDE/IDENTITY AS A FILE UPLOAD?</label>
+                                <label class="cob-label">DO YOU HAVE YOUR BRAND GUIDELINES/STYLE GUIDE/IDENTITY AS A FILE UPLOAD? *</label>
                                 <div class="cob-radio-group">
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="brand_guidelines_upload_radio" value="yes" class="cob-radio">
+                                        <input type="radio" name="brand_guidelines_upload_radio" value="yes" class="cob-radio" required>
                                         <span class="cob-radio-label">Yes</span>
                                     </label>
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="brand_guidelines_upload_radio" value="no" class="cob-radio">
+                                        <input type="radio" name="brand_guidelines_upload_radio" value="no" class="cob-radio" required>
                                         <span class="cob-radio-label">No</span>
                                     </label>
                                 </div>
@@ -830,11 +830,11 @@ if (!defined('ABSPATH')) {
                                 <label class="cob-label">WHICH METHOD PREFERRED TO COMMUNICATE WITH YOUR BRAND (NO LOGO)?</label>
                                 <div class="cob-radio-group">
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="communication_tone_radio" value="formal" class="cob-radio">
+                                        <input type="radio" name="communication_tone_radio" value="formal" class="cob-radio" required>
                                         <span class="cob-radio-label">Formal</span>
                                     </label>
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="communication_tone_radio" value="casual" class="cob-radio">
+                                        <input type="radio" name="communication_tone_radio" value="casual" class="cob-radio" required>
                                         <span class="cob-radio-label">Casual</span>
                                     </label>
                                 </div>
@@ -852,14 +852,14 @@ if (!defined('ABSPATH')) {
 
                             <!-- Brand Accounts -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">DO YOU HAVE BRAND ACCOUNTS?</label>
+                                <label class="cob-label">DO YOU HAVE BRAND ACCOUNTS? *</label>
                                 <div class="cob-radio-group">
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="brand_accounts_radio" value="yes" class="cob-radio">
+                                        <input type="radio" name="brand_accounts_radio" value="yes" class="cob-radio" required>
                                         <span class="cob-radio-label">Yes</span>
                                     </label>
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="brand_accounts_radio" value="no" class="cob-radio">
+                                        <input type="radio" name="brand_accounts_radio" value="no" class="cob-radio" required>
                                         <span class="cob-radio-label">No</span>
                                     </label>
                                 </div>
@@ -960,62 +960,62 @@ if (!defined('ABSPATH')) {
 
                             <!-- Industry Entities -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">LIST THE MEMBERS/ENTITIES DOING YOUR BUSINESS COMPARED TO THE SERVICES (LIST 6)</label>
+                                <label class="cob-label">LIST THE MEMBERS/ENTITIES DOING YOUR BUSINESS COMPARED TO THE SERVICES (LIST 6) *</label>
                                 <div class="cob-checkbox-group">
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="direct_competitors" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="direct_competitors" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Direct Competitors</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="indirect_competitors" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="indirect_competitors" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Indirect Competitors</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="new" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="new" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">New</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="sector" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="sector" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Sector</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="banking" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="banking" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Banking</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="services" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="services" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Services</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="fintech" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="fintech" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Fintech</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="property" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="property" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Property</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="insurance" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="insurance" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Insurance</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="health_medical" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="health_medical" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Health/Medical</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="retail" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="retail" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Retail</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="travel" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="travel" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Travel</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="construction" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="construction" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Construction</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="industry_entities[]" value="gaming" class="cob-checkbox">
+                                        <input type="checkbox" name="industry_entities[]" value="gaming" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Gaming</span>
                                     </label>
                                 </div>
@@ -1023,22 +1023,22 @@ if (!defined('ABSPATH')) {
 
                             <!-- Target Age Range -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">TARGET AUDIENCE AGE RANGE</label>
+                                <label class="cob-label">TARGET AUDIENCE AGE RANGE *</label>
                                 <div class="cob-checkbox-group">
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="target_age_range[]" value="silent_generation" class="cob-checkbox">
+                                        <input type="checkbox" name="target_age_range[]" value="silent_generation" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Silent Generation (78+)</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="target_age_range[]" value="baby_boomers" class="cob-checkbox">
+                                        <input type="checkbox" name="target_age_range[]" value="baby_boomers" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Baby Boomers (59-73)</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="target_age_range[]" value="gen_z" class="cob-checkbox">
+                                        <input type="checkbox" name="target_age_range[]" value="gen_z" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Gen Z (18-34)</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="target_age_range[]" value="millennials" class="cob-checkbox">
+                                        <input type="checkbox" name="target_age_range[]" value="millennials" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Millennials (23-38)</span>
                                     </label>
                                 </div>
@@ -1046,18 +1046,18 @@ if (!defined('ABSPATH')) {
 
                             <!-- Gender Purchase Decision -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">WHICH GENDER MOST OFTEN MAKES THE PURCHASE DECISION?</label>
+                                <label class="cob-label">WHICH GENDER MOST OFTEN MAKES THE PURCHASE DECISION? *</label>
                                 <div class="cob-checkbox-group">
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="gender_purchase_decision[]" value="female" class="cob-checkbox">
+                                        <input type="checkbox" name="gender_purchase_decision[]" value="female" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Female</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="gender_purchase_decision[]" value="male" class="cob-checkbox">
+                                        <input type="checkbox" name="gender_purchase_decision[]" value="male" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Male</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="gender_purchase_decision[]" value="unknown" class="cob-checkbox">
+                                        <input type="checkbox" name="gender_purchase_decision[]" value="unknown" class="cob-checkbox" required>
                                         <span class="cob-checkbox-label">Unknown</span>
                                     </label>
                                 </div>
@@ -1065,26 +1065,26 @@ if (!defined('ABSPATH')) {
 
                             <!-- Lead Source Markets -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">WHAT ARE YOUR LEAD SOURCE MARKETS?</label>
-                                <input type="text" name="lead_source_markets" class="cob-input" placeholder="Enter your lead source markets">
+                                <label class="cob-label">WHAT ARE YOUR LEAD SOURCE MARKETS? *</label>
+                                <input type="text" name="lead_source_markets" class="cob-input" placeholder="Enter your lead source markets" required>
                             </div>
 
                             <!-- Lead Times -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">HAVE YOU OBSERVED ANY LEAD TIMES FROM BOOKING TO TRAVEL? IF SO, WHAT ARE THE AVERAGES BY MARKET (IF AVAILABLE)?</label>
-                                <textarea name="lead_times" class="cob-input" placeholder="Describe observed lead times"></textarea>
+                                <label class="cob-label">HAVE YOU OBSERVED ANY LEAD TIMES FROM BOOKING TO TRAVEL? IF SO, WHAT ARE THE AVERAGES BY MARKET (IF AVAILABLE)? *</label>
+                                <textarea name="lead_times" class="cob-input" placeholder="Describe observed lead times" required></textarea>
                             </div>
 
                             <!-- Market Insights -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">DO YOU RECEIVE INSIGHTS ON YOUR MARKET?</label>
+                                <label class="cob-label">DO YOU RECEIVE INSIGHTS ON YOUR MARKET? *</label>
                                 <div class="cob-radio-group">
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="market_insights_radio" value="yes" class="cob-radio">
+                                        <input type="radio" name="market_insights_radio" value="yes" class="cob-radio" required>
                                         <span class="cob-radio-label">Yes</span>
                                     </label>
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="market_insights_radio" value="no" class="cob-radio">
+                                        <input type="radio" name="market_insights_radio" value="no" class="cob-radio" required>
                                         <span class="cob-radio-label">No</span>
                                     </label>
                                 </div>
@@ -1092,14 +1092,14 @@ if (!defined('ABSPATH')) {
 
                             <!-- Content Social Media -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">DO YOU HAVE A CONTENT/SOCIAL MEDIA?</label>
+                                <label class="cob-label">DO YOU HAVE A CONTENT/SOCIAL MEDIA? *</label>
                                 <div class="cob-radio-group">
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="content_social_media_radio" value="yes" class="cob-radio">
+                                        <input type="radio" name="content_social_media_radio" value="yes" class="cob-radio" required>
                                         <span class="cob-radio-label">Yes</span>
                                     </label>
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="content_social_media_radio" value="no" class="cob-radio">
+                                        <input type="radio" name="content_social_media_radio" value="no" class="cob-radio" required>
                                         <span class="cob-radio-label">No</span>
                                     </label>
                                 </div>
@@ -1107,14 +1107,14 @@ if (!defined('ABSPATH')) {
 
                             <!-- Business Focus Elements -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">CAN YOU EXPLAIN TO US WHAT ELEMENTS SHOULD YOU FOCUS ON YOUR BUSINESS?</label>
+                                <label class="cob-label">CAN YOU EXPLAIN TO US WHAT ELEMENTS SHOULD YOU FOCUS ON YOUR BUSINESS? *</label>
                                 <div class="cob-radio-group">
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="business_focus_elements_radio" value="yes" class="cob-radio">
+                                        <input type="radio" name="business_focus_elements_radio" value="yes" class="cob-radio" required>
                                         <span class="cob-radio-label">Yes</span>
                                     </label>
                                     <label class="cob-radio-option">
-                                        <input type="radio" name="business_focus_elements_radio" value="no" class="cob-radio">
+                                        <input type="radio" name="business_focus_elements_radio" value="no" class="cob-radio" required>
                                         <span class="cob-radio-label">No</span>
                                     </label>
                                 </div>

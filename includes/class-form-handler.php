@@ -156,16 +156,31 @@ class COB_Form_Handler {
     }
 
     public function ajax_submit_form() {
+        // Comprehensive debugging for form submission
+        error_log('=== COB FORM SUBMISSION DEBUG START ===');
+        error_log('COB: AJAX submit form method called');
+        error_log('COB: Request method: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('COB: Content type: ' . $_SERVER['CONTENT_TYPE'] ?? 'Not set');
+        error_log('COB: POST data received: ' . print_r($_POST, true));
+        error_log('COB: Raw input: ' . file_get_contents('php://input'));
+        
         try {
             // Ensure proper content type
             if (!wp_doing_ajax()) {
+                error_log('COB: Not an AJAX request');
                 wp_die(json_encode(['success' => false, 'message' => 'Invalid request']));
             }
 
+            error_log('COB: AJAX request validated');
             check_ajax_referer('cob_form_nonce', 'nonce');
+            error_log('COB: Nonce verification passed');
 
             $form_data = $_POST['form_data'] ?? [];
             $session_id = sanitize_text_field($_POST['session_id'] ?? '');
+            
+            error_log('COB: Session ID: ' . $session_id);
+            error_log('COB: Form data received: ' . print_r($form_data, true));
+            error_log('COB: Form data count: ' . count($form_data));
 
             // Ensure database class is loaded
             $this->load_dependencies();
@@ -212,22 +227,37 @@ class COB_Form_Handler {
                 }
             }
 
+            error_log('COB: Starting field validation...');
+            error_log('COB: Required fields to check: ' . implode(', ', $required_fields));
+            
             $missing_fields = [];
             foreach ($required_fields as $field) {
                 $field_value = $form_data[$field] ?? '';
+                $field_type = is_array($field_value) ? 'ARRAY' : 'STRING';
+                $field_content = is_array($field_value) ? json_encode($field_value) : $field_value;
+                
+                error_log("COB: Checking field '$field' - Type: $field_type, Value: '$field_content'");
                 
                 // Handle array fields (checkboxes, radio buttons)
                 if (is_array($field_value)) {
                     if (empty($field_value) || (count($field_value) === 1 && empty($field_value[0]))) {
                         $missing_fields[] = $field;
+                        error_log("COB: Field '$field' is missing (array empty)");
+                    } else {
+                        error_log("COB: Field '$field' is valid (array has content)");
                     }
                 } else {
                     // Handle string fields
                     if (empty(trim($field_value))) {
                         $missing_fields[] = $field;
+                        error_log("COB: Field '$field' is missing (string empty)");
+                    } else {
+                        error_log("COB: Field '$field' is valid (string has content)");
                     }
                 }
             }
+            
+            error_log('COB: Missing fields found: ' . implode(', ', $missing_fields));
 
             // Additional validation for specific checkbox array fields that are required
             $checkbox_array_fields = [
@@ -300,32 +330,42 @@ class COB_Form_Handler {
             $submission_id = COB_Database::save_submission($submission_data);
 
             if ($submission_id) {
+                error_log('COB: Submission saved successfully with ID: ' . $submission_id);
+                
                 // Delete draft after successful submission
                 try {
                     COB_Database::delete_draft($session_id);
+                    error_log('COB: Draft deleted successfully');
                 } catch (Exception $e) {
+                    error_log('COB: Draft deletion failed: ' . $e->getMessage());
                     // Don't fail submission if draft deletion fails
                 }
 
                 // Trigger email notifications
+                error_log('COB: Triggering email notifications...');
                 do_action('cob_after_submission', $submission_id, $submission_data);
 
                 COB_Database::log_activity('submission_completed', $submission_id, $session_id, 
                     'Form submitted successfully');
 
+                error_log('COB: Sending success response to frontend');
                 wp_die(json_encode([
                     'success' => true,
                     'message' => 'Form submitted successfully',
                     'submission_id' => $submission_id
                 ]));
             } else {
+                error_log('COB: Submission failed - no submission ID returned');
                 global $wpdb;
                 $db_error = $wpdb->last_error;
+                error_log('COB: Database error: ' . $db_error);
+                
                 if (class_exists('COB_Database')) {
                     COB_Database::log_activity('submission_db_error', null, $session_id, 
                         'Database error: ' . $db_error);
                 }
                 
+                error_log('COB: Sending error response to frontend');
                 wp_die(json_encode([
                     'success' => false, 
                     'message' => 'Failed to submit form. Please try again.',
@@ -333,21 +373,27 @@ class COB_Form_Handler {
                 ]));
             }
         } catch (Exception $e) {
+            error_log('COB: Exception occurred during submission: ' . $e->getMessage());
+            error_log('COB: Exception trace: ' . $e->getTraceAsString());
+            
             if (class_exists('COB_Database')) {
                 try {
                     COB_Database::log_activity('submission_exception', null, $session_id ?? '', 
                         'Exception: ' . $e->getMessage());
                 } catch (Exception $log_error) {
-                    // Ignore logging errors
+                    error_log('COB: Failed to log exception to database: ' . $log_error->getMessage());
                 }
             }
             
+            error_log('COB: Sending exception response to frontend');
             wp_die(json_encode([
                 'success' => false, 
                 'message' => 'Server error occurred. Please try again.',
                 'debug' => WP_DEBUG ? $e->getMessage() : ''
             ]));
         }
+        
+        error_log('=== COB FORM SUBMISSION DEBUG END ===');
     }
 
     private function sanitize_form_data($data) {

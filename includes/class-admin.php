@@ -104,6 +104,9 @@ class COB_Admin {
 
     public function admin_init() {
         register_setting('cob_settings_group', 'cob_settings');
+        
+        // Add AJAX handlers
+        add_action('wp_ajax_cob_update_database_schema', [$this, 'handle_database_schema_update']);
     }
 
     public function enqueue_admin_scripts($hook) {
@@ -127,6 +130,27 @@ class COB_Admin {
             if (strpos($hook, 'cob-email-settings') !== false) {
                 wp_enqueue_editor();
             }
+        }
+    }
+    
+    /**
+     * Handle AJAX request to update database schema
+     */
+    public function handle_database_schema_update() {
+        // Check nonce for security
+        if (!wp_verify_nonce($_POST['nonce'], 'cob_admin_nonce')) {
+            wp_send_json_error('Security check failed');
+        }
+        
+        if (class_exists('COB_Database') && method_exists('COB_Database', 'update_field_sizes')) {
+            try {
+                COB_Database::update_field_sizes();
+                wp_send_json_success('Database schema updated successfully! Field sizes for google_tag_manager_account and brand_guidelines_upload have been increased to TEXT.');
+            } catch (Exception $e) {
+                wp_send_json_error('Database update failed: ' . $e->getMessage());
+            }
+        } else {
+            wp_send_json_error('Database class not available');
         }
     }
 

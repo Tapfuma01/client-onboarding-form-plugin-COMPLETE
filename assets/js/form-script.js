@@ -57,6 +57,10 @@
             $('#cob-previous-btn').on('click', () => this.previousStep());
             $('#cob-submit-btn').on('click', (e) => {
                 console.log('COB: Submit button clicked!');
+                console.log('COB: Current step:', this.currentStep);
+                console.log('COB: Total steps:', this.totalSteps);
+                console.log('COB: Submit button element:', $('#cob-submit-btn').length);
+                console.log('COB: Form element:', $('#cob-onboarding-form').length);
                 e.preventDefault();
                 this.submitForm();
             });
@@ -336,8 +340,13 @@
         }
 
         validateCurrentStep() {
+            console.log(`COB: Validating step ${this.currentStep}`);
             const currentStepElement = $(`.cob-step-content[data-step="${this.currentStep}"]`);
+            console.log(`COB: Current step element found:`, currentStepElement.length);
+            
             const requiredFields = currentStepElement.find('input[required], textarea[required], select[required]');
+            console.log(`COB: Required fields found:`, requiredFields.length);
+            
             let isValid = true;
 
             // Clear previous errors
@@ -346,17 +355,27 @@
 
             requiredFields.each((index, field) => {
                 const $field = $(field);
-                const value = $field.val().trim();
+                const fieldName = $field.attr('name');
+                const fieldType = $field.attr('type');
+                const value = $field.val();
+                const trimmedValue = value ? value.trim() : '';
+                
+                console.log(`COB: Validating field: ${fieldName}, type: ${fieldType}, value: "${value}", trimmed: "${trimmedValue}"`);
 
-                if (!value) {
+                if (!trimmedValue) {
+                    console.log(`COB: Field ${fieldName} is empty - validation failed`);
                     this.showFieldError($field, 'This field is required');
                     isValid = false;
-                } else if ($field.attr('type') === 'email' && !this.isValidEmail(value)) {
+                } else if (fieldType === 'email' && !this.isValidEmail(trimmedValue)) {
+                    console.log(`COB: Field ${fieldName} has invalid email format - validation failed`);
                     this.showFieldError($field, 'Please enter a valid email address');
                     isValid = false;
-                } else if ($field.attr('type') === 'url' && !this.isValidUrl(value)) {
+                } else if (fieldType === 'url' && !this.isValidUrl(trimmedValue)) {
+                    console.log(`COB: Field ${fieldName} has invalid URL format - validation failed`);
                     this.showFieldError($field, 'Please enter a valid URL');
                     isValid = false;
+                } else {
+                    console.log(`COB: Field ${fieldName} passed validation`);
                 }
             });
 
@@ -365,18 +384,30 @@
                 'paid_media_history', 'current_paid_media', 'industry_entities', 'target_age_range'
             ];
 
+            console.log(`COB: Checking checkbox array fields:`, checkboxArrayFields);
+
             checkboxArrayFields.forEach(fieldName => {
                 const $checkboxes = currentStepElement.find(`input[name="${fieldName}[]"]`);
+                console.log(`COB: Checkbox array ${fieldName}: found ${$checkboxes.length} checkboxes`);
+                
                 if ($checkboxes.length > 0) {
                     const checkedBoxes = $checkboxes.filter(':checked');
+                    console.log(`COB: Checkbox array ${fieldName}: ${checkedBoxes.length} checked out of ${$checkboxes.length}`);
+                    
                     if (checkedBoxes.length === 0) {
+                        console.log(`COB: Checkbox array ${fieldName} has no selections - validation failed`);
                         // Show error on the first checkbox
                         this.showFieldError($checkboxes.first(), `Please select at least one option for ${fieldName.replace(/_/g, ' ')}`);
                         isValid = false;
+                    } else {
+                        console.log(`COB: Checkbox array ${fieldName} passed validation`);
                     }
+                } else {
+                    console.log(`COB: Checkbox array ${fieldName} not found in current step`);
                 }
             });
 
+            console.log(`COB: Step ${this.currentStep} validation result:`, isValid ? 'PASSED' : 'FAILED');
             return isValid;
         }
 
@@ -411,38 +442,66 @@
         getFormData() {
             const formData = {};
             
+            console.log('COB: Starting form data collection...');
+            
             $('#cob-onboarding-form').find('input, textarea, select').each((index, field) => {
-                const $field = $(field);
-                const name = $field.attr('name');
-                
-                if (!name) return;
+                try {
+                    const $field = $(field);
+                    const name = $field.attr('name');
+                    
+                    if (!name) {
+                        console.log('COB: Field has no name, skipping');
+                        return;
+                    }
 
-                // Remove array brackets from field names for consistent handling
-                const cleanName = name.replace(/\[\]$/, '');
-                const isArrayField = name.endsWith('[]');
+                    // Remove array brackets from field names for consistent handling
+                    const cleanName = name.replace(/\[\]$/, '');
+                    const isArrayField = name.endsWith('[]');
+                    
+                    console.log(`COB: Processing field: ${name}, cleanName: ${cleanName}, isArrayField: ${isArrayField}`);
 
-                if ($field.attr('type') === 'checkbox') {
+                    if ($field.attr('type') === 'checkbox') {
                     // Only create arrays for fields that are explicitly marked as arrays
                     if (isArrayField) {
-                        if (!formData[cleanName]) formData[cleanName] = [];
+                        console.log(`COB: Array checkbox field: ${cleanName}`);
+                        // Ensure the field is always initialized as an array
+                        if (!Array.isArray(formData[cleanName])) {
+                            formData[cleanName] = [];
+                            console.log(`COB: Initialized array for ${cleanName}`);
+                        }
                         if ($field.is(':checked')) {
-                            formData[cleanName].push($field.val());
+                            console.log(`COB: Adding ${$field.val()} to ${cleanName} array`);
+                            // Double-check it's an array before pushing
+                            if (Array.isArray(formData[cleanName])) {
+                                formData[cleanName].push($field.val());
+                            } else {
+                                console.error(`COB: ERROR - ${cleanName} is not an array! Type: ${typeof formData[cleanName]}`);
+                                // Force it to be an array and add the value
+                                formData[cleanName] = [$field.val()];
+                            }
                         }
                     } else {
                         // Single checkbox (boolean)
+                        console.log(`COB: Single checkbox field: ${cleanName}, checked: ${$field.is(':checked')}`);
                         formData[cleanName] = $field.is(':checked');
                     }
                 } else if ($field.attr('type') === 'radio') {
                     if ($field.is(':checked')) {
+                        console.log(`COB: Radio field: ${cleanName}, value: ${$field.val()}`);
                         formData[cleanName] = $field.val();
                     }
                 } else {
+                    console.log(`COB: Other field: ${cleanName}, value: ${$field.val()}`);
                     formData[cleanName] = $field.val();
+                }
+                } catch (error) {
+                    console.error(`COB: Error processing field ${name || 'unknown'}:`, error);
+                    console.error(`COB: Field details:`, { field, name, cleanName, isArrayField });
                 }
             });
 
             // Debug logging for form data
-            console.log('COB: Form data collected:', formData);
+            console.log('COB: Form data collection completed:', formData);
             
             return formData;
         }
@@ -791,7 +850,12 @@
         }
 
         submitForm() {
+            console.log('=== COB FORM SUBMISSION DEBUG START ===');
             console.log('COB: Form submission started');
+            console.log('COB: Current step:', this.currentStep);
+            console.log('COB: Total steps:', this.totalSteps);
+            console.log('COB: Session ID:', this.sessionId);
+            console.log('COB: Is submitting flag:', this.isSubmitting);
             
             if (this.isSubmitting) {
                 console.log('COB: Form already submitting, returning');
@@ -801,6 +865,7 @@
             console.log('COB: Validating current step...');
             if (!this.validateCurrentStep()) {
                 console.log('COB: Step validation failed');
+                console.log('COB: Validation errors found, stopping submission');
                 return;
             }
 
@@ -809,12 +874,25 @@
             $('#cob-submit-btn').addClass('cob-loading').prop('disabled', true).text('SUBMITTING...');
 
             const formData = this.getFormData();
+            console.log('COB: Raw form data collected:', formData);
             
             // Debug logging for problematic fields
             const debugFields = ['paid_media_history', 'current_paid_media', 'industry_entities', 'target_age_range'];
             debugFields.forEach(field => {
                 const value = formData[field];
                 console.log(`COB Debug - Field: ${field}, Value:`, value, 'Type:', typeof value, 'Is Array:', Array.isArray(value));
+            });
+
+            // Check if required fields are present
+            const requiredFields = ['project_name', 'business_name', 'primary_contact_name', 'primary_contact_email', 'primary_contact_number', 'main_approver', 'billing_email', 'preferred_contact_method', 'address_line_1', 'city', 'country', 'postal_code', 'has_website', 'has_google_analytics', 'has_search_console', 'reporting_frequency', 'main_objective', 'business_description', 'target_audience', 'main_competitors', 'unique_value_proposition', 'marketing_budget', 'start_timeline'];
+            console.log('COB: Checking required fields...');
+            requiredFields.forEach(field => {
+                const value = formData[field];
+                if (!value || value === '') {
+                    console.warn(`COB: Missing required field: ${field}`);
+                } else {
+                    console.log(`COB: Required field ${field}:`, value);
+                }
             });
 
             console.log('COB: AJAX request data:', {
@@ -836,9 +914,15 @@
                 }
             }).done((response) => {
                 console.log('COB: AJAX response received:', response);
+                console.log('COB: Response type:', typeof response);
+                console.log('COB: Response length:', response ? response.length : 'N/A');
+                
                 try {
                     const data = typeof response === 'string' ? JSON.parse(response) : response;
                     console.log('COB: Parsed response data:', data);
+                    console.log('COB: Response success flag:', data.success);
+                    console.log('COB: Response message:', data.message);
+                    console.log('COB: Response submission ID:', data.submission_id);
                     
                     if (data.success) {
                         console.log('COB: Form submission successful, submission ID:', data.submission_id);
@@ -846,18 +930,26 @@
                         this.showSuccessMessage(data.submission_id);
                     } else {
                         console.log('COB: Form submission failed:', data.message);
+                        console.log('COB: Full error response:', data);
                         alert(data.message || cob_ajax.messages.submit_error);
                     }
                 } catch (e) {
                     console.error('COB: Error parsing submit response:', e);
+                    console.error('COB: Raw response that failed to parse:', response);
                     alert(cob_ajax.messages.submit_error);
                 }
             }).fail((xhr, status, error) => {
                 console.error('COB: AJAX request failed:', {xhr, status, error});
+                console.error('COB: XHR status:', xhr.status);
+                console.error('COB: XHR status text:', xhr.statusText);
+                console.error('COB: XHR response text:', xhr.responseText);
+                console.error('COB: Error details:', error);
                 alert(cob_ajax.messages.submit_error);
             }).always(() => {
+                console.log('COB: AJAX request completed (always block)');
                 this.isSubmitting = false;
                 $('#cob-submit-btn').removeClass('cob-loading').prop('disabled', false).text('SUBMIT FORM');
+                console.log('=== COB FORM SUBMISSION DEBUG END ===');
             });
         }
 

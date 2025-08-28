@@ -261,6 +261,32 @@ body .page-content .cob-form-container,
     display: block !important;
 }
 
+/* Error Styling */
+.cob-error {
+    border-color: #ff4444 !important;
+    background-color: rgba(255, 68, 68, 0.1) !important;
+}
+
+.cob-error-message {
+    color: #ff4444;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background-color: rgba(255, 68, 68, 0.1);
+    border: 1px solid #ff4444;
+    border-radius: 8px;
+    font-family: Inter, sans-serif;
+}
+
+/* Required Field Indicator */
+.cob-label:after {
+    content: " *";
+    color: #ff4444;
+    font-weight: bold;
+}
+
 /* Form Content */
 .cob-form-content {
     flex: 1;
@@ -467,7 +493,13 @@ input[type="file"]:focus {
 
 /* Button Visibility Control */
 #cob-previous-btn {
-    display: none;
+    COB: Response length: 275
+    form-script.js?ver=1.0.0:922 COB: Parsed response data: {success: false, message: 'Failed to submit form. Please try again.', debug: 'WordPress database error: Processing the values fo…d values may be too long or contain invalid data.'}
+    form-script.js?ver=1.0.0:923 COB: Response success flag: false
+    form-script.js?ver=1.0.0:924 COB: Response message: Failed to submit form. Please try again.
+    form-script.js?ver=1.0.0:925 COB: Response submission ID: undefined
+    form-script.js?ver=1.0.0:932 COB: Form submission failed: Failed to submit form. Please try again.
+    form-script.js?ver=1.0.0:933 COB: Full error response: {success: false, message: 'Failed to submit form. Please try again.', debug: 'WordPress database error: Processing the values fo…d values may be too long or contain invalid data.'}    display: none;
 }
 
 #cob-continue-btn {

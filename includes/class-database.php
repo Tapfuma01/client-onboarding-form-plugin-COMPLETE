@@ -53,7 +53,7 @@ class COB_Database {
             technical_objective text NOT NULL,
             google_analytics_account varchar(10) NOT NULL,
             google_analytics_account_id varchar(255),
-            google_tag_manager_account varchar(10) NOT NULL,
+            google_tag_manager_account text NOT NULL,
             google_tag_manager_admin varchar(255),
             google_ads_account varchar(10) NOT NULL,
             google_ads_admin varchar(255),
@@ -80,7 +80,7 @@ class COB_Database {
             mission_2 text NOT NULL,
             brand_line_3 varchar(255) NOT NULL,
             mission_3 text NOT NULL,
-            brand_guidelines_upload varchar(10) NOT NULL,
+            brand_guidelines_upload text NOT NULL,
             brand_guidelines_files text,
             communication_tone varchar(20) NOT NULL,
             casual_tone_explanation text,
@@ -765,5 +765,25 @@ class COB_Database {
         $percentage = $total_required > 0 ? round(($completed / $total_required) * 70) + $step_bonus : 0;
         
         return min(100, max(0, $percentage));
+    }
+
+    /**
+     * Update database schema for specific field size issues
+     */
+    public static function update_field_sizes() {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cob_submissions';
+        
+        // Update google_tag_manager_account from varchar(10) to text
+        $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN google_tag_manager_account TEXT NOT NULL");
+        
+        // Update brand_guidelines_upload from varchar(10) to text
+        $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN brand_guidelines_upload TEXT NOT NULL");
+        
+        // Log the update
+        self::log_activity('schema_updated', null, 'system', 'Updated field sizes for google_tag_manager_account and brand_guidelines_upload');
+        
+        return true;
     }
 }

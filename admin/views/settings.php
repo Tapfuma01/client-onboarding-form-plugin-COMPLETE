@@ -210,5 +210,53 @@ if (!defined('ABSPATH')) {
                 </tr>
             </tbody>
         </table>
+        
+        <!-- Database Update Section -->
+        <div class="cob-database-update" style="margin-top: 20px;">
+            <h3><?php _e('Database Maintenance', 'client-onboarding-form'); ?></h3>
+            
+            <p><?php _e('If you encounter database errors with field sizes, click the button below to update the database schema:', 'client-onboarding-form'); ?></p>
+            
+            <button type="button" id="cob-update-database" class="button button-primary">
+                <?php _e('Update Database Schema', 'client-onboarding-form'); ?>
+            </button>
+            
+            <div id="cob-update-result" style="margin-top: 10px;"></div>
+        </div>
     </div>
 </div>
+
+<script>
+jQuery(document).ready(function($) {
+    // Database update button
+    $('#cob-update-database').on('click', function() {
+        var $button = $(this);
+        var $result = $('#cob-update-result');
+        
+        $button.prop('disabled', true).text('<?php _e('Updating...', 'client-onboarding-form'); ?>');
+        $result.html('');
+        
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'cob_update_database_schema',
+                nonce: '<?php echo wp_create_nonce('cob_admin_nonce'); ?>'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $result.html('<div class="notice notice-success"><p>' + response.data + '</p></div>');
+                } else {
+                    $result.html('<div class="notice notice-error"><p>Error: ' + response.data + '</p></div>');
+                }
+            },
+            error: function() {
+                $result.html('<div class="notice notice-error"><p>AJAX request failed. Please try again.</p></div>');
+            },
+            complete: function() {
+                $button.prop('disabled', false).text('<?php _e('Update Database Schema', 'client-onboarding-form'); ?>');
+            }
+        });
+    });
+});
+</script>

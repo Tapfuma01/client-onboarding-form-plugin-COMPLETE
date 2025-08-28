@@ -336,7 +336,7 @@ class ClientOnboardingForm {
         // Localize script with AJAX variables
         wp_localize_script('cob-form-script', 'cob_ajax', [
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('cob_admin_nonce'),
+            'nonce' => wp_create_nonce('cob_form_nonce'),
             'messages' => [
                 'draft_saved' => 'Draft saved successfully!',
                 'draft_load_failed' => 'Failed to load draft. Please try again.',

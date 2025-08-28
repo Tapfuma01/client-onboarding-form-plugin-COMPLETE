@@ -102,24 +102,8 @@ if (!$submission) {
             <h2><?php _e('STEP 2: TECHNICAL INFORMATION', 'client-onboarding-form'); ?></h2>
             <table class="form-table">
                 <tr>
-                    <th><?php _e('Has Website', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->has_website); ?></td>
-                </tr>
-                <tr>
-                    <th><?php _e('Has Google Analytics', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->has_google_analytics); ?></td>
-                </tr>
-                <tr>
-                    <th><?php _e('Has Search Console', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->has_search_console); ?></td>
-                </tr>
-                <tr>
-                    <th><?php _e('Reporting Frequency', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->reporting_frequency); ?></td>
-                </tr>
-                <tr>
                     <th><?php _e('Current CMS', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->current_content_management_system); ?></td>
+                    <td><?php echo esc_html($submission->current_cms); ?></td>
                 </tr>
                 <tr>
                     <th><?php _e('Website Hosting Company', 'client-onboarding-form'); ?></th>
@@ -149,32 +133,32 @@ if (!$submission) {
                     <th><?php _e('CMS Password', 'client-onboarding-form'); ?></th>
                     <td>[PROTECTED]</td>
                 </tr>
-                <?php if ($submission->crm_integration): ?>
+                <?php if ($submission->current_crm): ?>
                 <tr>
                     <th><?php _e('CRM Integration', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->crm_integration); ?></td>
+                    <td><?php echo esc_html($submission->current_crm); ?></td>
                 </tr>
                 <?php endif; ?>
                 <tr>
                     <th><?php _e('3rd Party Integrations', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->third_party_integrations_radio); ?></td>
+                    <td><?php echo esc_html($submission->third_party_integrations); ?></td>
                 </tr>
-                <?php if ($submission->third_party_integration_name): ?>
+                <?php if ($submission->third_party_name): ?>
                 <tr>
                     <th><?php _e('3rd Party Integration Name', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->third_party_integration_name); ?></td>
+                    <td><?php echo esc_html($submission->third_party_name); ?></td>
                 </tr>
                 <?php endif; ?>
-                <?php if ($submission->third_party_primary_contact_number): ?>
+                <?php if ($submission->third_party_contact_number): ?>
                 <tr>
                     <th><?php _e('3rd Party Contact Number', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->third_party_primary_contact_number); ?></td>
+                    <td><?php echo esc_html($submission->third_party_contact_number); ?></td>
                 </tr>
                 <?php endif; ?>
-                <?php if ($submission->third_party_primary_contact_email): ?>
+                <?php if ($submission->third_party_contact_email): ?>
                 <tr>
                     <th><?php _e('3rd Party Contact Email', 'client-onboarding-form'); ?></th>
-                    <td><a href="mailto:<?php echo esc_attr($submission->third_party_primary_contact_email); ?>"><?php echo esc_html($submission->third_party_primary_contact_email); ?></a></td>
+                    <td><a href="mailto:<?php echo esc_attr($submission->third_party_contact_email); ?>"><?php echo esc_html($submission->third_party_contact_email); ?></a></td>
                 </tr>
                 <?php endif; ?>
                 <?php if ($submission->booking_engine_name): ?>
@@ -218,7 +202,7 @@ if (!$submission) {
                 </tr>
                 <tr>
                     <th><?php _e('Google Analytics Account', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->google_analytics_radio); ?></td>
+                    <td><?php echo esc_html($submission->google_analytics_account); ?></td>
                 </tr>
                 <?php if ($submission->google_analytics_account): ?>
                 <tr>
@@ -228,7 +212,7 @@ if (!$submission) {
                 <?php endif; ?>
                 <tr>
                     <th><?php _e('Google Tag Manager Account', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->google_tag_manager_radio); ?></td>
+                    <td><?php echo esc_html($submission->google_tag_manager_account); ?></td>
                 </tr>
                 <?php if ($submission->google_tag_manager_account): ?>
                 <tr>
@@ -238,7 +222,7 @@ if (!$submission) {
                 <?php endif; ?>
                 <tr>
                     <th><?php _e('Google Ads Account', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->google_ads_radio); ?></td>
+                    <td><?php echo esc_html($submission->google_ads_account); ?></td>
                 </tr>
                 <?php if ($submission->google_ads_account): ?>
                 <tr>
@@ -254,7 +238,7 @@ if (!$submission) {
                 <?php endif; ?>
                 <tr>
                     <th><?php _e('Meta Business Manager Account', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->meta_business_manager_radio); ?></td>
+                    <td><?php echo esc_html($submission->meta_business_manager_account); ?></td>
                 </tr>
                 <?php if ($submission->meta_business_manager_account): ?>
                 <tr>
@@ -272,20 +256,20 @@ if (!$submission) {
                     <th><?php _e('Paid Media History', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->paid_media_history); ?></td>
                 </tr>
-                <?php if ($submission->other_paid_media_specify): ?>
+                <?php if ($submission->paid_media_history_other): ?>
                 <tr>
                     <th><?php _e('Other Paid Media Specify', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->other_paid_media_specify); ?></td>
+                    <td><?php echo esc_html($submission->paid_media_history_other); ?></td>
                 </tr>
                 <?php endif; ?>
                 <tr>
                     <th><?php _e('Current Paid Media', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->current_paid_media); ?></td>
                 </tr>
-                <?php if ($submission->other_current_paid_media_specify): ?>
+                <?php if ($submission->current_paid_media_other): ?>
                 <tr>
                     <th><?php _e('Other Current Paid Media Specify', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->other_current_paid_media_specify); ?></td>
+                    <td><?php echo esc_html($submission->current_paid_media_other); ?></td>
                 </tr>
                 <?php endif; ?>
             </table>
@@ -384,7 +368,7 @@ if (!$submission) {
             <table class="form-table">
                 <tr>
                     <th><?php _e('Brand Guidelines Upload', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->brand_guidelines_upload_radio); ?></td>
+                    <td><?php echo esc_html($submission->brand_guidelines_upload); ?></td>
                 </tr>
                 <?php if ($submission->brand_guidelines_upload): ?>
                 <tr>
@@ -399,7 +383,7 @@ if (!$submission) {
             <table class="form-table">
                 <tr>
                     <th><?php _e('Communication Tone', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->communication_tone_radio); ?></td>
+                    <td><?php echo esc_html($submission->communication_tone); ?></td>
                 </tr>
                 <?php if ($submission->casual_tone_explanation): ?>
                 <tr>
@@ -420,7 +404,7 @@ if (!$submission) {
             <table class="form-table">
                 <tr>
                     <th><?php _e('Brand Accounts', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->brand_accounts_radio); ?></td>
+                    <td><?php echo esc_html($submission->brand_accounts); ?></td>
                 </tr>
                 <?php if ($submission->facebook_page): ?>
                 <tr>
@@ -461,24 +445,20 @@ if (!$submission) {
             <h3><?php _e('Industry & Competitors', 'client-onboarding-form'); ?></h3>
             <table class="form-table">
                 <tr>
-                    <th><?php _e('Industry', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->industry); ?></td>
-                </tr>
-                <tr>
                     <th><?php _e('Industry Entities', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->industry_entities); ?></td>
                 </tr>
                 <tr>
                     <th><?php _e('Market Insights', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->market_insights_radio); ?></td>
+                    <td><?php echo esc_html($submission->market_insights); ?></td>
                 </tr>
                 <tr>
                     <th><?php _e('Content/Social Media', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->content_social_media_radio); ?></td>
+                    <td><?php echo esc_html($submission->content_social_media); ?></td>
                 </tr>
                 <tr>
                     <th><?php _e('Business Focus Elements', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->business_focus_elements_radio); ?></td>
+                    <td><?php echo esc_html($submission->business_focus_elements); ?></td>
                 </tr>
             </table>
 
@@ -508,48 +488,23 @@ if (!$submission) {
                     <td><a href="<?php echo esc_url($submission->facebook_page_url); ?>" target="_blank"><?php echo esc_html($submission->facebook_page_url); ?></a></td>
                 </tr>
                 <?php endif; ?>
-                <?php if ($submission->instagram_account_url): ?>
+                <?php if ($submission->instagram_page_url): ?>
                 <tr>
-                    <th><?php _e('Instagram Account URL', 'client-onboarding-form'); ?></th>
-                    <td><a href="<?php echo esc_url($submission->instagram_account_url); ?>" target="_blank"><?php echo esc_html($submission->instagram_account_url); ?></a></td>
+                    <th><?php _e('Instagram Page URL', 'client-onboarding-form'); ?></th>
+                    <td><a href="<?php echo esc_url($submission->instagram_page_url); ?>" target="_blank"><?php echo esc_html($submission->instagram_page_url); ?></a></td>
                 </tr>
                 <?php endif; ?>
-                <?php if ($submission->linkedin_page_url): ?>
-                <tr>
-                    <th><?php _e('LinkedIn Page URL', 'client-onboarding-form'); ?></th>
-                    <td><a href="<?php echo esc_url($submission->linkedin_page_url); ?>" target="_blank"><?php echo esc_html($submission->linkedin_page_url); ?></a></td>
-                </tr>
-                <?php endif; ?>
-                <?php if ($submission->tiktok_account_url): ?>
-                <tr>
-                    <th><?php _e('TikTok Account URL', 'client-onboarding-form'); ?></th>
-                    <td><a href="<?php echo esc_url($submission->tiktok_account_url); ?>" target="_blank"><?php echo esc_html($submission->tiktok_account_url); ?></a></td>
-                </tr>
-                <?php endif; ?>
-                <?php if ($submission->pinterest_page_url): ?>
-                <tr>
-                    <th><?php _e('Pinterest Page URL', 'client-onboarding-form'); ?></th>
-                    <td><a href="<?php echo esc_url($submission->pinterest_page_url); ?>" target="_blank"><?php echo esc_html($submission->pinterest_page_url); ?></a></td>
-                </tr>
-                <?php endif; ?>
+
+
+
                 <?php if ($submission->twitter_accounts_url): ?>
                 <tr>
                     <th><?php _e('Twitter Account URL', 'client-onboarding-form'); ?></th>
                     <td><a href="<?php echo esc_url($submission->twitter_accounts_url); ?>" target="_blank"><?php echo esc_html($submission->twitter_accounts_url); ?></a></td>
                 </tr>
                 <?php endif; ?>
-                <?php if ($submission->youtube_channel_url): ?>
-                <tr>
-                    <th><?php _e('YouTube Channel URL', 'client-onboarding-form'); ?></th>
-                    <td><a href="<?php echo esc_url($submission->youtube_channel_url); ?>" target="_blank"><?php echo esc_html($submission->youtube_channel_url); ?></a></td>
-                </tr>
-                <?php endif; ?>
-                <?php if ($submission->other_social_media_platforms): ?>
-                <tr>
-                    <th><?php _e('Other Social Media Platforms', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->other_social_media_platforms); ?></td>
-                </tr>
-                <?php endif; ?>
+
+
             </table>
 
             <!-- Target Audience -->
@@ -567,18 +522,8 @@ if (!$submission) {
                     <th><?php _e('Target Age Range', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->target_age_range); ?></td>
                 </tr>
-                <tr>
-                    <th><?php _e('Gender Purchase Decision', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->gender_purchase_decision); ?></td>
-                </tr>
-                <tr>
-                    <th><?php _e('Lead Source Markets', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->lead_source_markets); ?></td>
-                </tr>
-                <tr>
-                    <th><?php _e('Lead Times', 'client-onboarding-form'); ?></th>
-                    <td><?php echo esc_html($submission->lead_times); ?></td>
-                </tr>
+
+
                 <tr>
                     <th><?php _e('Problems Solved', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->problems_solved); ?></td>
