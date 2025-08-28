@@ -56,6 +56,7 @@
             $('#cob-continue-btn').on('click', () => this.nextStep());
             $('#cob-previous-btn').on('click', () => this.previousStep());
             $('#cob-submit-btn').on('click', (e) => {
+                console.log('COB: Submit button clicked!');
                 e.preventDefault();
                 this.submitForm();
             });
@@ -93,6 +94,8 @@
             $('input[type="radio"]').on('change', (e) => {
                 const name = $(e.target).attr('name');
                 const value = $(e.target).val();
+                
+                console.log(`COB: Radio button changed - ${name}: ${value}`);
                 this.toggleConditionalFields(name, value);
             });
 
@@ -102,10 +105,15 @@
                 const isChecked = $(e.target).is(':checked');
                 const value = $(e.target).val();
                 
+                console.log(`COB: Checkbox changed - ${name}: ${value}, checked: ${isChecked}`);
+                
                 // Check if this checkbox affects conditional fields
                 if (value === 'other') {
                     this.toggleConditionalFields(name, isChecked ? 'other' : '');
                 }
+                
+                // Handle checkbox arrays (multiple selections)
+                this.handleCheckboxArrayChanges(name);
             });
 
             // Initialize conditional fields on page load
@@ -113,23 +121,29 @@
         }
 
         toggleConditionalFields(fieldName, fieldValue) {
+            console.log(`COB: Toggling conditional fields for ${fieldName} = ${fieldValue}`);
+            
             $(`.cob-conditional-fields[data-show-when="${fieldName}"]`).each((index, element) => {
                 const $element = $(element);
                 const showValue = $element.attr('data-show-value');
                 
                 if (fieldValue === showValue) {
-                    $element.show();
+                    $element.removeClass('cob-conditional-active').addClass('cob-conditional-active');
                     // Make required fields actually required when shown
                     $element.find('[required]').prop('required', true);
+                    console.log(`COB: Showing conditional field for ${fieldName} = ${fieldValue}`);
                 } else {
-                    $element.hide();
+                    $element.removeClass('cob-conditional-active');
                     // Remove required attribute when hidden to prevent validation errors
                     $element.find('[required]').prop('required', false);
+                    console.log(`COB: Hiding conditional field for ${fieldName} = ${fieldValue}`);
                 }
             });
         }
 
         initializeConditionalFields() {
+            console.log('COB: Initializing conditional fields');
+            
             // Set initial state of conditional fields based on current form values
             $('input[type="radio"]:checked').each((index, element) => {
                 const name = $(element).attr('name');
@@ -146,6 +160,39 @@
                     this.toggleConditionalFields(name, 'other');
                 }
             });
+            
+            console.log('COB: Conditional fields initialization completed');
+        }
+
+        handleCheckboxArrayChanges(fieldName) {
+            // Get all checked checkboxes for this field name
+            const checkedValues = $(`input[name="${fieldName}"]:checked`).map(function() {
+                return this.value;
+            }).get();
+            
+            console.log(`COB: Checkbox array ${fieldName} values:`, checkedValues);
+            
+            // Check if "other" is selected
+            if (checkedValues.includes('other')) {
+                this.toggleConditionalFields(fieldName, 'other');
+            } else {
+                // If "other" is not selected, hide the conditional field
+                this.toggleConditionalFields(fieldName, '');
+            }
+        }
+
+        // Debug method - can be called from browser console
+        debugButtonVisibility() {
+            console.log('=== COB BUTTON VISIBILITY DEBUG ===');
+            console.log('Current Step:', this.currentStep);
+            console.log('Total Steps:', this.totalSteps);
+            console.log('Is First Step:', this.currentStep === 1);
+            console.log('Is Last Step:', this.currentStep === 4);
+            console.log('Submit Button Element:', $('#cob-submit-btn').length);
+            console.log('Submit Button Classes:', $('#cob-submit-btn').attr('class'));
+            console.log('Submit Button Display:', $('#cob-submit-btn').css('display'));
+            console.log('Submit Button Computed Display:', window.getComputedStyle($('#cob-submit-btn')[0]).display);
+            console.log('=== END DEBUG ===');
         }
 
         generateSessionId() {
@@ -208,6 +255,11 @@
             
             // Update button visibility based on step
             this.updateButtonVisibility();
+            
+            // Re-initialize conditional fields for the current step
+            setTimeout(() => {
+                this.initializeConditionalFields();
+            }, 100);
         }
 
         updateMobileTabs() {
@@ -232,11 +284,13 @@
             const isLastStep = this.currentStep === 4;
             
             console.log('COB: Updating button visibility - Step:', this.currentStep, 'First:', isFirstStep, 'Last:', isLastStep);
+            console.log('COB: Current step element:', $(`.cob-step-content[data-step="${this.currentStep}"]`).length);
+            console.log('COB: Submit button element:', $('#cob-submit-btn').length);
             
             // Remove all visibility classes first
-            $('#cob-previous-btn').removeClass('cob-visible');
-            $('#cob-continue-btn').removeClass('cob-hidden');
-            $('#cob-submit-btn').removeClass('cob-visible');
+            $('#cob-previous-btn').removeClass('cob-visible cob-hidden');
+            $('#cob-continue-btn').removeClass('cob-visible cob-hidden');
+            $('#cob-submit-btn').removeClass('cob-visible cob-hidden');
             
             // Previous button - show on all steps except first
             if (isFirstStep) {
@@ -265,19 +319,19 @@
                 console.log('COB: Submit button hidden (not last step)');
             }
             
-            // Also force with CSS to override any inline styles
+            // Force display with CSS classes (more reliable than inline styles)
             if (isFirstStep) {
-                $('#cob-previous-btn').css('display', 'none !important');
+                $('#cob-previous-btn').removeClass('cob-visible').addClass('cob-hidden');
             } else {
-                $('#cob-previous-btn').css('display', 'inline-block !important');
+                $('#cob-previous-btn').removeClass('cob-hidden').addClass('cob-visible');
             }
             
             if (isLastStep) {
-                $('#cob-continue-btn').css('display', 'none !important');
-                $('#cob-submit-btn').css('display', 'inline-block !important');
+                $('#cob-continue-btn').removeClass('cob-visible').addClass('cob-hidden');
+                $('#cob-submit-btn').removeClass('cob-hidden').addClass('cob-visible');
             } else {
-                $('#cob-continue-btn').css('display', 'inline-block !important');
-                $('#cob-submit-btn').css('display', 'none !important');
+                $('#cob-continue-btn').removeClass('cob-hidden').addClass('cob-visible');
+                $('#cob-submit-btn').removeClass('cob-visible').addClass('cob-hidden');
             }
         }
 
@@ -365,11 +419,18 @@
 
                 // Remove array brackets from field names for consistent handling
                 const cleanName = name.replace(/\[\]$/, '');
+                const isArrayField = name.endsWith('[]');
 
                 if ($field.attr('type') === 'checkbox') {
-                    if (!formData[cleanName]) formData[cleanName] = [];
-                    if ($field.is(':checked')) {
-                        formData[cleanName].push($field.val());
+                    // Only create arrays for fields that are explicitly marked as arrays
+                    if (isArrayField) {
+                        if (!formData[cleanName]) formData[cleanName] = [];
+                        if ($field.is(':checked')) {
+                            formData[cleanName].push($field.val());
+                        }
+                    } else {
+                        // Single checkbox (boolean)
+                        formData[cleanName] = $field.is(':checked');
                     }
                 } else if ($field.attr('type') === 'radio') {
                     if ($field.is(':checked')) {
@@ -380,6 +441,9 @@
                 }
             });
 
+            // Debug logging for form data
+            console.log('COB: Form data collected:', formData);
+            
             return formData;
         }
 
@@ -727,12 +791,20 @@
         }
 
         submitForm() {
-            if (this.isSubmitting) return;
-
-            if (!this.validateCurrentStep()) {
+            console.log('COB: Form submission started');
+            
+            if (this.isSubmitting) {
+                console.log('COB: Form already submitting, returning');
                 return;
             }
 
+            console.log('COB: Validating current step...');
+            if (!this.validateCurrentStep()) {
+                console.log('COB: Step validation failed');
+                return;
+            }
+
+            console.log('COB: Step validation passed, proceeding with submission');
             this.isSubmitting = true;
             $('#cob-submit-btn').addClass('cob-loading').prop('disabled', true).text('SUBMITTING...');
 
@@ -745,6 +817,14 @@
                 console.log(`COB Debug - Field: ${field}, Value:`, value, 'Type:', typeof value, 'Is Array:', Array.isArray(value));
             });
 
+            console.log('COB: AJAX request data:', {
+                url: cob_ajax.ajax_url,
+                action: 'cob_submit_form',
+                nonce: cob_ajax.nonce,
+                session_id: this.sessionId,
+                form_data: formData
+            });
+
             $.ajax({
                 url: cob_ajax.ajax_url,
                 type: 'POST',
@@ -755,20 +835,25 @@
                     form_data: formData
                 }
             }).done((response) => {
+                console.log('COB: AJAX response received:', response);
                 try {
                     const data = typeof response === 'string' ? JSON.parse(response) : response;
+                    console.log('COB: Parsed response data:', data);
                     
                     if (data.success) {
+                        console.log('COB: Form submission successful, submission ID:', data.submission_id);
                         this.stopAutoSave();
                         this.showSuccessMessage(data.submission_id);
                     } else {
+                        console.log('COB: Form submission failed:', data.message);
                         alert(data.message || cob_ajax.messages.submit_error);
                     }
                 } catch (e) {
-                    console.error('Error parsing submit response:', e);
+                    console.error('COB: Error parsing submit response:', e);
                     alert(cob_ajax.messages.submit_error);
                 }
-            }).fail(() => {
+            }).fail((xhr, status, error) => {
+                console.error('COB: AJAX request failed:', {xhr, status, error});
                 alert(cob_ajax.messages.submit_error);
             }).always(() => {
                 this.isSubmitting = false;

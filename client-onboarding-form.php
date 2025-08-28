@@ -341,7 +341,8 @@ class ClientOnboardingForm {
                 'draft_saved' => 'Draft saved successfully!',
                 'draft_load_failed' => 'Failed to load draft. Please try again.',
                 'form_submitted' => 'Form submitted successfully!',
-                'form_submit_failed' => 'Failed to submit form. Please try again.'
+                'form_submit_failed' => 'Failed to submit form. Please try again.',
+                'submit_error' => 'Failed to submit form. Please try again.'
             ]
         ]);
     }

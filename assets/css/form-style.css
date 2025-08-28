@@ -251,6 +251,16 @@ body .page-content .cob-form-container,
     display: none !important;
 }
 
+/* Conditional Fields - Hidden by default */
+.cob-conditional-fields {
+    display: none !important;
+}
+
+/* Conditional Fields - Show when active */
+.cob-conditional-fields.cob-conditional-active {
+    display: block !important;
+}
+
 /* Form Content */
 .cob-form-content {
     flex: 1;
@@ -457,15 +467,15 @@ input[type="file"]:focus {
 
 /* Button Visibility Control */
 #cob-previous-btn {
-    display: none !important;
+    display: none;
 }
 
 #cob-continue-btn {
-    display: inline-block !important;
+    display: inline-block;
 }
 
 #cob-submit-btn {
-    display: none !important;
+    display: none;
 }
 
 /* Enhanced Navigation Styling */
