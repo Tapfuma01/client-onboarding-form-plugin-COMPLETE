@@ -142,7 +142,7 @@
                 const showValue = $element.attr('data-show-value');
                 
                 if (fieldValue === showValue) {
-                    $element.removeClass('cob-conditional-active').addClass('cob-conditional-active');
+                    $element.addClass('cob-conditional-active');
                     // Make required fields actually required when shown
                     $element.find('[required]').prop('required', true);
                     console.log(`COB: Showing conditional field for ${fieldName} = ${fieldValue}`);
@@ -453,6 +453,7 @@
             const formData = {};
             
             console.log('COB: Starting form data collection...');
+            console.log('COB: Total form elements found:', $('#cob-onboarding-form').find('input, textarea, select').length);
             
             $('#cob-onboarding-form').find('input, textarea, select').each((index, field) => {
                 try {
@@ -521,6 +522,32 @@
 
             // Debug logging for form data
             console.log('COB: Form data collection completed:', formData);
+            
+            // Additional debugging - check specific required fields
+            const requiredFields = [
+                'project_name', 'business_name', 'current_website', 'primary_contact_name', 
+                'primary_contact_email', 'primary_contact_number', 'main_approver',
+                'billing_email', 'preferred_contact_method', 'address_line_1',
+                'city', 'country', 'postal_code', 'has_website', 'has_google_analytics', 
+                'has_search_console', 'reporting_frequency', 'main_objective', 
+                'business_description', 'target_audience', 'main_competitors',
+                'unique_value_proposition', 'marketing_budget', 'start_timeline', 
+                'brand_guidelines_upload_radio', 'communication_tone_radio', 
+                'brand_accounts_radio', 'industry_entities', 'market_insights_radio', 
+                'content_social_media_radio', 'business_focus_elements_radio',
+                'target_age_range', 'gender_purchase_decision', 'lead_source_markets', 
+                'lead_times', 'marketing_goals', 'industry', 'paid_media_history', 'current_paid_media'
+            ];
+            
+            console.log('COB: Checking required fields...');
+            requiredFields.forEach(field => {
+                const value = formData[field];
+                if (value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
+                    console.warn(`COB: Missing required field: ${field}`);
+                } else {
+                    console.log(`COB: Field ${field}:`, value);
+                }
+            });
             
             return formData;
         }

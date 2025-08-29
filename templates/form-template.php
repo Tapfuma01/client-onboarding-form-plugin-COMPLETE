@@ -837,8 +837,29 @@ if (!defined('ABSPATH')) {
 
                             <!-- Industry Entities -->
                             <div class="cob-form-group cob-form-group-full">
-                                <label class="cob-label">INDUSTRY ENTITIES</label>
-                                <textarea name="industry_entities" class="cob-textarea" placeholder="List relevant industry organizations or entities"></textarea>
+                                <label class="cob-label">INDUSTRY ENTITIES *</label>
+                                <div class="cob-checkbox-group">
+                                    <label class="cob-checkbox-option">
+                                        <input type="checkbox" name="industry_entities[]" value="trade_associations" class="cob-checkbox">
+                                        <span class="cob-checkbox-label">Trade Associations</span>
+                                    </label>
+                                    <label class="cob-checkbox-option">
+                                        <input type="checkbox" name="industry_entities[]" value="professional_bodies" class="cob-checkbox">
+                                        <span class="cob-checkbox-label">Professional Bodies</span>
+                                    </label>
+                                    <label class="cob-checkbox-option">
+                                        <input type="checkbox" name="industry_entities[]" value="regulatory_agencies" class="cob-checkbox">
+                                        <span class="cob-checkbox-label">Regulatory Agencies</span>
+                                    </label>
+                                    <label class="cob-checkbox-option">
+                                        <input type="checkbox" name="industry_entities[]" value="industry_forums" class="cob-checkbox">
+                                        <span class="cob-checkbox-label">Industry Forums</span>
+                                    </label>
+                                    <label class="cob-checkbox-option">
+                                        <input type="checkbox" name="industry_entities[]" value="none" class="cob-checkbox">
+                                        <span class="cob-checkbox-label">None</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <!-- Market Insights -->
@@ -914,6 +935,29 @@ if (!defined('ABSPATH')) {
                             <div class="cob-form-group">
                                 <label class="cob-label">LEAD TIMES *</label>
                                 <input type="text" name="lead_times" class="cob-input" placeholder="e.g., 1-3 months, 3-6 months" required>
+                            </div>
+
+                            <!-- Gender Purchase Decision -->
+                            <div class="cob-form-group">
+                                <label class="cob-label">GENDER PURCHASE DECISION *</label>
+                                <div class="cob-radio-group">
+                                    <label class="cob-radio-option">
+                                        <input type="radio" name="gender_purchase_decision" value="male" class="cob-radio" required>
+                                        <span class="cob-radio-label">Male</span>
+                                    </label>
+                                    <label class="cob-radio-option">
+                                        <input type="radio" name="gender_purchase_decision" value="female" class="cob-radio" required>
+                                        <span class="cob-radio-label">Female</span>
+                                    </label>
+                                    <label class="cob-radio-option">
+                                        <input type="radio" name="gender_purchase_decision" value="both" class="cob-radio" required>
+                                        <span class="cob-radio-label">Both</span>
+                                    </label>
+                                    <label class="cob-radio-option">
+                                        <input type="radio" name="gender_purchase_decision" value="other" class="cob-radio" required>
+                                        <span class="cob-radio-label">Other/Not Applicable</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <!-- Problems & Challenges -->
@@ -1381,9 +1425,10 @@ if (!defined('ABSPATH')) {
                 </form>
             </main>
 
-            <!-- Sticky Save Status - Right Side -->
+            <!-- Sticky Save Status - Fixed Bottom Right -->
             <div class="cob-sticky-save-status" id="cob-save-status">
                 <div class="cob-save-status-content">
+                    <span class="cob-save-icon">💾</span>
                     <span id="cob-save-text">Last saved: Just now</span>
                 </div>
             </div>
