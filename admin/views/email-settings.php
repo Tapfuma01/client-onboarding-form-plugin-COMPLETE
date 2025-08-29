@@ -370,6 +370,17 @@ $merge_tags = COB_Email_Notifications::get_available_merge_tags();
             </div>
         </div>
 
+        <div class="cob-default-settings-section" style="margin: 20px 0; padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+            <h3><?php _e('Quick Setup', 'client-onboarding-form'); ?></h3>
+            <p><?php _e('Need to quickly set up default email settings? Click the button below to configure basic email notifications.', 'client-onboarding-form'); ?></p>
+            <form method="post" style="display: inline;">
+                <?php wp_nonce_field('cob_set_defaults_nonce'); ?>
+                <button type="submit" name="cob_set_defaults" class="button button-secondary">
+                    <?php _e('Set Default Email Settings', 'client-onboarding-form'); ?>
+                </button>
+            </form>
+        </div>
+
         <?php submit_button(__('Save Email Settings', 'client-onboarding-form')); ?>
     </form>
 </div>

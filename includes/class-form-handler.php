@@ -455,6 +455,9 @@ class COB_Form_Handler {
                 error_log('COB: Triggering email notifications...');
                 do_action('cob_after_submission', $submission_id, $submission_data);
 
+                // Test admin notification
+                $this->test_admin_notification($submission_id, $submission_data);
+
                 COB_Database::log_activity('submission_completed', $submission_id, $session_id, 
                     'Form submitted successfully');
 
@@ -690,6 +693,33 @@ class COB_Form_Handler {
         
         // For any other data types, convert to string
         return (string) $value;
+    }
+
+    private function test_admin_notification($submission_id, $submission_data) {
+        // This is a placeholder for testing admin notifications.
+        // In a real scenario, you would trigger an email or other admin notification here.
+        // For now, we'll just log that it was called.
+        error_log('COB: Admin notification test triggered for submission ID: ' . $submission_id);
+        error_log('COB: Submission data for admin notification: ' . print_r($submission_data, true));
+
+        // Example: Send an email to the admin
+        // $admin_email = get_option('admin_email'); // Get admin email from settings
+        // if ($admin_email) {
+        //     $subject = 'New Client Onboarding Submission';
+        //     $message = 'A new client onboarding submission has been received. Submission ID: ' . $submission_id . "\n\n";
+        //     $message .= 'Business Name: ' . ($submission_data['business_name'] ?? 'N/A') . "\n";
+        //     $message .= 'Project Name: ' . ($submission_data['project_name'] ?? 'N/A') . "\n";
+        //     $message .= 'Primary Contact: ' . ($submission_data['primary_contact_name'] ?? 'N/A') . "\n";
+        //     $message .= 'Email: ' . ($submission_data['primary_contact_email'] ?? 'N/A') . "\n";
+        //     $message .= 'Website: ' . ($submission_data['current_website'] ?? 'N/A') . "\n";
+        //     $message .= 'Status: ' . ($submission_data['status'] ?? 'N/A') . "\n";
+        //     $message .= 'Submitted at: ' . ($submission_data['submitted_at'] ?? 'N/A') . "\n";
+
+        //     wp_mail($admin_email, $subject, $message);
+        //     error_log('COB: Admin email sent successfully to ' . $admin_email);
+        // } else {
+        //     error_log('COB: Admin email not configured. Cannot send test notification.');
+        // }
     }
 
 }

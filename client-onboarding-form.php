@@ -105,6 +105,25 @@ class ClientOnboardingForm {
             COB_Database::update_database_schema();
         }
         
+        // Set default email settings if they don't exist
+        $existing_settings = get_option('cob_settings', []);
+        $default_settings = [
+            'enable_admin_notification' => true,
+            'admin_email' => get_option('admin_email'),
+            'admin_email_subject' => 'New Client Onboarding Submission - {business_name}',
+            'enable_client_confirmation' => true,
+            'client_email_subject' => 'Thank you for your submission - {business_name}',
+        ];
+        
+        // Only set defaults if settings don't exist
+        if (empty($existing_settings)) {
+            update_option('cob_settings', $default_settings);
+        } else {
+            // Merge existing settings with defaults, preserving existing values
+            $merged_settings = array_merge($default_settings, $existing_settings);
+            update_option('cob_settings', $merged_settings);
+        }
+        
         // Schedule cron jobs
         if (!wp_next_scheduled('cob_database_maintenance')) {
             wp_schedule_event(time(), 'daily', 'cob_database_maintenance');

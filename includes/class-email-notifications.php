@@ -28,6 +28,34 @@ class COB_Email_Notifications {
         add_action('wp_ajax_cob_send_test_notification', [$this, 'send_test_notification']);
         add_action('wp_ajax_cob_test_notifications', [$this, 'test_notifications']);
         add_action('wp_ajax_cob_test_notification', [$this, 'test_notification']);
+
+        // Ensure default settings are set
+        $this->ensure_default_settings();
+    }
+
+    /**
+     * Ensure default settings are set
+     */
+    private function ensure_default_settings() {
+        $existing_settings = get_option('cob_settings', []);
+        $default_settings = [
+            'enable_admin_notification' => true,
+            'admin_email' => get_option('admin_email'),
+            'admin_email_subject' => 'New Client Onboarding Submission - {business_name}',
+            'enable_client_confirmation' => true,
+            'client_email_subject' => 'Thank you for your submission - {business_name}',
+        ];
+        
+        // Only set defaults if settings don't exist
+        if (empty($existing_settings)) {
+            update_option('cob_settings', $default_settings);
+            $this->settings = $default_settings;
+        } else {
+            // Merge existing settings with defaults, preserving existing values
+            $merged_settings = array_merge($default_settings, $existing_settings);
+            update_option('cob_settings', $merged_settings);
+            $this->settings = $merged_settings;
+        }
     }
 
     /**
@@ -510,7 +538,7 @@ class COB_Email_Notifications {
      */
     private function get_client_email_subject() {
         return $this->settings['client_email_subject'] ?? 
-               'Thank you for your submission - {project_name}';
+               'Thank you for your submission - {business_name}';
     }
 
     /**

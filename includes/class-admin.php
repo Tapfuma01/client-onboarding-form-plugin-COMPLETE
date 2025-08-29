@@ -19,6 +19,8 @@ class COB_Admin {
         add_action('wp_ajax_cob_get_draft_details', [$this, 'handle_get_draft_details']);
         add_action('wp_ajax_cob_delete_draft', [$this, 'handle_delete_draft']);
         add_action('wp_ajax_cob_generate_share_token', [$this, 'handle_generate_share_token']);
+        add_action('wp_ajax_cob_send_test_notification', [$this, 'handle_send_test_notification']);
+        add_action('wp_ajax_cob_test_admin_notification', [$this, 'handle_test_admin_notification']);
         
         // Add admin-post handler for email settings
         add_action('admin_post_cob_save_email_settings', [$this, 'handle_save_email_settings']);
