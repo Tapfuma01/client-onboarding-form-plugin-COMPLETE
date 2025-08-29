@@ -553,14 +553,20 @@ if (!defined('ABSPATH')) {
                                         <span class="cob-checkbox-label">Improve Customer Retention</span>
                                     </label>
                                     <label class="cob-checkbox-option">
-                                        <input type="checkbox" name="marketing_goals[]" value="expand_market_reach" class="cob-checkbox">
-                                        <span class="cob-checkbox-label">Expand Market Reach</span>
+                                        <input type="checkbox" name="marketing_goals[]" value="expand_to_new_markets" class="cob-checkbox">
+                                        <span class="cob-checkbox-label">Expand to New Markets</span>
                                     </label>
                                     <label class="cob-checkbox-option">
                                         <input type="checkbox" name="marketing_goals[]" value="other" class="cob-checkbox">
                                         <span class="cob-checkbox-label">Other</span>
                                     </label>
                                 </div>
+                            </div>
+
+                            <!-- Conditional field for Marketing Goals Other -->
+                            <div class="cob-form-group cob-conditional-fields" data-show-when="marketing_goals" data-show-value="other">
+                                <label class="cob-label">IF OTHER, PLEASE SPECIFY</label>
+                                <input type="text" name="marketing_goals_other" class="cob-input" placeholder="Specify other marketing goals">
                             </div>
 
                             <!-- Industry -->
@@ -1095,7 +1101,17 @@ if (!defined('ABSPATH')) {
                                         <input type="checkbox" name="marketing_goals[]" value="expand_to_new_markets" class="cob-checkbox">
                                         <span class="cob-checkbox-label">Expand to New Markets</span>
                                     </label>
+                                    <label class="cob-checkbox-option">
+                                        <input type="checkbox" name="marketing_goals[]" value="other" class="cob-checkbox">
+                                        <span class="cob-checkbox-label">Other</span>
+                                    </label>
                                 </div>
+                            </div>
+
+                            <!-- Conditional field for Marketing Goals Other -->
+                            <div class="cob-form-group cob-conditional-fields" data-show-when="marketing_goals" data-show-value="other">
+                                <label class="cob-label">IF OTHER, PLEASE SPECIFY</label>
+                                <input type="text" name="marketing_goals_other" class="cob-input" placeholder="Specify other marketing goals">
                             </div>
 
                             <!-- Industry Information -->

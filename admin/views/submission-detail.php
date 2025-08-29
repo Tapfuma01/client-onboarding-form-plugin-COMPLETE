@@ -497,6 +497,18 @@ if (!$submission) {
                     <th><?php _e('Industry Entities', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->industry_entities); ?></td>
                 </tr>
+                <?php if ($submission->industry_entities_other): ?>
+                <tr>
+                    <th><?php _e('Industry Entities Other', 'client-onboarding-form'); ?></th>
+                    <td><?php echo esc_html($submission->industry_entities_other); ?></td>
+                </tr>
+                <?php endif; ?>
+                <?php if ($submission->industry_status): ?>
+                <tr>
+                    <th><?php _e('Industry Status', 'client-onboarding-form'); ?></th>
+                    <td><?php echo esc_html($submission->industry_status); ?></td>
+                </tr>
+                <?php endif; ?>
                 <tr>
                     <th><?php _e('Market Insights', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->market_insights); ?></td>
@@ -559,6 +571,26 @@ if (!$submission) {
             <!-- Target Audience -->
             <h3><?php _e('Target Audience', 'client-onboarding-form'); ?></h3>
             <table class="form-table">
+                <tr>
+                    <th><?php _e('Marketing Goals', 'client-onboarding-form'); ?></th>
+                    <td><?php echo esc_html($submission->marketing_goals); ?></td>
+                </tr>
+                <?php if ($submission->marketing_goals_other): ?>
+                <tr>
+                    <th><?php _e('Marketing Goals Other', 'client-onboarding-form'); ?></th>
+                    <td><?php echo esc_html($submission->marketing_goals_other); ?></td>
+                </tr>
+                <?php endif; ?>
+                <tr>
+                    <th><?php _e('Industry', 'client-onboarding-form'); ?></th>
+                    <td><?php echo esc_html($submission->industry); ?></td>
+                </tr>
+                <?php if ($submission->industry_other): ?>
+                <tr>
+                    <th><?php _e('Industry Other', 'client-onboarding-form'); ?></th>
+                    <td><?php echo esc_html($submission->industry_other); ?></td>
+                </tr>
+                <?php endif; ?>
                 <tr>
                     <th><?php _e('Ideal Customer Description', 'client-onboarding-form'); ?></th>
                     <td><?php echo esc_html($submission->ideal_customer_description); ?></td>

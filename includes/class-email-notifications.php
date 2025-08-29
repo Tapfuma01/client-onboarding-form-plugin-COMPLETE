@@ -422,6 +422,12 @@ class COB_Email_Notifications {
             'facebook_page' => $this->submission_data['facebook_page'] ?? '',
             'instagram_username' => $this->submission_data['instagram_username'] ?? '',
             'industry_entities' => $this->submission_data['industry_entities'] ?? '',
+            'industry_entities_other' => $this->submission_data['industry_entities_other'] ?? '',
+            'industry_status' => $this->submission_data['industry_status'] ?? '',
+            'marketing_goals' => $this->submission_data['marketing_goals'] ?? '',
+            'marketing_goals_other' => $this->submission_data['marketing_goals_other'] ?? '',
+            'industry' => $this->submission_data['industry'] ?? '',
+            'industry_other' => $this->submission_data['industry_other'] ?? '',
             'market_insights' => $this->submission_data['market_insights'] ?? '',
             'content_social_media' => $this->submission_data['content_social_media'] ?? '',
             'business_focus_elements' => $this->submission_data['business_focus_elements'] ?? '',
@@ -885,6 +891,30 @@ class COB_Email_Notifications {
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry Entities:</strong></td>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{industry_entities}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry Entities Other:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{industry_entities_other}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry Status:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{industry_status}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Marketing Goals:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{marketing_goals}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Marketing Goals Other:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{marketing_goals_other}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{industry}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Industry Other:</strong></td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">{industry_other}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Market Insights:</strong></td>
