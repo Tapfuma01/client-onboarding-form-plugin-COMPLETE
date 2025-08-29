@@ -51,14 +51,14 @@ class COB_Database {
             booking_engine_password varchar(255),
             booking_engine_contact_email varchar(255),
             technical_objective text NOT NULL,
-            google_analytics_account varchar(10) NOT NULL,
+            google_analytics_account text NOT NULL,
             google_analytics_account_id varchar(255),
             google_tag_manager_account text NOT NULL,
             google_tag_manager_admin varchar(255),
-            google_ads_account varchar(10) NOT NULL,
+            google_ads_account text NOT NULL,
             google_ads_admin varchar(255),
             google_ads_customer_id varchar(255),
-            meta_business_manager_account varchar(10) NOT NULL,
+            meta_business_manager_account text NOT NULL,
             meta_business_manager_admin varchar(255),
             meta_business_manager_id varchar(255),
             paid_media_history text NOT NULL,
@@ -82,18 +82,27 @@ class COB_Database {
             mission_3 text NOT NULL,
             brand_guidelines_upload text NOT NULL,
             brand_guidelines_files text,
+            logo_file_url varchar(500),
+            logo_file_name varchar(255),
+            logo_file_id int(11),
+            brand_guidelines_url varchar(500),
+            brand_guidelines_name varchar(255),
+            brand_guidelines_id int(11),
+            brand_guidelines_upload_url varchar(500),
+            brand_guidelines_upload_name varchar(255),
+            brand_guidelines_upload_id int(11),
             communication_tone varchar(20) NOT NULL,
             casual_tone_explanation text,
             formal_tone_explanation text,
-            brand_accounts varchar(10) NOT NULL,
+            brand_accounts text NOT NULL,
             facebook_page varchar(255),
             instagram_username varchar(255),
             industry_entities text NOT NULL,
             industry_entities_other varchar(255),
             industry_status text,
-            market_insights varchar(10) NOT NULL,
-            content_social_media varchar(10) NOT NULL,
-            business_focus_elements varchar(10) NOT NULL,
+            market_insights text NOT NULL,
+            content_social_media text NOT NULL,
+            business_focus_elements text NOT NULL,
             social_media_accounts text,
             facebook_accounts_url text,
             facebook_page_url text,
@@ -103,8 +112,8 @@ class COB_Database {
             potential_client_view text NOT NULL,
             target_age_range text NOT NULL,
             problems_solved text NOT NULL,
-            business_challenges varchar(10) NOT NULL,
-            tracking_accounting varchar(10) NOT NULL,
+            business_challenges text NOT NULL,
+            tracking_accounting text NOT NULL,
             additional_information text,
             status varchar(20) DEFAULT 'submitted',
             submitted_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -775,15 +784,79 @@ class COB_Database {
         
         $table_name = $wpdb->prefix . 'cob_submissions';
         
-        // Update google_tag_manager_account from varchar(10) to text
-        $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN google_tag_manager_account TEXT NOT NULL");
+        // List of fields to update from VARCHAR(10) to TEXT
+        $fields_to_update = [
+            'google_analytics_account',
+            'google_ads_account', 
+            'meta_business_manager_account',
+            'brand_accounts',
+            'market_insights',
+            'content_social_media',
+            'business_focus_elements',
+            'business_challenges',
+            'tracking_accounting',
+            'google_tag_manager_account',
+            'brand_guidelines_upload'
+        ];
         
-        // Update brand_guidelines_upload from varchar(10) to text
-        $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN brand_guidelines_upload TEXT NOT NULL");
+        $updated_fields = [];
+        
+        foreach ($fields_to_update as $field) {
+            try {
+                $result = $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN $field TEXT NOT NULL");
+                if ($result !== false) {
+                    $updated_fields[] = $field;
+                } else {
+                    error_log("COB: Failed to update field $field: " . $wpdb->last_error);
+                }
+            } catch (Exception $e) {
+                error_log("COB: Exception updating field $field: " . $e->getMessage());
+            }
+        }
+        
+        // Add new file upload fields if they don't exist
+        $new_file_fields = [
+            'logo_file_url' => 'VARCHAR(500)',
+            'logo_file_name' => 'VARCHAR(255)',
+            'logo_file_id' => 'INT(11)',
+            'brand_guidelines_url' => 'VARCHAR(500)',
+            'brand_guidelines_name' => 'VARCHAR(255)',
+            'brand_guidelines_id' => 'INT(11)',
+            'brand_guidelines_upload_url' => 'VARCHAR(500)',
+            'brand_guidelines_upload_name' => 'VARCHAR(255)',
+            'brand_guidelines_upload_id' => 'INT(11)'
+        ];
+        
+        $added_fields = [];
+        foreach ($new_file_fields as $field => $definition) {
+            $column_exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$field'");
+            if (empty($column_exists)) {
+                try {
+                    $result = $wpdb->query("ALTER TABLE $table_name ADD COLUMN $field $definition");
+                    if ($result !== false) {
+                        $added_fields[] = $field;
+                        error_log("COB: Added new field $field successfully");
+                    } else {
+                        error_log("COB: Failed to add field $field: " . $wpdb->last_error);
+                    }
+                } catch (Exception $e) {
+                    error_log("COB: Exception adding field $field: " . $e->getMessage());
+                }
+            } else {
+                error_log("COB: Field $field already exists");
+            }
+        }
         
         // Log the update
-        self::log_activity('schema_updated', null, 'system', 'Updated field sizes for google_tag_manager_account and brand_guidelines_upload');
+        $fields_list = implode(', ', $updated_fields);
+        $added_fields_list = !empty($added_fields) ? ', Added fields: ' . implode(', ', $added_fields) : '';
+        self::log_activity('schema_updated', null, 'system', "Updated field sizes for: $fields_list$added_fields_list");
         
-        return true;
+        return [
+            'success' => true,
+            'updated_fields' => $updated_fields,
+            'total_fields' => count($fields_to_update),
+            'added_fields' => $added_fields
+        ];
     }
 }

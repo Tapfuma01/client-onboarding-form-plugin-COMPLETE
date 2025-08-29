@@ -40,6 +40,77 @@ class COB_Form_Handler {
         }
     }
 
+    /**
+     * Process file uploads from the form
+     * @return array|false Array of uploaded file data or false on failure
+     */
+    private function process_file_uploads() {
+        if (empty($_FILES)) {
+            return [];
+        }
+
+        $uploaded_files = [];
+        $upload_dir = wp_upload_dir();
+        $allowed_types = [
+            'logo_file' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+            'brand_guidelines' => ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+            'brand_guidelines_upload' => ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/gif', 'image/webp']
+        ];
+
+        foreach ($_FILES as $field_name => $file_data) {
+            if ($file_data['error'] === UPLOAD_ERR_OK && !empty($file_data['name'])) {
+                // Check if this is a file field we want to process
+                if (!isset($allowed_types[$field_name])) {
+                    continue;
+                }
+
+                // Validate file type
+                $file_type = wp_check_filetype($file_data['name']);
+                if (!in_array($file_type['type'], $allowed_types[$field_name])) {
+                    error_log("COB: Invalid file type for $field_name: " . $file_type['type']);
+                    continue;
+                }
+
+                // Create unique filename
+                $filename = wp_unique_filename($upload_dir['path'], $file_data['name']);
+                $file_path = $upload_dir['path'] . '/' . $filename;
+
+                // Move uploaded file
+                if (move_uploaded_file($file_data['tmp_name'], $file_path)) {
+                    // Add to WordPress media library
+                    $attachment_id = wp_insert_attachment([
+                        'post_title' => sanitize_file_name($file_data['name']),
+                        'post_content' => '',
+                        'post_status' => 'inherit',
+                        'post_mime_type' => $file_type['type']
+                    ], $file_path);
+
+                    if (!is_wp_error($attachment_id)) {
+                        // Generate attachment metadata
+                        wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $file_path));
+                        
+                        // Store file information
+                        $uploaded_files[$field_name] = [
+                            'id' => $attachment_id,
+                            'url' => wp_get_attachment_url($attachment_id),
+                            'name' => $file_data['name'],
+                            'type' => $file_type['type'],
+                            'size' => $file_data['size']
+                        ];
+
+                        error_log("COB: File uploaded successfully for $field_name: " . $uploaded_files[$field_name]['url']);
+                    } else {
+                        error_log("COB: Failed to create attachment for $field_name: " . $attachment_id->get_error_message());
+                    }
+                } else {
+                    error_log("COB: Failed to move uploaded file for $field_name");
+                }
+            }
+        }
+
+        return $uploaded_files;
+    }
+
     public function enqueue_scripts() {
         if (is_singular() && has_shortcode(get_post()->post_content, 'client_onboarding_form')) {
             wp_enqueue_style(
@@ -193,7 +264,7 @@ class COB_Form_Handler {
             // Validate required fields - only the ones actually marked as required in the form
             $required_fields = [
                 // Step 1: Client Information
-                'project_name', 'business_name', 'primary_contact_name', 
+                'project_name', 'business_name', 'current_website', 'primary_contact_name', 
                 'primary_contact_email', 'primary_contact_number', 'main_approver',
                 'billing_email', 'preferred_contact_method', 'address_line_1',
                 'city', 'country', 'postal_code', 'has_website',
@@ -209,7 +280,7 @@ class COB_Form_Handler {
                 'unique_value_proposition', 'marketing_budget', 'start_timeline',
                 
                 // Additional required fields
-                'current_website', 'brand_guidelines_upload_radio', 'communication_tone_radio', 
+                'brand_guidelines_upload_radio', 'communication_tone_radio', 
                 'brand_accounts_radio', 'industry_entities', 'market_insights_radio', 
                 'content_social_media_radio', 'business_focus_elements_radio',
                 'target_age_range', 'gender_purchase_decision', 'lead_source_markets', 'lead_times'
@@ -308,6 +379,29 @@ class COB_Form_Handler {
                         'message' => 'Invalid email address in ' . str_replace('_', ' ', $field)
                     ]));
                 }
+            }
+
+            // Process file uploads
+            error_log('COB: Processing file uploads...');
+            $uploaded_files = $this->process_file_uploads();
+            if ($uploaded_files === false) {
+                error_log('COB: File upload processing failed');
+                wp_die(json_encode([
+                    'success' => false, 
+                    'message' => 'Error processing file uploads. Please try again.'
+                ]));
+            }
+
+            // Merge uploaded file data with form data
+            if (!empty($uploaded_files)) {
+                error_log('COB: Files uploaded successfully: ' . print_r($uploaded_files, true));
+                foreach ($uploaded_files as $field_name => $file_data) {
+                    $form_data[$field_name . '_url'] = $file_data['url'];
+                    $form_data[$field_name . '_name'] = $file_data['name'];
+                    $form_data[$field_name . '_id'] = $file_data['id'];
+                }
+            } else {
+                error_log('COB: No files uploaded');
             }
 
             // Sanitize and prepare data for database
@@ -510,6 +604,17 @@ class COB_Form_Handler {
             'mission_3' => sanitize_textarea_field($form_data['mission_3'] ?? ''),
             'brand_guidelines_upload' => sanitize_text_field($form_data['brand_guidelines_upload'] ?? ''),
             'brand_guidelines_files' => sanitize_text_field($form_data['brand_guidelines_files'] ?? ''),
+            
+            // File Upload Fields
+            'logo_file_url' => esc_url_raw($form_data['logo_file_url'] ?? ''),
+            'logo_file_name' => sanitize_text_field($form_data['logo_file_name'] ?? ''),
+            'logo_file_id' => intval($form_data['logo_file_id'] ?? 0),
+            'brand_guidelines_url' => esc_url_raw($form_data['brand_guidelines_url'] ?? ''),
+            'brand_guidelines_name' => sanitize_text_field($form_data['brand_guidelines_name'] ?? ''),
+            'brand_guidelines_id' => intval($form_data['brand_guidelines_id'] ?? 0),
+            'brand_guidelines_upload_url' => esc_url_raw($form_data['brand_guidelines_upload_url'] ?? ''),
+            'brand_guidelines_upload_name' => sanitize_text_field($form_data['brand_guidelines_upload_name'] ?? ''),
+            'brand_guidelines_upload_id' => intval($form_data['brand_guidelines_upload_id'] ?? 0),
             'communication_tone' => sanitize_text_field($form_data['communication_tone'] ?? ''),
             'casual_tone_explanation' => sanitize_textarea_field($form_data['casual_tone_explanation'] ?? ''),
             'formal_tone_explanation' => sanitize_textarea_field($form_data['formal_tone_explanation'] ?? ''),

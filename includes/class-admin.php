@@ -144,8 +144,17 @@ class COB_Admin {
         
         if (class_exists('COB_Database') && method_exists('COB_Database', 'update_field_sizes')) {
             try {
-                COB_Database::update_field_sizes();
-                wp_send_json_success('Database schema updated successfully! Field sizes for google_tag_manager_account and brand_guidelines_upload have been increased to TEXT.');
+                $result = COB_Database::update_field_sizes();
+                if ($result['success']) {
+                    $message = sprintf(
+                        'Database schema updated successfully! %d fields have been updated from VARCHAR(10) to TEXT: %s',
+                        $result['total_fields'],
+                        implode(', ', $result['updated_fields'])
+                    );
+                    wp_send_json_success($message);
+                } else {
+                    wp_send_json_error('Database update completed with some errors. Check the error log for details.');
+                }
             } catch (Exception $e) {
                 wp_send_json_error('Database update failed: ' . $e->getMessage());
             }

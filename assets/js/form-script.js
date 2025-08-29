@@ -17,6 +17,11 @@
         }
 
         init() {
+            console.log('COB: Initializing ClientOnboardingForm...');
+            console.log('COB: Start button element exists:', $('#cob-start-form').length);
+            console.log('COB: Start page element exists:', $('#cob-start-page').length);
+            console.log('COB: Form page element exists:', $('#cob-form-page').length);
+            
             this.bindEvents();
             this.loadDraft();
             this.startAutoSave();
@@ -35,7 +40,12 @@
 
         bindEvents() {
             // Start page button
-            $('#cob-start-form').on('click', () => this.showFormPage());
+            $('#cob-start-form').on('click', (e) => {
+                console.log('COB: Start button clicked!');
+                console.log('COB: Start button element:', $('#cob-start-form').length);
+                console.log('COB: Event target:', e.target);
+                this.showFormPage();
+            });
 
             // Thank you page button
             $('#cob-visit-cx-platform').on('click', () => this.visitCXPlatform());
@@ -460,40 +470,49 @@
                     
                     console.log(`COB: Processing field: ${name}, cleanName: ${cleanName}, isArrayField: ${isArrayField}`);
 
-                    if ($field.attr('type') === 'checkbox') {
-                    // Only create arrays for fields that are explicitly marked as arrays
-                    if (isArrayField) {
-                        console.log(`COB: Array checkbox field: ${cleanName}`);
-                        // Ensure the field is always initialized as an array
-                        if (!Array.isArray(formData[cleanName])) {
-                            formData[cleanName] = [];
-                            console.log(`COB: Initialized array for ${cleanName}`);
+                    if ($field.attr('type') === 'file') {
+                        // Handle file uploads
+                        const fileInput = $field[0];
+                        if (fileInput.files && fileInput.files.length > 0) {
+                            console.log(`COB: File field: ${cleanName}, file: ${fileInput.files[0].name}`);
+                            formData[cleanName] = fileInput.files[0];
+                        } else {
+                            console.log(`COB: File field: ${cleanName}, no file selected`);
                         }
-                        if ($field.is(':checked')) {
-                            console.log(`COB: Adding ${$field.val()} to ${cleanName} array`);
-                            // Double-check it's an array before pushing
-                            if (Array.isArray(formData[cleanName])) {
-                                formData[cleanName].push($field.val());
-                            } else {
-                                console.error(`COB: ERROR - ${cleanName} is not an array! Type: ${typeof formData[cleanName]}`);
-                                // Force it to be an array and add the value
-                                formData[cleanName] = [$field.val()];
+                    } else if ($field.attr('type') === 'checkbox') {
+                        // Only create arrays for fields that are explicitly marked as arrays
+                        if (isArrayField) {
+                            console.log(`COB: Array checkbox field: ${cleanName}`);
+                            // Ensure the field is always initialized as an array
+                            if (!Array.isArray(formData[cleanName])) {
+                                formData[cleanName] = [];
+                                console.log(`COB: Initialized array for ${cleanName}`);
                             }
+                            if ($field.is(':checked')) {
+                                console.log(`COB: Adding ${$field.val()} to ${cleanName} array`);
+                                // Double-check it's an array before pushing
+                                if (Array.isArray(formData[cleanName])) {
+                                    formData[cleanName].push($field.val());
+                                } else {
+                                    console.error(`COB: ERROR - ${cleanName} is not an array! Type: ${typeof formData[cleanName]}`);
+                                    // Force it to be an array and add the value
+                                    formData[cleanName] = [$field.val()];
+                                }
+                            }
+                        } else {
+                            // Single checkbox (boolean)
+                            console.log(`COB: Single checkbox field: ${cleanName}, checked: ${$field.is(':checked')}`);
+                            formData[cleanName] = $field.is(':checked');
+                        }
+                    } else if ($field.attr('type') === 'radio') {
+                        if ($field.is(':checked')) {
+                            console.log(`COB: Radio field: ${cleanName}, value: ${$field.val()}`);
+                            formData[cleanName] = $field.val();
                         }
                     } else {
-                        // Single checkbox (boolean)
-                        console.log(`COB: Single checkbox field: ${cleanName}, checked: ${$field.is(':checked')}`);
-                        formData[cleanName] = $field.is(':checked');
-                    }
-                } else if ($field.attr('type') === 'radio') {
-                    if ($field.is(':checked')) {
-                        console.log(`COB: Radio field: ${cleanName}, value: ${$field.val()}`);
+                        console.log(`COB: Other field: ${cleanName}, value: ${$field.val()}`);
                         formData[cleanName] = $field.val();
                     }
-                } else {
-                    console.log(`COB: Other field: ${cleanName}, value: ${$field.val()}`);
-                    formData[cleanName] = $field.val();
-                }
                 } catch (error) {
                     console.error(`COB: Error processing field ${name || 'unknown'}:`, error);
                     console.error(`COB: Field details:`, { field, name, cleanName, isArrayField });
@@ -895,62 +914,87 @@
                 }
             });
 
-            console.log('COB: AJAX request data:', {
-                url: cob_ajax.ajax_url,
-                action: 'cob_submit_form',
-                nonce: cob_ajax.nonce,
-                session_id: this.sessionId,
-                form_data: formData
-            });
+            // Check if there are file uploads
+            const hasFileUploads = Object.values(formData).some(value => value instanceof File);
+            console.log('COB: Has file uploads:', hasFileUploads);
 
-            $.ajax({
-                url: cob_ajax.ajax_url,
-                type: 'POST',
-                data: {
+            if (hasFileUploads) {
+                // Use FormData for file uploads
+                console.log('COB: Using FormData for file uploads');
+                const formDataObj = new FormData();
+                formDataObj.append('action', 'cob_submit_form');
+                formDataObj.append('nonce', cob_ajax.nonce);
+                formDataObj.append('session_id', this.sessionId);
+                
+                // Add form data
+                Object.keys(formData).forEach(key => {
+                    const value = formData[key];
+                    if (value instanceof File) {
+                        formDataObj.append(key, value);
+                        console.log(`COB: Added file: ${key} = ${value.name}`);
+                    } else if (Array.isArray(value)) {
+                        value.forEach(item => {
+                            formDataObj.append(key + '[]', item);
+                        });
+                        console.log(`COB: Added array: ${key}[] = ${value.join(', ')}`);
+                    } else {
+                        formDataObj.append(key, value);
+                        console.log(`COB: Added field: ${key} = ${value}`);
+                    }
+                });
+
+                console.log('COB: FormData prepared for file uploads');
+
+                $.ajax({
+                    url: cob_ajax.ajax_url,
+                    type: 'POST',
+                    data: formDataObj,
+                    processData: false,
+                    contentType: false
+                }).done((response) => {
+                    console.log('COB: File upload AJAX response received:', response);
+                    this.handleSubmitResponse(response);
+                }).fail((xhr, status, error) => {
+                    console.error('COB: File upload AJAX request failed:', {xhr, status, error});
+                    this.handleSubmitError(xhr, status, error);
+                }).always(() => {
+                    console.log('COB: File upload AJAX request completed (always block)');
+                    this.isSubmitting = false;
+                    $('#cob-submit-btn').removeClass('cob-loading').prop('disabled', false).text('SUBMIT');
+                });
+            } else {
+                // Use regular AJAX for non-file submissions
+                console.log('COB: Using regular AJAX (no file uploads)');
+                console.log('COB: AJAX request data:', {
+                    url: cob_ajax.ajax_url,
                     action: 'cob_submit_form',
                     nonce: cob_ajax.nonce,
                     session_id: this.sessionId,
                     form_data: formData
-                }
-            }).done((response) => {
-                console.log('COB: AJAX response received:', response);
-                console.log('COB: Response type:', typeof response);
-                console.log('COB: Response length:', response ? response.length : 'N/A');
-                
-                try {
-                    const data = typeof response === 'string' ? JSON.parse(response) : response;
-                    console.log('COB: Parsed response data:', data);
-                    console.log('COB: Response success flag:', data.success);
-                    console.log('COB: Response message:', data.message);
-                    console.log('COB: Response submission ID:', data.submission_id);
-                    
-                    if (data.success) {
-                        console.log('COB: Form submission successful, submission ID:', data.submission_id);
-                        this.stopAutoSave();
-                        this.showSuccessMessage(data.submission_id);
-                    } else {
-                        console.log('COB: Form submission failed:', data.message);
-                        console.log('COB: Full error response:', data);
-                        alert(data.message || cob_ajax.messages.submit_error);
+                });
+
+                $.ajax({
+                    url: cob_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'cob_submit_form',
+                        nonce: cob_ajax.nonce,
+                        session_id: this.sessionId,
+                        form_data: formData
                     }
-                } catch (e) {
-                    console.error('COB: Error parsing submit response:', e);
-                    console.error('COB: Raw response that failed to parse:', response);
-                    alert(cob_ajax.messages.submit_error);
-                }
-            }).fail((xhr, status, error) => {
-                console.error('COB: AJAX request failed:', {xhr, status, error});
-                console.error('COB: XHR status:', xhr.status);
-                console.error('COB: XHR status text:', xhr.statusText);
-                console.error('COB: XHR response text:', xhr.responseText);
-                console.error('COB: Error details:', error);
-                alert(cob_ajax.messages.submit_error);
-            }).always(() => {
-                console.log('COB: AJAX request completed (always block)');
-                this.isSubmitting = false;
-                $('#cob-submit-btn').removeClass('cob-loading').prop('disabled', false).text('SUBMIT FORM');
-                console.log('=== COB FORM SUBMISSION DEBUG END ===');
-            });
+                }).done((response) => {
+                    console.log('COB: Regular AJAX response received:', response);
+                    this.handleSubmitResponse(response);
+                }).fail((xhr, status, error) => {
+                    console.error('COB: Regular AJAX request failed:', {xhr, status, error});
+                    this.handleSubmitError(xhr, status, error);
+                }).always(() => {
+                    console.log('COB: Regular AJAX request completed (always block)');
+                    this.isSubmitting = false;
+                    $('#cob-submit-btn').removeClass('cob-loading').prop('disabled', false).text('SUBMIT FORM');
+                    console.log('=== COB FORM SUBMISSION DEBUG END ===');
+                });
+            }
         }
 
         showSuccessMessage(submissionId) {
@@ -959,9 +1003,15 @@
         }
 
         showFormPage() {
+            console.log('COB: showFormPage method called');
+            console.log('COB: Start page element:', $('#cob-start-page').length);
+            console.log('COB: Form page element:', $('#cob-form-page').length);
+            
             // Hide start page and show form page
             $('#cob-start-page').removeClass('cob-page-active').hide();
             $('#cob-form-page').addClass('cob-page-active').show();
+            
+            console.log('COB: Page transition completed');
         }
 
         showThankYouPage() {
@@ -1100,6 +1150,49 @@
                 $('.cob-mobile-tabs').hide();
                 $('.cob-step-navigation').show();
             }
+        }
+
+        /**
+         * Handle form submission response
+         */
+        handleSubmitResponse(response) {
+            console.log('COB: Handling submit response:', response);
+            console.log('COB: Response type:', typeof response);
+            console.log('COB: Response length:', response ? response.length : 'N/A');
+            
+            try {
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
+                console.log('COB: Parsed response data:', data);
+                console.log('COB: Response success flag:', data.success);
+                console.log('COB: Response message:', data.message);
+                console.log('COB: Response submission ID:', data.submission_id);
+                
+                if (data.success) {
+                    console.log('COB: Form submission successful, submission ID:', data.submission_id);
+                    this.stopAutoSave();
+                    this.showSuccessMessage(data.submission_id);
+                } else {
+                    console.log('COB: Form submission failed:', data.message);
+                    console.log('COB: Full error response:', data);
+                    alert(data.message || cob_ajax.messages.submit_error);
+                }
+            } catch (e) {
+                console.error('COB: Error parsing submit response:', e);
+                console.error('COB: Raw response that failed to parse:', response);
+                alert(cob_ajax.messages.submit_error);
+            }
+        }
+
+        /**
+         * Handle form submission error
+         */
+        handleSubmitError(xhr, status, error) {
+            console.error('COB: AJAX request failed:', {xhr, status, error});
+            console.error('COB: XHR status:', xhr.status);
+            console.error('COB: XHR status text:', xhr.statusText);
+            console.error('COB: XHR response text:', xhr.responseText);
+            console.error('COB: Error details:', error);
+            alert(cob_ajax.messages.submit_error);
         }
     }
 

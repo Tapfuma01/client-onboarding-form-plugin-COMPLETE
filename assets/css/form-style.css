@@ -493,13 +493,7 @@ input[type="file"]:focus {
 
 /* Button Visibility Control */
 #cob-previous-btn {
-    COB: Response length: 275
-    form-script.js?ver=1.0.0:922 COB: Parsed response data: {success: false, message: 'Failed to submit form. Please try again.', debug: 'WordPress database error: Processing the values fo…d values may be too long or contain invalid data.'}
-    form-script.js?ver=1.0.0:923 COB: Response success flag: false
-    form-script.js?ver=1.0.0:924 COB: Response message: Failed to submit form. Please try again.
-    form-script.js?ver=1.0.0:925 COB: Response submission ID: undefined
-    form-script.js?ver=1.0.0:932 COB: Form submission failed: Failed to submit form. Please try again.
-    form-script.js?ver=1.0.0:933 COB: Full error response: {success: false, message: 'Failed to submit form. Please try again.', debug: 'WordPress database error: Processing the values fo…d values may be too long or contain invalid data.'}    display: none;
+    display: none;
 }
 
 #cob-continue-btn {
@@ -777,6 +771,101 @@ input[type="file"]:focus {
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 10px;
+}
+
+.cob-thank-you-line-2 {
+    display: block;
+    font-size: 32px;
+    font-weight: 500;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.cob-thank-you-description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #cccccc;
+    margin-bottom: 40px;
+    max-width: 600px;
+}
+
+.cob-next-steps {
+    margin-bottom: 40px;
+}
+
+.cob-next-steps h4 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #D5FD72;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.cob-next-steps ul {
+    list-style: none;
+    padding: 0;
+}
+
+.cob-next-steps li {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #cccccc;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.cob-next-steps li:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #D5FD72;
+    font-weight: bold;
+}
+
+.cob-thank-you-actions {
+    margin-bottom: 40px;
+}
+
+.cob-cx-platform-btn {
+    background-color: #D5FD72 !important;
+    color: #171B23 !important;
+    border: none !important;
+    padding: 18px 40px !important;
+    font-family: Inter !important;
+    font-size: 16px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    line-height: 24px !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(213, 253, 114, 0.3) !important;
+}
+
+.cob-cx-platform-btn:hover {
+    background-color: #c4e866 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(213, 253, 114, 0.4) !important;
+}
+
+.cob-contact-info {
+    padding: 20px;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    border-left: 4px solid #D5FD72;
+}
+
+.cob-contact-info p {
+    margin-bottom: 10px;
+    color: #cccccc;
+}
+
+.cob-contact-info strong {
+    color: #D5FD72;
 }
 
 .cob-thank-you-line-2,

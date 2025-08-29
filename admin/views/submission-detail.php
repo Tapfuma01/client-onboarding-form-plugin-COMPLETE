@@ -378,6 +378,55 @@ if (!$submission) {
                 <?php endif; ?>
             </table>
 
+            <!-- File Uploads -->
+            <h3><?php _e('UPLOADED FILES', 'client-onboarding-form'); ?></h3>
+            <table class="form-table">
+                <?php if (!empty($submission->logo_file_url)): ?>
+                <tr>
+                    <th><?php _e('Logo File', 'client-onboarding-form'); ?></th>
+                    <td>
+                        <a href="<?php echo esc_url($submission->logo_file_url); ?>" target="_blank" class="button button-small">
+                            <span class="dashicons dashicons-download"></span>
+                            <?php echo esc_html($submission->logo_file_name ?: 'Download Logo'); ?>
+                        </a>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            <?php _e('File ID:', 'client-onboarding-form'); ?> <?php echo esc_html($submission->logo_file_id); ?>
+                        </small>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                
+                <?php if (!empty($submission->brand_guidelines_url)): ?>
+                <tr>
+                    <th><?php _e('Brand Guidelines', 'client-onboarding-form'); ?></th>
+                    <td>
+                        <a href="<?php echo esc_url($submission->brand_guidelines_url); ?>" target="_blank" class="button button-small">
+                            <span class="dashicons dashicons-download"></span>
+                            <?php echo esc_html($submission->brand_guidelines_name ?: 'Download Brand Guidelines'); ?>
+                        </a>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            <?php _e('File ID:', 'client-onboarding-form'); ?> <?php echo esc_html($submission->brand_guidelines_id); ?>
+                        </small>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                
+                <?php if (!empty($submission->brand_guidelines_upload_url)): ?>
+                <tr>
+                    <th><?php _e('Brand Guidelines Upload', 'client-onboarding-form'); ?></th>
+                    <td>
+                        <a href="<?php echo esc_url($submission->brand_guidelines_upload_url); ?>" target="_blank" class="button button-small">
+                            <span class="dashicons dashicons-download"></span>
+                            <?php echo esc_html($submission->brand_guidelines_upload_name ?: 'Download Brand Guidelines Upload'); ?>
+                        </a>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            <?php _e('File ID:', 'client-onboarding-form'); ?> <?php echo esc_html($submission->brand_guidelines_upload_id); ?>
+                        </small>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </table>
+
             <!-- Communication Preferences -->
             <h3><?php _e('Communication Preferences', 'client-onboarding-form'); ?></h3>
             <table class="form-table">
@@ -557,12 +606,55 @@ if (!$submission) {
                 <a href="<?php echo admin_url('admin.php?page=cob-submissions'); ?>" class="button button-secondary">
                     <?php _e('← Back to Submissions', 'client-onboarding-form'); ?>
                 </a>
+                <button type="button" id="cob-send-test-email" class="button button-primary" 
+                        data-submission-id="<?php echo esc_attr($submission->id); ?>">
+                    <?php _e('Send Test Email', 'client-onboarding-form'); ?>
+                </button>
                 <a href="<?php echo admin_url('admin.php?page=cob-submissions&action=delete&view=' . $submission->id); ?>" 
                    class="button button-link-delete" 
                    onclick="return confirm('<?php _e('Are you sure you want to delete this submission?', 'client-onboarding-form'); ?>')">
                     <?php _e('Delete Submission', 'client-onboarding-form'); ?>
                 </a>
             </p>
+            
+            <!-- Test Email Result -->
+            <div id="cob-test-email-result" style="margin-top: 10px;"></div>
         </div>
+        
+        <script>
+        jQuery(document).ready(function($) {
+            $('#cob-send-test-email').on('click', function() {
+                var $button = $(this);
+                var $result = $('#cob-test-email-result');
+                var submissionId = $button.data('submission-id');
+                
+                $button.prop('disabled', true).text('<?php _e('Sending...', 'client-onboarding-form'); ?>');
+                $result.html('');
+                
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'cob_send_test_notification',
+                        nonce: '<?php echo wp_create_nonce('cob_admin_nonce'); ?>',
+                        submission_id: submissionId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $result.html('<div class="notice notice-success"><p>' + response.data + '</p></div>');
+                        } else {
+                            $result.html('<div class="notice notice-error"><p>Error: ' + response.data + '</p></div>');
+                        }
+                    },
+                    error: function() {
+                        $result.html('<div class="notice notice-error"><p>AJAX request failed. Please try again.</p></div>');
+                    },
+                    complete: function() {
+                        $button.prop('disabled', false).text('<?php _e('Send Test Email', 'client-onboarding-form'); ?>');
+                    }
+                });
+            });
+        });
+        </script>
     </div>
 </div>
