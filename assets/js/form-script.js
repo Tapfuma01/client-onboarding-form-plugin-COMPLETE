@@ -79,6 +79,15 @@
             $('#cob-save-draft').on('click', () => this.saveDraft(true));
             $('#cob-exit-form').on('click', () => this.exitForm());
 
+            // Prevent default form submission and ensure our custom handler is used
+            $('#cob-onboarding-form').on('submit', (e) => {
+                console.log('COB: Form submit event triggered - preventing default');
+                e.preventDefault();
+                e.stopPropagation();
+                this.submitForm();
+                return false;
+            });
+
             // Form input changes
             $('#cob-onboarding-form').on('input change', 'input, textarea, select', () => {
                 this.clearFieldError($(event.target));
@@ -472,13 +481,14 @@
                     console.log(`COB: Processing field: ${name}, cleanName: ${cleanName}, isArrayField: ${isArrayField}`);
 
                     if ($field.attr('type') === 'file') {
-                        // Handle file uploads
+                        // Handle file uploads - only include if file is actually selected
                         const fileInput = $field[0];
                         if (fileInput.files && fileInput.files.length > 0) {
                             console.log(`COB: File field: ${cleanName}, file: ${fileInput.files[0].name}`);
                             formData[cleanName] = fileInput.files[0];
                         } else {
-                            console.log(`COB: File field: ${cleanName}, no file selected`);
+                            console.log(`COB: File field: ${cleanName}, no file selected - skipping`);
+                            // Don't add file fields with no selection to avoid serialization issues
                         }
                     } else if ($field.attr('type') === 'checkbox') {
                         // Only create arrays for fields that are explicitly marked as arrays

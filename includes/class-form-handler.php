@@ -231,8 +231,9 @@ class COB_Form_Handler {
         error_log('=== COB FORM SUBMISSION DEBUG START ===');
         error_log('COB: AJAX submit form method called');
         error_log('COB: Request method: ' . $_SERVER['REQUEST_METHOD']);
-        error_log('COB: Content type: ' . $_SERVER['CONTENT_TYPE'] ?? 'Not set');
+        error_log('COB: Content type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'Not set'));
         error_log('COB: POST data received: ' . print_r($_POST, true));
+        error_log('COB: FILES data received: ' . print_r($_FILES, true));
         error_log('COB: Raw input: ' . file_get_contents('php://input'));
         
         try {
@@ -246,7 +247,22 @@ class COB_Form_Handler {
             check_ajax_referer('cob_form_nonce', 'nonce');
             error_log('COB: Nonce verification passed');
 
-            $form_data = $_POST['form_data'] ?? [];
+            // Determine if this is a file upload submission or regular form submission
+            $is_file_upload = !empty($_FILES) && isset($_POST['action']) && $_POST['action'] === 'cob_submit_form';
+            
+            if ($is_file_upload) {
+                // File upload submission - data is directly in $_POST
+                error_log('COB: Processing file upload submission');
+                $form_data = $_POST;
+                // Remove action and nonce from form data
+                unset($form_data['action']);
+                unset($form_data['nonce']);
+            } else {
+                // Regular form submission - data is in $_POST['form_data']
+                error_log('COB: Processing regular form submission');
+                $form_data = $_POST['form_data'] ?? [];
+            }
+            
             $session_id = sanitize_text_field($_POST['session_id'] ?? '');
             
             error_log('COB: Session ID: ' . $session_id);
