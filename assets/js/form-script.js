@@ -23,7 +23,12 @@
             console.log('COB: Form page element exists:', $('#cob-form-page').length);
             
             this.bindEvents();
-            this.loadDraft();
+            
+            // Delay loading draft to ensure AJAX object is available
+            setTimeout(() => {
+                this.loadDraft();
+            }, 500);
+            
             this.startAutoSave();
             this.updateStepDisplay();
             this.initSaveStatus();
@@ -36,6 +41,9 @@
                 this.updateButtonVisibility();
                 console.log('COB: Initial button visibility update completed');
             }, 100);
+            
+            // Initialize progress display
+            this.updateProgressDisplay();
         }
 
         bindEvents() {
@@ -610,8 +618,8 @@
                         if (data.success) {
                             if (showMessage) {
                                 this.showSaveStatus(cob_ajax.messages.draft_saved);
-                                // Generate share token and ask if client wants to complete later
-                                this.generateShareTokenAndAsk();
+                                // Show the enhanced save draft modal
+                                this.showSaveDraftModal();
                             }
                             this.updateSaveStatus(data.last_saved);
                         } else if (data.retry_after && retryCount < maxRetries) {
@@ -626,13 +634,13 @@
                         } else {
                             // Show error message
                             if (showMessage) {
-                                alert(data.message || 'Failed to save draft. Please try again.');
+                                this.showSaveStatus('Failed to save draft. Please try again.', 'error');
                             }
                         }
                     } catch (e) {
                         console.error('Error parsing save response:', e);
                         if (showMessage) {
-                            alert('Error processing response. Please try again.');
+                            this.showSaveStatus('Error processing response. Please try again.', 'error');
                         }
                     }
                 }).fail((xhr, status, error) => {
@@ -650,7 +658,7 @@
                     }
                     
                     if (showMessage) {
-                        alert('Failed to save draft. Please try again.');
+                        this.showSaveStatus('Failed to save draft. Please try again.', 'error');
                     }
                 }).always(() => {
                     if (showMessage) {
@@ -662,8 +670,248 @@
             return saveWithRetry();
         }
 
-        generateShareTokenAndAsk() {
-            // Generate share token via AJAX
+        showSaveDraftModal() {
+            // Remove any existing modals
+            $('.cob-save-draft-modal').remove();
+            
+            const modal = $(`
+                <div class="cob-save-draft-modal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.85);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    backdrop-filter: blur(5px);
+                ">
+                    <div class="cob-modal-content" style="
+                        background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+                        padding: 40px;
+                        border-radius: 16px;
+                        max-width: 600px;
+                        width: 90%;
+                        text-align: center;
+                        border: 2px solid #9dff00;
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                        position: relative;
+                        overflow: hidden;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #9dff00, #00ff9d, #9dff00);
+                            background-size: 200% 100%;
+                            animation: shimmer 2s infinite;
+                        "></div>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <div style="
+                                width: 80px;
+                                height: 80px;
+                                background: #9dff00;
+                                border-radius: 50%;
+                                margin: 0 auto 20px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                animation: pulse 2s infinite;
+                            ">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 12l2 2 4-4" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h3 style="color: #9dff00; margin-bottom: 15px; font-size: 28px; font-weight: 700;">Draft Saved Successfully!</h3>
+                            <p style="color: #fff; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
+                                Your form progress has been securely saved. You can now:
+                            </p>
+                        </div>
+                        
+                        <div style="
+                            background: rgba(255,255,255,0.05);
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin-bottom: 30px;
+                            border: 1px solid rgba(157,255,0,0.3);
+                        ">
+                            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                <div style="
+                                    width: 24px;
+                                    height: 24px;
+                                    background: #9dff00;
+                                    border-radius: 50%;
+                                    margin-right: 15px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                ">
+                                    <span style="color: #000; font-weight: bold; font-size: 12px;">1</span>
+                                </div>
+                                <span style="color: #fff; font-weight: 600;">Continue filling out the form now</span>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                <div style="
+                                    width: 24px;
+                                    height: 24px;
+                                    background: #9dff00;
+                                    border-radius: 50%;
+                                    margin-right: 15px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                ">
+                                    <span style="color: #000; font-weight: bold; font-size: 12px;">2</span>
+                                </div>
+                                <span style="color: #fff; font-weight: 600;">Get a completion link to finish later</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="
+                                    width: 24px;
+                                    height: 24px;
+                                    background: #9dff00;
+                                    border-radius: 50%;
+                                    margin-right: 15px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                ">
+                                    <span style="color: #000; font-weight: bold; font-size: 12px;">3</span>
+                                </div>
+                                <span style="color: #fff; font-weight: 600;">Send the link to your email</span>
+                            </div>
+                        </div>
+                        
+                        <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <button class="cob-btn cob-btn-secondary" style="
+                                background: rgba(255,255,255,0.1);
+                                color: #fff;
+                                border: 2px solid rgba(255,255,255,0.3);
+                                padding: 15px 30px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 600;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
+                            ">Continue Now</button>
+                            <button class="cob-btn cob-btn-primary" style="
+                                background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%);
+                                color: #000;
+                                border: none;
+                                padding: 15px 30px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 700;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
+                                box-shadow: 0 4px 15px rgba(157,255,0,0.3);
+                            ">Get Completion Link</button>
+                            <button class="cob-btn cob-btn-email" style="
+                                background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+                                color: #fff;
+                                border: none;
+                                padding: 15px 30px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 700;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
+                                box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+                            ">Send to Email</button>
+                        </div>
+                        
+                        <button class="cob-modal-close" style="
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255,255,255,0.1);
+                            border: none;
+                            color: #fff;
+                            width: 30px;
+                            height: 30px;
+                            border-radius: 50%;
+                            cursor: pointer;
+                            font-size: 18px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: all 0.3s ease;
+                        ">×</button>
+                    </div>
+                </div>
+            `);
+
+            $('body').append(modal);
+
+            // Add CSS animations
+            $('<style>')
+                .prop('type', 'text/css')
+                .html(`
+                    @keyframes shimmer {
+                        0% { background-position: 200% 0; }
+                        100% { background-position: -200% 0; }
+                    }
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.05); }
+                    }
+                    .cob-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+                    }
+                    .cob-btn:active {
+                        transform: translateY(0);
+                    }
+                `)
+                .appendTo('head');
+
+            // Handle button clicks
+            modal.find('.cob-btn-secondary').on('click', () => {
+                modal.fadeOut(300, () => modal.remove());
+            });
+
+            modal.find('.cob-btn-primary').on('click', () => {
+                this.generateCompletionLink();
+            });
+
+            modal.find('.cob-btn-email').on('click', () => {
+                this.showEmailModal();
+            });
+
+            modal.find('.cob-modal-close').on('click', () => {
+                modal.fadeOut(300, () => modal.remove());
+            });
+
+            // Close modal on outside click
+            modal.on('click', (e) => {
+                if (e.target === modal[0]) {
+                    modal.fadeOut(300, () => modal.remove());
+                }
+            });
+
+            // Auto-close after 30 seconds
+            setTimeout(() => {
+                if (modal.is(':visible')) {
+                    modal.fadeOut(300, () => modal.remove());
+                }
+            }, 30000);
+        }
+
+        generateCompletionLink() {
+            console.log('COB: generateCompletionLink called with session ID:', this.sessionId);
+            
+            // Remove any existing link modals
+            $('.cob-link-modal').remove();
+            
+            // Generate share token first
             $.ajax({
                 url: cob_ajax.ajax_url,
                 type: 'POST',
@@ -673,95 +921,39 @@
                     session_id: this.sessionId
                 }
             }).done((response) => {
+                console.log('COB: Raw AJAX response for share token generation:', response);
                 try {
                     const data = typeof response === 'string' ? JSON.parse(response) : response;
-                    if (data.success && data.token) {
-                        console.log('COB: Share token generated successfully:', data.token);
-                        this.askForCompletionLink(data.token);
+                    console.log('COB: Parsed response data for share token generation:', data);
+                    
+                    if (data.success && (data.token || (data.data && data.data.token))) {
+                        const token = data.token || data.data.token;
+                        console.log('COB: Share token generated successfully:', token);
+                        this.showCompletionLinkModal(token);
                     } else {
-                        console.error('COB: Failed to generate share token:', data.message);
-                        // Fallback: ask without token
-                        this.askForCompletionLink(this.sessionId);
+                        console.error('COB: Failed to generate share token. Response data:', data);
+                        const errorMessage = data.message || (data.data && typeof data.data === 'string' ? data.data : 'Unknown error occurred');
+                        console.error('COB: Error message:', errorMessage);
+                        this.showSaveStatus('Failed to generate completion link: ' + errorMessage, 'error');
                     }
                 } catch (e) {
-                    console.error('COB: Error generating share token:', e);
-                    // Fallback: ask without token
-                    this.askForCompletionLink(this.sessionId);
+                    console.error('Error generating share token:', e);
+                    this.showSaveStatus('Error generating completion link. Please try again.', 'error');
                 }
             }).fail((xhr, status, error) => {
-                console.error('COB: Failed to generate share token:', status, error);
-                // Fallback: ask without token
-                this.askForCompletionLink(this.sessionId);
+                console.error('Failed to generate share token:', status, error);
+                console.error('COB: XHR response for share token generation:', xhr.responseText);
+                console.error('COB: XHR status for share token generation:', xhr.status);
+                this.showSaveStatus('Failed to generate completion link. Please try again.', 'error');
             });
         }
 
-        askForCompletionLink(sessionId) {
-            const modal = $(`
-                <div class="cob-completion-modal" style="
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.8);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 10000;
-                ">
-                    <div class="cob-modal-content" style="
-                        background: #2a2a2a;
-                        padding: 40px;
-                        border-radius: 12px;
-                        max-width: 500px;
-                        text-align: center;
-                        border: 1px solid #555;
-                    ">
-                        <h3 style="color: #9dff00; margin-bottom: 20px; font-size: 24px;">Draft Saved Successfully!</h3>
-                        <p style="color: #fff; margin-bottom: 30px; line-height: 1.6;">
-                            Your form progress has been saved. Would you like to complete the form later?
-                        </p>
-                        <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center;">
-                            <button class="cob-btn cob-btn-secondary" style="
-                                background: #555;
-                                color: #fff;
-                                border: none;
-                                padding: 12px 24px;
-                                border-radius: 6px;
-                                cursor: pointer;
-                                font-weight: 600;
-                            ">Continue Now</button>
-                            <button class="cob-btn cob-btn-primary" style="
-                                background: #9dff00;
-                                color: #000;
-                                border: none;
-                                padding: 12px 24px;
-                                border-radius: 6px;
-                                cursor: pointer;
-                                font-weight: 600;
-                            ">Get Completion Link</button>
-                        </div>
-                    </div>
-                </div>
-            `);
-
-            $('body').append(modal);
-
-            // Handle button clicks
-            modal.find('.cob-btn-secondary').on('click', () => {
-                modal.remove();
-            });
-
-            modal.find('.cob-btn-primary').on('click', () => {
-                this.generateCompletionLink(sessionId);
-                modal.remove();
-            });
-        }
-
-        generateCompletionLink(sessionId) {
-            // Generate the completion link using the share token
+        showCompletionLinkModal(token) {
             const currentUrl = window.location.origin + window.location.pathname;
-            const completionLink = `${currentUrl}?cob_share=${sessionId}`;
+            const completionLink = `${currentUrl}?cob_share=${token}`;
+            
+            console.log('COB: Generated completion link:', completionLink);
+            console.log('COB: Using token:', token);
             
             const linkModal = $(`
                 <div class="cob-link-modal" style="
@@ -770,61 +962,159 @@
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background: rgba(0,0,0,0.8);
+                    background: rgba(0,0,0,0.9);
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    z-index: 10000;
+                    z-index: 10001;
+                    backdrop-filter: blur(10px);
                 ">
                     <div class="cob-modal-content" style="
-                        background: #2a2a2a;
+                        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
                         padding: 40px;
-                        border-radius: 12px;
-                        max-width: 600px;
+                        border-radius: 16px;
+                        max-width: 700px;
+                        width: 90%;
                         text-align: center;
-                        border: 1px solid #555;
+                        border: 2px solid #9dff00;
+                        box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+                        position: relative;
                     ">
-                        <h3 style="color: #9dff00; margin-bottom: 20px; font-size: 24px;">Your Completion Link</h3>
-                        <p style="color: #fff; margin-bottom: 20px; line-height: 1.6;">
-                            Use this link to return and complete your form later. The link will take you directly to where you left off.
-                        </p>
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #9dff00, #00ff9d, #9dff00);
+                            background-size: 200% 100%;
+                            animation: shimmer 2s infinite;
+                        "></div>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <div style="
+                                width: 60px;
+                                height: 60px;
+                                background: #9dff00;
+                                border-radius: 50%;
+                                margin: 0 auto 20px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            ">
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h3 style="color: #9dff00; margin-bottom: 15px; font-size: 26px; font-weight: 700;">Your Completion Link</h3>
+                            <p style="color: #fff; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
+                                Use this secure link to return and complete your form later. The link will take you directly to where you left off.
+                            </p>
+                        </div>
+                        
                         <div class="cob-link-display" style="
-                            background: #1a1a1a;
-                            padding: 15px;
-                            border-radius: 6px;
-                            margin: 20px 0;
-                            border: 1px solid #555;
+                            background: rgba(0,0,0,0.3);
+                            padding: 20px;
+                            border-radius: 12px;
+                            margin: 25px 0;
+                            border: 2px solid rgba(157,255,0,0.3);
+                            position: relative;
                         ">
+                            <div style="
+                                position: absolute;
+                                top: -10px;
+                                left: 20px;
+                                background: #1a1a1a;
+                                padding: 0 10px;
+                                color: #9dff00;
+                                font-size: 12px;
+                                font-weight: 600;
+                                text-transform: uppercase;
+                            ">Completion Link</div>
                             <input type="text" value="${completionLink}" readonly style="
                                 width: 100%;
                                 background: transparent;
                                 border: none;
                                 color: #9dff00;
-                                font-family: monospace;
+                                font-family: 'Courier New', monospace;
                                 font-size: 14px;
                                 text-align: center;
+                                padding: 10px;
+                                outline: none;
                             ">
                         </div>
-                        <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center;">
+                        
+                        <div style="
+                            background: rgba(157,255,0,0.1);
+                            border-radius: 8px;
+                            padding: 15px;
+                            margin: 20px 0;
+                            border: 1px solid rgba(157,255,0,0.2);
+                        ">
+                            <p style="color: #9dff00; margin: 0; font-size: 14px; font-weight: 600;">
+                                💡 <strong>Pro Tip:</strong> Save this link in your bookmarks or send it to your email for easy access later!
+                            </p>
+                        </div>
+                        
+                        <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                             <button class="cob-btn cob-btn-copy" style="
-                                background: #9dff00;
+                                background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%);
                                 color: #000;
                                 border: none;
-                                padding: 12px 24px;
-                                border-radius: 6px;
+                                padding: 15px 30px;
+                                border-radius: 8px;
                                 cursor: pointer;
-                                font-weight: 600;
-                            ">Copy Link</button>
-                            <button class="cob-btn cob-btn-close" style="
-                                background: #555;
+                                font-weight: 700;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
+                                box-shadow: 0 4px 15px rgba(157,255,0,0.3);
+                            ">📋 Copy Link</button>
+                            <button class="cob-btn cob-btn-email" style="
+                                background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
                                 color: #fff;
                                 border: none;
-                                padding: 12px 24px;
-                                border-radius: 6px;
+                                padding: 15px 30px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 700;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
+                                box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+                            ">📧 Send to Email</button>
+                            <button class="cob-btn cob-btn-close" style="
+                                background: rgba(255,255,255,0.1);
+                                color: #fff;
+                                border: 2px solid rgba(255,255,255,0.3);
+                                padding: 15px 30px;
+                                border-radius: 8px;
                                 cursor: pointer;
                                 font-weight: 600;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
                             ">Close</button>
                         </div>
+                        
+                        <button class="cob-modal-close" style="
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255,255,255,0.1);
+                            border: none;
+                            color: #fff;
+                            width: 30px;
+                            height: 30px;
+                            border-radius: 50%;
+                            cursor: pointer;
+                            font-size: 18px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: all 0.3s ease;
+                        ">×</button>
                     </div>
                 </div>
             `);
@@ -836,17 +1126,452 @@
                 navigator.clipboard.writeText(completionLink).then(() => {
                     const copyBtn = linkModal.find('.cob-btn-copy');
                     const originalText = copyBtn.text();
-                    copyBtn.text('Copied!').css('background', '#4CAF50');
+                    copyBtn.text('✅ Copied!').css('background', 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)');
                     setTimeout(() => {
-                        copyBtn.text(originalText).css('background', '#9dff00');
+                        copyBtn.text(originalText).css('background', 'linear-gradient(135deg, #9dff00 0%, #00ff9d 100%)');
+                    }, 2000);
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = completionLink;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    const copyBtn = linkModal.find('.cob-btn-copy');
+                    const originalText = copyBtn.text();
+                    copyBtn.text('✅ Copied!').css('background', 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)');
+                    setTimeout(() => {
+                        copyBtn.text(originalText).css('background', 'linear-gradient(135deg, #9dff00 0%, #00ff9d 100%)');
                     }, 2000);
                 });
             });
 
+            // Handle email button
+            linkModal.find('.cob-btn-email').on('click', () => {
+                linkModal.remove();
+                this.showEmailModal(completionLink);
+            });
+
             // Handle close button
             linkModal.find('.cob-btn-close').on('click', () => {
-                linkModal.remove();
+                linkModal.fadeOut(300, () => linkModal.remove());
             });
+
+            // Handle close button
+            linkModal.find('.cob-modal-close').on('click', () => {
+                linkModal.fadeOut(300, () => linkModal.remove());
+            });
+
+            // Close modal on outside click
+            linkModal.on('click', (e) => {
+                if (e.target === linkModal[0]) {
+                    linkModal.fadeOut(300, () => linkModal.remove());
+                }
+            });
+        }
+
+        showEmailModal(completionLink = null) {
+            // Remove any existing email modals
+            $('.cob-email-modal').remove();
+            
+            if (!completionLink) {
+                // Generate completion link first
+                $.ajax({
+                    url: cob_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'cob_generate_share_token',
+                        nonce: cob_ajax.nonce,
+                        session_id: this.sessionId
+                    }
+                }).done((response) => {
+                    try {
+                        const data = typeof response === 'string' ? JSON.parse(response) : response;
+                        if (data.success && (data.token || (data.data && data.data.token))) {
+                            const token = data.token || data.data.token;
+                            const currentUrl = window.location.origin + window.location.pathname;
+                            console.log('COB: Email modal - generated token:', token);
+                            this.showEmailModal(`${currentUrl}?cob_share=${token}`);
+                        } else {
+                            console.error('COB: Email modal - failed to generate token:', data.message);
+                            this.showSaveStatus('Failed to generate completion link for email. Please try again.', 'error');
+                        }
+                    } catch (e) {
+                        console.error('Error generating share token for email:', e);
+                        this.showSaveStatus('Error generating completion link for email. Please try again.', 'error');
+                    }
+                }).fail((xhr, status, error) => {
+                    console.error('Failed to generate share token for email:', status, error);
+                    this.showSaveStatus('Failed to generate completion link for email. Please try again.', 'error');
+                });
+                return;
+            }
+
+            const formData = this.getFormData();
+            const defaultEmail = formData['primary_contact_email'] || '';
+            
+            const emailModal = $(`
+                <div class="cob-email-modal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10002;
+                    backdrop-filter: blur(10px);
+                ">
+                    <div class="cob-modal-content" style="
+                        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+                        padding: 40px;
+                        border-radius: 16px;
+                        max-width: 600px;
+                        width: 90%;
+                        text-align: center;
+                        border: 2px solid #ff6b6b;
+                        box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+                        position: relative;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #ff6b6b, #ff8e53, #ff6b6b);
+                            background-size: 200% 100%;
+                            animation: shimmer 2s infinite;
+                        "></div>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <div style="
+                                width: 60px;
+                                height: 60px;
+                                background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+                                border-radius: 50%;
+                                margin: 0 auto 20px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            ">
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M22 6l-10 7L2 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h3 style="color: #ff6b6b; margin-bottom: 15px; font-size: 26px; font-weight: 700;">Send Completion Link</h3>
+                            <p style="color: #fff; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
+                                Enter your email address and we'll send you a secure link to complete your form later.
+                            </p>
+                        </div>
+                        
+                        <form class="cob-email-form" style="margin-bottom: 30px;">
+                            <div style="margin-bottom: 20px;">
+                                <label for="cob-email-input" style="
+                                    display: block;
+                                    text-align: left;
+                                    color: #fff;
+                                    margin-bottom: 8px;
+                                    font-weight: 600;
+                                    font-size: 14px;
+                                ">Email Address</label>
+                                <input type="email" id="cob-email-input" value="${defaultEmail}" required style="
+                                    width: 100%;
+                                    padding: 15px;
+                                    border: 2px solid rgba(255,255,255,0.2);
+                                    border-radius: 8px;
+                                    background: rgba(255,255,255,0.1);
+                                    color: #fff;
+                                    font-size: 16px;
+                                    outline: none;
+                                    transition: all 0.3s ease;
+                                    box-sizing: border-box;
+                                " placeholder="Enter your email address">
+                            </div>
+                            
+                            <div style="
+                                background: rgba(255,255,255,0.05);
+                                border-radius: 8px;
+                                padding: 15px;
+                                margin: 20px 0;
+                                border: 1px solid rgba(255,255,255,0.1);
+                            ">
+                                <p style="color: #9dff00; margin: 0; font-size: 14px; font-weight: 600;">
+                                    🔒 <strong>Privacy:</strong> Your email will only be used to send the completion link. We won't spam you or share your information.
+                                </p>
+                            </div>
+                        </form>
+                        
+                        <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <button class="cob-btn cob-btn-send" style="
+                                background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+                                color: #fff;
+                                border: none;
+                                padding: 15px 30px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 700;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
+                                box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+                            ">📧 Send Link</button>
+                            <button class="cob-btn cob-btn-cancel" style="
+                                background: rgba(255,255,255,0.1);
+                                color: #fff;
+                                border: 2px solid rgba(255,255,255,0.3);
+                                padding: 15px 30px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 600;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                                min-width: 140px;
+                            ">Cancel</button>
+                        </div>
+                        
+                        <button class="cob-modal-close" style="
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: rgba(255,255,255,0.1);
+                            border: none;
+                            color: #fff;
+                            width: 30px;
+                            height: 30px;
+                            border-radius: 50%;
+                            cursor: pointer;
+                            font-size: 18px;
+                            display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.3s ease;
+                        ">×</button>
+                    </div>
+                </div>
+            `);
+
+            $('body').append(emailModal);
+
+            // Handle send button
+            emailModal.find('.cob-btn-send').on('click', (e) => {
+                e.preventDefault();
+                const email = emailModal.find('#cob-email-input').val().trim();
+                
+                if (!email) {
+                    emailModal.find('#cob-email-input').css('border-color', '#ff6b6b');
+                    return;
+                }
+                
+                if (!this.isValidEmail(email)) {
+                    emailModal.find('#cob-email-input').css('border-color', '#ff6b6b');
+                    return;
+                }
+                
+                this.sendCompletionLink(email, completionLink, emailModal);
+            });
+
+            // Handle cancel button
+            emailModal.find('.cob-btn-cancel').on('click', () => {
+                emailModal.fadeOut(300, () => emailModal.remove());
+            });
+
+            // Handle close button
+            emailModal.find('.cob-modal-close').on('click', () => {
+                emailModal.fadeOut(300, () => emailModal.remove());
+            });
+
+            // Close modal on outside click
+            emailModal.on('click', (e) => {
+                if (e.target === emailModal[0]) {
+                    emailModal.fadeOut(300, () => emailModal.remove());
+                }
+            });
+
+            // Handle email input styling
+            emailModal.find('#cob-email-input').on('input', function() {
+                $(this).css('border-color', 'rgba(255,255,255,0.2)');
+            });
+
+            // Handle form submission on enter
+            emailModal.find('.cob-email-form').on('submit', (e) => {
+                e.preventDefault();
+                emailModal.find('.cob-btn-send').click();
+            });
+
+            // Focus on email input
+            setTimeout(() => {
+                emailModal.find('#cob-email-input').focus();
+            }, 100);
+        }
+
+        sendCompletionLink(email, completionLink, modal) {
+            const sendBtn = modal.find('.cob-btn-send');
+            const originalText = sendBtn.text();
+            
+            sendBtn.prop('disabled', true).text('📤 Sending...');
+            
+            $.ajax({
+                url: cob_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'cob_send_completion_link',
+                    nonce: cob_ajax.nonce,
+                    email: email,
+                    completion_link: completionLink,
+                    session_id: this.sessionId
+                }
+            }).done((response) => {
+                try {
+                    const data = typeof response === 'string' ? JSON.parse(response) : response;
+                    
+                    if (data.success) {
+                        modal.find('.cob-modal-content').html(`
+                            <div style="text-align: center; padding: 40px;">
+                                <div style="
+                                    width: 80px;
+                                    height: 80px;
+                                    background: #4CAF50;
+                                    border-radius: 50%;
+                                    margin: 0 auto 20px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                ">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <h3 style="color: #4CAF50; margin-bottom: 15px; font-size: 26px; font-weight: 700;">Email Sent Successfully!</h3>
+                                <p style="color: #fff; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
+                                    We've sent the completion link to <strong>${email}</strong>. Check your inbox (and spam folder) for the email.
+                                </p>
+                                <button class="cob-btn cob-btn-close" style="
+                                    background: #4CAF50;
+                                    color: #fff;
+                                    border: none;
+                                    padding: 15px 30px;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-weight: 700;
+                                    font-size: 16px;
+                                    transition: all 0.3s ease;
+                                    min-width: 140px;
+                                ">Close</button>
+                            </div>
+                        `);
+                        
+                        modal.find('.cob-btn-close').on('click', () => {
+                            modal.fadeOut(300, () => modal.remove());
+                        });
+                    } else {
+                        this.showEmailError(modal, data.message || 'Failed to send email. Please try again.');
+                    }
+                } catch (e) {
+                    console.error('Error parsing email response:', e);
+                    this.showEmailError(modal, 'Error processing response. Please try again.');
+                }
+            }).fail((xhr, status, error) => {
+                console.error('Failed to send email:', status, error);
+                this.showEmailError(modal, 'Network error. Please try again.');
+            });
+        }
+
+        showEmailError(modal, message) {
+            const sendBtn = modal.find('.cob-btn-send');
+            sendBtn.prop('disabled', false).text('📧 Send Link');
+            
+            // Show error message
+            if (!modal.find('.cob-email-error').length) {
+                modal.find('.cob-email-form').after(`
+                    <div class="cob-email-error" style="
+                        background: rgba(255,107,107,0.1);
+                        border: 1px solid rgba(255,107,107,0.3);
+                        border-radius: 8px;
+                        padding: 15px;
+                        margin: 20px 0;
+                        color: #ff6b6b;
+                        font-weight: 600;
+                    ">${message}</div>
+                `);
+            } else {
+                modal.find('.cob-email-error').text(message);
+            }
+        }
+
+        isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        updateProgressDisplay() {
+            // Update all progress bars on the page
+            const progress = this.calculateProgress();
+            
+            // Update main progress bar
+            $('.cob-progress-fill').css('width', progress + '%');
+            $('.cob-mobile-progress-fill').css('width', progress + '%');
+            
+            // Update progress text
+            $('.cob-progress-text').text(progress + '% COMPLETE');
+            $('.cob-mobile-progress-text').text('PROGRESS');
+            
+            // Update step indicators
+            for (let i = 1; i <= this.totalSteps; i++) {
+                const stepElement = $(`.cob-step-item[data-step="${i}"]`);
+                if (i <= this.currentStep) {
+                    stepElement.addClass('cob-step-completed');
+                } else {
+                    stepElement.removeClass('cob-step-completed');
+                }
+            }
+        }
+
+        calculateProgress() {
+            const formData = this.getFormData();
+            let completedFields = 0;
+            let totalFields = 0;
+            
+            // Count all form fields
+            $('#cob-onboarding-form input, #cob-onboarding-form select, #cob-onboarding-form textarea').each(function() {
+                const field = $(this);
+                const name = field.attr('name');
+                
+                if (name && name !== 'submit') {
+                    totalFields++;
+                    
+                    if (field.attr('type') === 'checkbox' || field.attr('type') === 'radio') {
+                        if (field.is(':checked')) {
+                            completedFields++;
+                        }
+                    } else {
+                        if (field.val() && field.val().trim() !== '') {
+                            completedFields++;
+                        }
+                    }
+                }
+            });
+            
+            // Calculate percentage with step bonus
+            const fieldProgress = totalFields > 0 ? (completedFields / totalFields) * 70 : 0;
+            const stepProgress = (this.currentStep - 1) * 7.5; // 7.5% per step
+            
+            return Math.min(100, Math.round(fieldProgress + stepProgress));
+        }
+
+        scrollToCurrentStep() {
+            // Scroll to the current step section
+            const currentStepElement = $(`.cob-step[data-step="${this.currentStep}"]`);
+            if (currentStepElement.length) {
+                $('html, body').animate({
+                    scrollTop: currentStepElement.offset().top - 100
+                }, 800);
+            }
         }
 
         loadDraft() {
@@ -1064,16 +1789,49 @@
 
         showSaveStatus(message, type = 'success') {
             const statusElement = $('#cob-save-status');
-            statusElement.removeClass('cob-error cob-success').addClass(type);
+            
+            // Remove existing classes and add appropriate ones
+            statusElement.removeClass('cob-error cob-success cob-warning').addClass(`cob-${type}`);
+            
+            // Set message and styling
             statusElement.text(message);
+            
+            // Apply styling based on type
+            switch (type) {
+                case 'error':
+                    statusElement.css({
+                        'background-color': 'rgba(255, 107, 107, 0.1)',
+                        'border-color': 'rgba(255, 107, 107, 0.3)',
+                        'color': '#ff6b6b'
+                    });
+                    break;
+                case 'warning':
+                    statusElement.css({
+                        'background-color': 'rgba(255, 193, 7, 0.1)',
+                        'border-color': 'rgba(255, 193, 7, 0.3)',
+                        'color': '#ffc107'
+                    });
+                    break;
+                case 'success':
+                default:
+                    statusElement.css({
+                        'background-color': 'rgba(157, 255, 0, 0.1)',
+                        'border-color': 'rgba(157, 255, 0, 0.3)',
+                        'color': '#9dff00'
+                    });
+                    break;
+            }
+            
             statusElement.show();
             
             // Update the header save status with current time
             this.updateSaveStatus();
             
+            // Auto-hide after appropriate time
+            const hideDelay = type === 'error' ? 5000 : 3000;
             setTimeout(() => {
                 statusElement.fadeOut();
-            }, 3000);
+            }, hideDelay);
         }
 
         updateSaveStatus(timestamp) {
@@ -1102,6 +1860,16 @@
             if (shareToken) {
                 console.log('COB: Loading shared draft with token:', shareToken);
                 
+                // Check if AJAX object is available
+                if (typeof cob_ajax === 'undefined' || !cob_ajax.ajax_url || !cob_ajax.nonce) {
+                    console.error('COB: AJAX object not available, retrying in 1 second...');
+                    setTimeout(() => this.loadSharedDraft(), 1000);
+                    return;
+                }
+                
+                console.log('COB: AJAX URL:', cob_ajax.ajax_url);
+                console.log('COB: Nonce:', cob_ajax.nonce);
+                
                 // Load the draft using the share token
                 $.ajax({
                     url: cob_ajax.ajax_url,
@@ -1112,8 +1880,10 @@
                         share_token: shareToken
                     }
                 }).done((response) => {
+                    console.log('COB: Raw AJAX response:', response);
                     try {
                         const data = typeof response === 'string' ? JSON.parse(response) : response;
+                        console.log('COB: Parsed response data:', data);
                         
                         if (data.success && data.draft) {
                             console.log('COB: Shared draft loaded successfully:', data.draft);
@@ -1128,12 +1898,19 @@
                             this.currentStep = data.draft.current_step;
                             this.updateStepDisplay();
                             
-                            // Show success message
-                            this.showSaveStatus('Shared draft loaded successfully! You can continue from where you left off.');
+                            // Update progress bars
+                            this.updateProgressDisplay();
+                            
+                            // Show success message with progress info
+                            const progress = data.draft.progress_percentage || 0;
+                            this.showSaveStatus(`Shared draft loaded successfully! You're ${progress}% complete and can continue from Step ${this.currentStep}.`, 'success');
                             
                             // Clean up the URL
                             const newUrl = window.location.pathname;
                             window.history.replaceState({}, document.title, newUrl);
+                            
+                            // Scroll to the current step
+                            this.scrollToCurrentStep();
                             
                         } else {
                             console.error('COB: Failed to load shared draft:', data.message);
@@ -1145,6 +1922,8 @@
                     }
                 }).fail((xhr, status, error) => {
                     console.error('COB: Failed to load shared draft:', status, error);
+                    console.error('COB: XHR response:', xhr.responseText);
+                    console.error('COB: XHR status:', xhr.status);
                     this.showSaveStatus('Failed to load shared draft: Network error', 'error');
                 });
             }
@@ -1155,15 +1934,40 @@
             Object.keys(formData).forEach(fieldName => {
                 const field = $(`[name="${fieldName}"]`);
                 if (field.length) {
+                    const value = formData[fieldName];
+                    
                     if (field.attr('type') === 'checkbox') {
-                        field.prop('checked', formData[fieldName] === true || formData[fieldName] === '1');
+                        // Handle checkbox arrays
+                        if (Array.isArray(value)) {
+                            value.forEach(val => {
+                                $(`[name="${fieldName}"][value="${val}"]`).prop('checked', true);
+                            });
+                        } else {
+                            field.prop('checked', value === true || value === '1' || value === 'on');
+                        }
                     } else if (field.attr('type') === 'radio') {
-                        field.filter(`[value="${formData[fieldName]}"]`).prop('checked', true);
+                        field.filter(`[value="${value}"]`).prop('checked', true);
+                    } else if (field.is('select')) {
+                        // Handle select fields
+                        if (Array.isArray(value)) {
+                            // Multiple select
+                            field.val(value);
+                        } else {
+                            field.val(value);
+                        }
+                    } else if (field.attr('type') === 'textarea') {
+                        field.val(value);
                     } else {
-                        field.val(formData[fieldName]);
+                        field.val(value);
                     }
                 }
             });
+            
+            // Trigger change events to update any dependent fields
+            $('input, select, textarea').trigger('change');
+            
+            // Update progress display
+            this.updateProgressDisplay();
         }
 
         exitForm() {

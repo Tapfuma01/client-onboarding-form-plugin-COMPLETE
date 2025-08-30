@@ -18,7 +18,7 @@ class COB_Admin {
         add_action('wp_ajax_cob_generate_share_link', [$this, 'handle_generate_share_link']);
         add_action('wp_ajax_cob_get_draft_details', [$this, 'handle_get_draft_details']);
         add_action('wp_ajax_cob_delete_draft', [$this, 'handle_delete_draft']);
-        add_action('wp_ajax_cob_generate_share_token', [$this, 'handle_generate_share_token']);
+        // Note: cob_generate_share_token is handled in the main plugin file to avoid conflicts
         add_action('wp_ajax_cob_send_test_notification', [$this, 'handle_send_test_notification']);
         add_action('wp_ajax_cob_test_admin_notification', [$this, 'handle_test_admin_notification']);
         
@@ -453,30 +453,7 @@ class COB_Admin {
         }
     }
 
-    /**
-     * Handle AJAX request to generate share token
-     */
-    public function handle_generate_share_token() {
-        // Check nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'cob_admin_nonce')) {
-            wp_send_json_error('Security check failed');
-        }
-        
-        $session_id = sanitize_text_field($_POST['session_id'] ?? '');
-        
-        if (empty($session_id)) {
-            wp_send_json_error('Session ID is required');
-        }
-        
-        // Generate share token
-        $token = COB_Database::generate_share_token($session_id);
-        
-        if ($token) {
-            wp_send_json_success(['token' => $token]);
-        } else {
-            wp_send_json_error('Failed to generate share token');
-        }
-    }
+    // Note: handle_generate_share_token method removed to avoid conflicts with main plugin file
 
     public function logs_page() {
         // Ensure database class is loaded

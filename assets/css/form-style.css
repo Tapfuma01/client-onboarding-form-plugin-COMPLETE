@@ -25,6 +25,102 @@ body .cob-form-container,
     position: relative;
 }
 
+/* Modal and Status Message Styles */
+.cob-save-status {
+    position: fixed !important;
+    top: 100px !important;
+    right: 20px !important;
+    background: rgba(157, 255, 0, 0.1) !important;
+    border: 1px solid rgba(157, 255, 0, 0.3) !important;
+    color: #9dff00 !important;
+    padding: 15px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    z-index: 10003 !important;
+    max-width: 400px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s ease !important;
+}
+
+.cob-save-status.show {
+    transform: translateX(0) !important;
+}
+
+.cob-save-status.cob-error {
+    background: rgba(255, 107, 107, 0.1) !important;
+    border-color: rgba(255, 107, 107, 0.3) !important;
+    color: #ff6b6b !important;
+}
+
+.cob-save-status.cob-warning {
+    background: rgba(255, 193, 7, 0.1) !important;
+    border-color: rgba(255, 193, 7, 0.3) !important;
+    color: #ffc107 !important;
+}
+
+.cob-save-status.cob-success {
+    background: rgba(157, 255, 0, 0.1) !important;
+    border-color: rgba(157, 255, 0, 0.3) !important;
+    color: #9dff00 !important;
+}
+
+/* Modal Animation Classes */
+.cob-modal-enter {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.cob-modal-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.3s ease;
+}
+
+.cob-modal-exit {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.cob-modal-exit-active {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+}
+
+/* Button Hover Effects */
+.cob-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
+}
+
+.cob-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* Progress Bar Enhancements */
+.cob-progress-fill,
+.cob-mobile-progress-fill {
+    transition: width 0.8s ease !important;
+}
+
+/* Step Completion Indicators */
+.cob-step-item.cob-step-completed .cob-step-circle {
+    background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%) !important;
+    color: #000 !important;
+}
+
+.cob-step-item.cob-step-completed .cob-step-circle::after {
+    content: '✓' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+}
+
 /* Override WordPress page/content containers */
 body .entry-content .cob-form-container,
 body .site-content .cob-form-container,

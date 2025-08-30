@@ -20,8 +20,9 @@ class COB_Form_Handler {
         add_action('wp_ajax_nopriv_cob_get_draft', [$this, 'ajax_get_draft']);
         add_action('wp_ajax_cob_submit_form', [$this, 'ajax_submit_form']);
         add_action('wp_ajax_nopriv_cob_submit_form', [$this, 'ajax_submit_form']);
-        add_action('wp_ajax_cob_get_shared_draft', [$this, 'ajax_get_shared_draft']);
-        add_action('wp_ajax_nopriv_cob_get_shared_draft', [$this, 'ajax_get_shared_draft']);
+        // Note: cob_get_shared_draft is handled in the main plugin file to avoid conflicts
+        add_action('wp_ajax_cob_send_completion_link', [$this, 'ajax_send_completion_link']);
+        add_action('wp_ajax_nopriv_cob_send_completion_link', [$this, 'ajax_send_completion_link']);
         
         // Ensure database class is loaded for AJAX requests
         $this->load_dependencies();
@@ -128,17 +129,7 @@ class COB_Form_Handler {
                 true
             );
 
-            wp_localize_script('cob-form-script', 'cob_ajax', [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('cob_form_nonce'),
-                'messages' => [
-                    'draft_saved' => __('Draft saved successfully!', 'client-onboarding-form'),
-                    'submit_success' => __('Form submitted successfully!', 'client-onboarding-form'),
-                    'submit_error' => __('Error submitting form. Please try again.', 'client-onboarding-form'),
-                    'validation_error' => __('Please fill in all required fields.', 'client-onboarding-form'),
-                    'exit_confirm' => __('Are you sure you want to exit? Your progress will be saved as a draft.', 'client-onboarding-form')
-                ]
-            ]);
+                    // Note: Script localization is handled in the main plugin file to avoid conflicts
         }
     }
 
@@ -720,6 +711,161 @@ class COB_Form_Handler {
         // } else {
         //     error_log('COB: Admin email not configured. Cannot send test notification.');
         // }
+    }
+
+    /**
+     * AJAX handler for sending completion links via email
+     */
+    public function ajax_send_completion_link() {
+        try {
+            check_ajax_referer('cob_form_nonce', 'nonce');
+
+            $email = sanitize_email($_POST['email'] ?? '');
+            $completion_link = esc_url_raw($_POST['completion_link'] ?? '');
+            $session_id = sanitize_text_field($_POST['session_id'] ?? '');
+
+            if (empty($email)) {
+                wp_send_json_error('Email address is required');
+            }
+
+            if (empty($completion_link)) {
+                wp_send_json_error('Completion link is required');
+            }
+
+            if (empty($session_id)) {
+                wp_send_json_error('Session ID is required');
+            }
+
+            // Validate email format
+            if (!is_email($email)) {
+                wp_send_json_error('Invalid email format');
+            }
+
+            // Get form data for the email
+            $draft_data = COB_Database::get_draft($session_id);
+            if (!$draft_data) {
+                wp_send_json_error('Draft not found');
+            }
+
+            // Prepare email content
+            $subject = 'Complete Your FLUX Client Onboarding Form';
+            $message = $this->prepare_completion_link_email($email, $completion_link, $draft_data);
+
+            // Send email
+            $headers = ['Content-Type: text/html; charset=UTF-8'];
+            $sent = wp_mail($email, $subject, $message, $headers);
+
+            if ($sent) {
+                // Log the email sent
+                COB_Database::log_activity('completion_link_sent', null, $session_id, "Completion link sent to: $email");
+                
+                wp_send_json_success([
+                    'message' => 'Completion link sent successfully!',
+                    'email' => $email
+                ]);
+            } else {
+                wp_send_json_error('Failed to send email. Please try again.');
+            }
+
+        } catch (Exception $e) {
+            error_log('COB: Error sending completion link: ' . $e->getMessage());
+            wp_send_json_error('Server error occurred. Please try again.');
+        }
+    }
+
+    /**
+     * Prepare the HTML email content for completion link
+     */
+    private function prepare_completion_link_email($email, $completion_link, $draft_data) {
+        $business_name = $draft_data['form_data']['business_name'] ?? 'Your Business';
+        $current_step = $draft_data['current_step'] ?? 1;
+        $progress = $draft_data['progress_percentage'] ?? 0;
+        
+        $step_names = [
+            1 => 'Client Information',
+            2 => 'Technical Information', 
+            3 => 'Reporting Information',
+            4 => 'Marketing Information'
+        ];
+        
+        $current_step_name = $step_names[$current_step] ?? 'Step ' . $current_step;
+        
+        ob_start();
+        ?>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Complete Your FLUX Client Onboarding Form</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .header h1 { color: #000; margin: 0; font-size: 28px; font-weight: 700; }
+                .content { background: #fff; padding: 30px; border: 1px solid #ddd; }
+                .progress-bar { background: #f0f0f0; border-radius: 10px; height: 20px; margin: 20px 0; overflow: hidden; }
+                .progress-fill { background: linear-gradient(90deg, #9dff00, #00ff9d); height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+                .cta-button { display: inline-block; background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%); color: #000; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; font-size: 16px; margin: 20px 0; }
+                .footer { background: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; border: 1px solid #ddd; }
+                .info-box { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin: 20px 0; }
+                .step-info { background: #e8f5e8; border: 1px solid #9dff00; border-radius: 8px; padding: 15px; margin: 15px 0; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>FLUX</h1>
+                </div>
+                
+                <div class="content">
+                    <h2>Complete Your Client Onboarding Form</h2>
+                    
+                    <p>Hello!</p>
+                    
+                    <p>We noticed you started filling out the FLUX Client Onboarding Form but didn't complete it. Don't worry - your progress has been saved and you can continue from exactly where you left off!</p>
+                    
+                    <div class="info-box">
+                        <h3>Your Progress Summary</h3>
+                        <p><strong>Business:</strong> <?php echo esc_html($business_name); ?></p>
+                        <p><strong>Current Step:</strong> <?php echo esc_html($current_step_name); ?></p>
+                        <p><strong>Progress:</strong> <?php echo esc_html($progress); ?>% complete</p>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: <?php echo esc_attr($progress); ?>%"></div>
+                    </div>
+                    
+                    <div class="step-info">
+                        <p><strong>💡 Tip:</strong> You're currently on <strong><?php echo esc_html($current_step_name); ?></strong>. Click the button below to continue from where you left off.</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="<?php echo esc_url($completion_link); ?>" class="cta-button">
+                            Continue Your Form
+                        </a>
+                    </div>
+                    
+                    <p><strong>What happens next?</strong></p>
+                    <ul>
+                        <li>Click the button above to return to your form</li>
+                        <li>All your previous answers will be automatically loaded</li>
+                        <li>Continue from exactly where you left off</li>
+                        <li>Submit when you're ready</li>
+                    </ul>
+                    
+                    <p><strong>Need help?</strong> If you have any questions or need assistance, please don't hesitate to contact us.</p>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>FLUX Agency</strong> - Streamlining your digital marketing journey</p>
+                    <p><small>This email was sent because you requested a completion link for your onboarding form. If you didn't request this, please ignore this email.</small></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        <?php
+        return ob_get_clean();
     }
 
 }

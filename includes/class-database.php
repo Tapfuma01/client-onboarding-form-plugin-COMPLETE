@@ -673,6 +673,17 @@ class COB_Database {
         $table_name = $wpdb->prefix . 'cob_drafts';
         $token = 'share_' . wp_generate_password(32, false);
         
+        // First check if the draft exists
+        $draft_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE session_id = %s",
+            $session_id
+        ));
+        
+        if (!$draft_exists) {
+            error_log('COB: Draft does not exist for session: ' . $session_id);
+            return false;
+        }
+        
         $result = $wpdb->update(
             $table_name,
             ['share_token' => $token],
@@ -686,6 +697,7 @@ class COB_Database {
             return $token;
         }
         
+        error_log('COB: Failed to update share token for session: ' . $session_id);
         return false;
     }
 
@@ -694,10 +706,29 @@ class COB_Database {
         
         $table_name = $wpdb->prefix . 'cob_drafts';
         
+        // First try to find by share_token
         $draft = $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM $table_name WHERE share_token = %s",
             $token
         ));
+
+        // If not found and token looks like a session ID, try to find by session_id
+        if (!$draft && strpos($token, 'session_') === 0) {
+            error_log('COB: Token looks like session ID, trying to find by session_id: ' . $token);
+            $draft = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $table_name WHERE session_id = %s",
+                $token
+            ));
+            
+            if ($draft) {
+                error_log('COB: Found draft by session_id, generating share token');
+                // Generate a share token for this draft
+                $share_token = self::generate_share_token($draft->session_id);
+                if ($share_token) {
+                    error_log('COB: Generated share token: ' . $share_token);
+                }
+            }
+        }
 
         if ($draft) {
             return [

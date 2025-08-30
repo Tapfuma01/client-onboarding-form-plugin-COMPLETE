@@ -194,34 +194,51 @@ class ClientOnboardingForm {
      * Handle AJAX request to generate share token
      */
     public function handle_generate_share_token() {
-        // Check nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'cob_admin_nonce')) {
-            wp_send_json_error('Security check failed');
-        }
-        
-        $session_id = sanitize_text_field($_POST['session_id'] ?? '');
-        
-        error_log('COB: Generating share token for session: ' . $session_id);
-        
-        if (empty($session_id)) {
-            wp_send_json_error('Session ID is required');
-        }
-        
-        // Generate share token
-        if (class_exists('COB_Database')) {
-            error_log('COB: Database class exists, calling generate_share_token');
-            $token = COB_Database::generate_share_token($session_id);
-            
-            if ($token) {
-                error_log('COB: Share token generated successfully: ' . $token);
-                wp_send_json_success(['token' => $token]);
-            } else {
-                error_log('COB: Failed to generate share token for session: ' . $session_id);
-                wp_send_json_error('Failed to generate share token');
+        try {
+            // Check nonce
+            if (!wp_verify_nonce($_POST['nonce'], 'cob_form_nonce')) {
+                wp_send_json_error('Security check failed');
             }
-        } else {
-            error_log('COB: Database class not available');
-            wp_send_json_error('Database class not available');
+            
+            $session_id = sanitize_text_field($_POST['session_id'] ?? '');
+            
+            error_log('COB: Generating share token for session: ' . $session_id);
+            error_log('COB: POST data: ' . print_r($_POST, true));
+            
+            if (empty($session_id)) {
+                wp_send_json_error('Session ID is required');
+            }
+            
+            // Ensure database class is loaded
+            if (!class_exists('COB_Database')) {
+                require_once COB_PLUGIN_PATH . 'includes/class-database.php';
+            }
+            
+            // Generate share token
+            if (class_exists('COB_Database')) {
+                error_log('COB: Database class exists, calling generate_share_token');
+                $token = COB_Database::generate_share_token($session_id);
+                
+                if ($token) {
+                    error_log('COB: Share token generated successfully: ' . $token);
+                    wp_send_json_success(['token' => $token]);
+                } else {
+                    error_log('COB: Failed to generate share token for session: ' . $session_id);
+                    // Check if draft exists
+                    $draft_exists = COB_Database::get_draft($session_id);
+                    if (!$draft_exists) {
+                        wp_send_json_error('Draft not found. Please save your form first before generating a completion link.');
+                    } else {
+                        wp_send_json_error('Failed to generate share token. Please try again.');
+                    }
+                }
+            } else {
+                error_log('COB: Database class not available');
+                wp_send_json_error('Database class not available');
+            }
+        } catch (Exception $e) {
+            error_log('COB: Exception in handle_generate_share_token: ' . $e->getMessage());
+            wp_send_json_error('Server error: ' . $e->getMessage());
         }
     }
 
@@ -229,34 +246,59 @@ class ClientOnboardingForm {
      * Handle AJAX request to load a shared draft
      */
     public function handle_load_shared_draft() {
-        // Check nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'cob_admin_nonce')) {
-            wp_send_json_error('Security check failed');
-        }
-
-        $token = sanitize_text_field($_POST['share_token'] ?? '');
-        
-        error_log('COB: Loading shared draft with token: ' . $token);
-
-        if (empty($token)) {
-            wp_send_json_error('Share token is required');
-        }
-
-        // Load the draft data
-        if (class_exists('COB_Database')) {
-            error_log('COB: Database class exists, calling get_draft_by_token');
-            $draft_data = COB_Database::get_draft_by_token($token);
+        try {
+            error_log('COB: handle_load_shared_draft called');
+            error_log('COB: REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            error_log('COB: POST data: ' . print_r($_POST, true));
+            error_log('COB: GET data: ' . print_r($_GET, true));
             
-            if ($draft_data) {
-                error_log('COB: Draft data found: ' . print_r($draft_data, true));
-                wp_send_json_success(['draft' => $draft_data]);
-            } else {
-                error_log('COB: No draft found for token: ' . $token);
-                wp_send_json_error('Draft not found or expired');
+            // Check nonce
+            if (!wp_verify_nonce($_POST['nonce'], 'cob_form_nonce')) {
+                error_log('COB: Nonce verification failed for load_shared_draft');
+                error_log('COB: Expected nonce: cob_form_nonce');
+                error_log('COB: Received nonce: ' . ($_POST['nonce'] ?? 'NOT SET'));
+                wp_send_json_error('Security check failed');
             }
-        } else {
-            error_log('COB: Database class not available');
-            wp_send_json_error('Database class not available');
+
+            $token = sanitize_text_field($_POST['share_token'] ?? '');
+            
+            error_log('COB: Loading shared draft with token: ' . $token);
+
+            if (empty($token)) {
+                error_log('COB: Token is empty');
+                wp_send_json_error('Share token is required');
+            }
+
+            // Ensure database class is loaded
+            if (!class_exists('COB_Database')) {
+                error_log('COB: Loading COB_Database class');
+                require_once COB_PLUGIN_PATH . 'includes/class-database.php';
+            }
+            
+            // Load the draft data
+            if (class_exists('COB_Database')) {
+                error_log('COB: Database class exists, calling get_draft_by_token');
+                $draft_data = COB_Database::get_draft_by_token($token);
+                
+                if ($draft_data) {
+                    error_log('COB: Draft data found: ' . print_r($draft_data, true));
+                    wp_send_json_success(['draft' => $draft_data]);
+                } else {
+                    error_log('COB: No draft found for token: ' . $token);
+                    wp_send_json_error('Draft not found or expired');
+                }
+            } else {
+                error_log('COB: Database class not available');
+                wp_send_json_error('Database class not available');
+            }
+        } catch (Exception $e) {
+            error_log('COB: Exception in handle_load_shared_draft: ' . $e->getMessage());
+            error_log('COB: Exception trace: ' . $e->getTraceAsString());
+            wp_send_json_error('Server error: ' . $e->getMessage());
+        } catch (Error $e) {
+            error_log('COB: Error in handle_load_shared_draft: ' . $e->getMessage());
+            error_log('COB: Error trace: ' . $e->getTraceAsString());
+            wp_send_json_error('Server error: ' . $e->getMessage());
         }
     }
 
@@ -361,7 +403,10 @@ class ClientOnboardingForm {
                 'draft_load_failed' => 'Failed to load draft. Please try again.',
                 'form_submitted' => 'Form submitted successfully!',
                 'form_submit_failed' => 'Failed to submit form. Please try again.',
-                'submit_error' => 'Failed to submit form. Please try again.'
+                'submit_error' => 'Failed to submit form. Please try again.',
+                'submit_success' => 'Form submitted successfully!',
+                'validation_error' => 'Please fill in all required fields.',
+                'exit_confirm' => 'Are you sure you want to exit? Your progress will be saved as a draft.'
             ]
         ]);
     }
