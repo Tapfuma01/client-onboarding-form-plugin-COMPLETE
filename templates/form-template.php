@@ -20,8 +20,8 @@ if (!defined('ABSPATH')) {
             <main class="cob-start-content">
                 <div class="cob-start-content-wrapper">
                     <div class="cob-start-heading">
-                        <span class="cob-heading-line-1">CLIENT ONBOARDING</span>
-                        <span class="cob-heading-line-2">FORM</span>
+                        <span class="cob-heading-line-1">CLIENT</span>
+                        <span class="cob-heading-line-2">ONBOARDING</span>
                     </div>
                     <div class="cob-start-description">
                         Welcome to FLUX! We're excited to help you get started with your digital marketing journey. 
@@ -92,6 +92,7 @@ if (!defined('ABSPATH')) {
 
             <!-- Step Navigation Sidebar -->
             <nav class="cob-step-navigation cob-nav-enhanced">
+                <div class="cob-step-wrapper">
                 <div class="cob-step-item cob-nav-item-enhanced cob-step-active" data-step="1">
                     <div class="cob-step-circle cob-circle-enhanced">
                         <span class="cob-step-number cob-number-enhanced">1</span>
@@ -116,6 +117,7 @@ if (!defined('ABSPATH')) {
                     </div>
                     <span class="cob-step-name cob-name-enhanced">MARKETING INFORMATION</span>
                 </div>
+                <div class="cob-step-wrapper">
             </nav>
 
             <!-- Main Form Content -->

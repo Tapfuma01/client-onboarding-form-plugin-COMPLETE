@@ -801,15 +801,15 @@ class COB_Form_Handler {
             <style>
                 body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .header { background: linear-gradient(135deg, #d5FD72 0%, #00ff9d 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
                 .header h1 { color: #000; margin: 0; font-size: 28px; font-weight: 700; }
                 .content { background: #fff; padding: 30px; border: 1px solid #ddd; }
                 .progress-bar { background: #f0f0f0; border-radius: 10px; height: 20px; margin: 20px 0; overflow: hidden; }
-                .progress-fill { background: linear-gradient(90deg, #9dff00, #00ff9d); height: 100%; border-radius: 10px; transition: width 0.3s ease; }
-                .cta-button { display: inline-block; background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%); color: #000; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; font-size: 16px; margin: 20px 0; }
+                .progress-fill { background: linear-gradient(90deg, #d5FD72, #00ff9d); height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+                .cta-button { display: inline-block; background: linear-gradient(135deg, #d5FD72 0%, #00ff9d 100%); color: #000; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: 700; font-size: 16px; margin: 20px 0; }
                 .footer { background: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; border: 1px solid #ddd; }
                 .info-box { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin: 20px 0; }
-                .step-info { background: #e8f5e8; border: 1px solid #9dff00; border-radius: 8px; padding: 15px; margin: 15px 0; }
+                .step-info { background: #e8f5e8; border: 1px solid #d5FD72; border-radius: 8px; padding: 15px; margin: 15px 0; }
             </style>
         </head>
         <body>

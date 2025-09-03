@@ -494,7 +494,7 @@ $merge_tags = COB_Email_Notifications::get_available_merge_tags();
 }
 
 .cob-merge-tag:hover {
-    background: #9dff00;
+    background: #d5FD72;
     color: #000;
 }
 
@@ -710,7 +710,7 @@ jQuery(document).ready(function($) {
             // Visual feedback
             var $tag = $(this);
             var originalBg = $tag.css('background-color');
-            $tag.css('background-color', '#9dff00');
+            $tag.css('background-color', '#d5FD72');
             setTimeout(function() {
                 $tag.css('background-color', originalBg);
             }, 500);

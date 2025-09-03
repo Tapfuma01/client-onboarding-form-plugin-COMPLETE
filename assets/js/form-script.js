@@ -695,7 +695,7 @@
                         max-width: 600px;
                         width: 90%;
                         text-align: center;
-                        border: 2px solid #9dff00;
+                        border: 2px solid #d5FD72;
                         box-shadow: 0 20px 40px rgba(0,0,0,0.5);
                         position: relative;
                         overflow: hidden;
@@ -706,7 +706,7 @@
                             left: 0;
                             right: 0;
                             height: 4px;
-                            background: linear-gradient(90deg, #9dff00, #00ff9d, #9dff00);
+                            background: linear-gradient(90deg, #d5FD72, #00ff9d, #d5FD72);
                             background-size: 200% 100%;
                             animation: shimmer 2s infinite;
                         "></div>
@@ -715,7 +715,7 @@
                             <div style="
                                 width: 80px;
                                 height: 80px;
-                                background: #9dff00;
+                                background: #d5FD72;
                                 border-radius: 50%;
                                 margin: 0 auto 20px;
                                 display: flex;
@@ -727,7 +727,7 @@
                                     <path d="M9 12l2 2 4-4" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
-                            <h3 style="color: #9dff00; margin-bottom: 15px; font-size: 28px; font-weight: 700;">Draft Saved Successfully!</h3>
+                            <h3 style="color: #d5FD72; margin-bottom: 15px; font-size: 28px; font-weight: 700;">Draft Saved Successfully!</h3>
                             <p style="color: #fff; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
                                 Your form progress has been securely saved. You can now:
                             </p>
@@ -744,7 +744,7 @@
                                 <div style="
                                     width: 24px;
                                     height: 24px;
-                                    background: #9dff00;
+                                    background: #d5FD72;
                                     border-radius: 50%;
                                     margin-right: 15px;
                                     display: flex;
@@ -759,7 +759,7 @@
                                 <div style="
                                     width: 24px;
                                     height: 24px;
-                                    background: #9dff00;
+                                    background: #d5FD72;
                                     border-radius: 50%;
                                     margin-right: 15px;
                                     display: flex;
@@ -774,7 +774,7 @@
                                 <div style="
                                     width: 24px;
                                     height: 24px;
-                                    background: #9dff00;
+                                    background: #d5FD72;
                                     border-radius: 50%;
                                     margin-right: 15px;
                                     display: flex;
@@ -801,7 +801,7 @@
                                 min-width: 140px;
                             ">Continue Now</button>
                             <button class="cob-btn cob-btn-primary" style="
-                                background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%);
+                                background: #d5FD72;
                                 color: #000;
                                 border: none;
                                 padding: 15px 30px;
@@ -811,7 +811,7 @@
                                 font-size: 16px;
                                 transition: all 0.3s ease;
                                 min-width: 140px;
-                                box-shadow: 0 4px 15px rgba(157,255,0,0.3);
+                                box-shadow: 0 4px 15px rgba(213,253,114,0.3);
                             ">Get Completion Link</button>
                             <button class="cob-btn cob-btn-email" style="
                                 background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
@@ -976,7 +976,7 @@
                         max-width: 700px;
                         width: 90%;
                         text-align: center;
-                        border: 2px solid #9dff00;
+                        border: 2px solid #d5FD72;
                         box-shadow: 0 25px 50px rgba(0,0,0,0.7);
                         position: relative;
                     ">
@@ -986,7 +986,7 @@
                             left: 0;
                             right: 0;
                             height: 4px;
-                            background: linear-gradient(90deg, #9dff00, #00ff9d, #9dff00);
+                            background: linear-gradient(90deg, #d5FD72, #00ff9d, #d5FD72);
                             background-size: 200% 100%;
                             animation: shimmer 2s infinite;
                         "></div>
@@ -995,7 +995,7 @@
                             <div style="
                                 width: 60px;
                                 height: 60px;
-                                background: #9dff00;
+                                background: #d5FD72;
                                 border-radius: 50%;
                                 margin: 0 auto 20px;
                                 display: flex;
@@ -1007,7 +1007,7 @@
                                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
-                            <h3 style="color: #9dff00; margin-bottom: 15px; font-size: 26px; font-weight: 700;">Your Completion Link</h3>
+                            <h3 style="color: #d5FD72; margin-bottom: 15px; font-size: 26px; font-weight: 700;">Your Completion Link</h3>
                             <p style="color: #fff; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
                                 Use this secure link to return and complete your form later. The link will take you directly to where you left off.
                             </p>
@@ -1027,7 +1027,7 @@
                                 left: 20px;
                                 background: #1a1a1a;
                                 padding: 0 10px;
-                                color: #9dff00;
+                                color: #d5FD72;
                                 font-size: 12px;
                                 font-weight: 600;
                                 text-transform: uppercase;
@@ -1036,7 +1036,7 @@
                                 width: 100%;
                                 background: transparent;
                                 border: none;
-                                color: #9dff00;
+                                color: #d5FD72;
                                 font-family: 'Courier New', monospace;
                                 font-size: 14px;
                                 text-align: center;
@@ -1052,14 +1052,14 @@
                             margin: 20px 0;
                             border: 1px solid rgba(157,255,0,0.2);
                         ">
-                            <p style="color: #9dff00; margin: 0; font-size: 14px; font-weight: 600;">
+                            <p style="color: #d5FD72; margin: 0; font-size: 14px; font-weight: 600;">
                                 💡 <strong>Pro Tip:</strong> Save this link in your bookmarks or send it to your email for easy access later!
                             </p>
                         </div>
                         
                         <div class="cob-modal-buttons" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                             <button class="cob-btn cob-btn-copy" style="
-                                background: linear-gradient(135deg, #9dff00 0%, #00ff9d 100%);
+                                background: #d5FD72;
                                 color: #000;
                                 border: none;
                                 padding: 15px 30px;
@@ -1069,8 +1069,8 @@
                                 font-size: 16px;
                                 transition: all 0.3s ease;
                                 min-width: 140px;
-                                box-shadow: 0 4px 15px rgba(157,255,0,0.3);
-                            ">📋 Copy Link</button>
+                                box-shadow: 0 4px 15px rgba(213,253,114,0.3);
+                            ">Copy Link</button>
                             <button class="cob-btn cob-btn-email" style="
                                 background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
                                 color: #fff;
@@ -1083,7 +1083,7 @@
                                 transition: all 0.3s ease;
                                 min-width: 140px;
                                 box-shadow: 0 4px 15px rgba(255,107,107,0.3);
-                            ">📧 Send to Email</button>
+                            ">Send to Email</button>
                             <button class="cob-btn cob-btn-close" style="
                                 background: rgba(255,255,255,0.1);
                                 color: #fff;
@@ -1123,29 +1123,42 @@
 
             // Handle copy button
             linkModal.find('.cob-btn-copy').on('click', () => {
-                navigator.clipboard.writeText(completionLink).then(() => {
-                    const copyBtn = linkModal.find('.cob-btn-copy');
-                    const originalText = copyBtn.text();
-                    copyBtn.text('✅ Copied!').css('background', 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)');
-                    setTimeout(() => {
-                        copyBtn.text(originalText).css('background', 'linear-gradient(135deg, #9dff00 0%, #00ff9d 100%)');
-                    }, 2000);
-                }).catch(() => {
+                console.log('COB: Copy button clicked, link to copy:', completionLink);
+                
+                const copyBtn = linkModal.find('.cob-btn-copy');
+                const originalText = copyBtn.text();
+                const originalBackground = copyBtn.css('background');
+                
+                // Try modern clipboard API first
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    console.log('COB: Using modern clipboard API');
+                    navigator.clipboard.writeText(completionLink).then(() => {
+                        console.log('COB: Clipboard API success');
+                        // Show success feedback
+                        copyBtn.text('✅ Copied!').css({
+                            'background': 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+                            'color': '#fff'
+                        });
+                        
+                        // Show tooltip
+                        this.showCopyTooltip(linkModal, 'Link copied to clipboard!');
+                        
+                        // Reset button after 3 seconds
+                        setTimeout(() => {
+                            copyBtn.text(originalText).css({
+                                'background': originalBackground,
+                                'color': '#000'
+                            });
+                        }, 3000);
+                    }).catch((err) => {
+                        console.error('COB: Clipboard API failed:', err);
+                        this.fallbackCopyToClipboard(completionLink, copyBtn, originalText, originalBackground, linkModal);
+                    });
+                } else {
+                    console.log('COB: Using fallback copy method');
                     // Fallback for older browsers
-                    const textArea = document.createElement('textarea');
-                    textArea.value = completionLink;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    
-                    const copyBtn = linkModal.find('.cob-btn-copy');
-                    const originalText = copyBtn.text();
-                    copyBtn.text('✅ Copied!').css('background', 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)');
-                    setTimeout(() => {
-                        copyBtn.text(originalText).css('background', 'linear-gradient(135deg, #9dff00 0%, #00ff9d 100%)');
-                    }, 2000);
-                });
+                    this.fallbackCopyToClipboard(completionLink, copyBtn, originalText, originalBackground, linkModal);
+                }
             });
 
             // Handle email button
@@ -1301,7 +1314,7 @@
                                 margin: 20px 0;
                                 border: 1px solid rgba(255,255,255,0.1);
                             ">
-                                <p style="color: #9dff00; margin: 0; font-size: 14px; font-weight: 600;">
+                                <p style="color: #d5FD72; margin: 0; font-size: 14px; font-weight: 600;">
                                     🔒 <strong>Privacy:</strong> Your email will only be used to send the completion link. We won't spam you or share your information.
                                 </p>
                             </div>
@@ -1320,7 +1333,7 @@
                                 transition: all 0.3s ease;
                                 min-width: 140px;
                                 box-shadow: 0 4px 15px rgba(255,107,107,0.3);
-                            ">📧 Send Link</button>
+                            ">Send Link</button>
                             <button class="cob-btn cob-btn-cancel" style="
                                 background: rgba(255,255,255,0.1);
                                 color: #fff;
@@ -1817,7 +1830,7 @@
                     statusElement.css({
                         'background-color': 'rgba(157, 255, 0, 0.1)',
                         'border-color': 'rgba(157, 255, 0, 0.3)',
-                        'color': '#9dff00'
+                        'color': '#d5FD72'
                     });
                     break;
             }
@@ -1881,28 +1894,42 @@
                     }
                 }).done((response) => {
                     console.log('COB: Raw AJAX response:', response);
+                    console.log('COB: Response type:', typeof response);
+                    console.log('COB: Response keys:', Object.keys(response));
+                    console.log('COB: Response success:', response.success);
+                    console.log('COB: Response draft:', response.draft);
+                    console.log('COB: Response message:', response.message);
+                    
                     try {
                         const data = typeof response === 'string' ? JSON.parse(response) : response;
                         console.log('COB: Parsed response data:', data);
+                        console.log('COB: Parsed data type:', typeof data);
+                        console.log('COB: Parsed data keys:', Object.keys(data));
                         
-                        if (data.success && data.draft) {
-                            console.log('COB: Shared draft loaded successfully:', data.draft);
+                        console.log('COB: Checking response conditions:');
+                        console.log('COB: data.success:', data.success);
+                        console.log('COB: data.data.draft:', data.data ? data.data.draft : 'undefined');
+                        console.log('COB: data.success type:', typeof data.success);
+                        console.log('COB: data.data.draft type:', data.data && data.data.draft ? typeof data.data.draft : 'undefined');
+                        
+                        if (data.success === true && data.data && data.data.draft && typeof data.data.draft === 'object') {
+                            console.log('COB: Shared draft loaded successfully:', data.data.draft);
                             
                             // Set the session ID from the shared draft
-                            this.sessionId = data.draft.session_id;
+                            this.sessionId = data.data.draft.session_id;
                             
                             // Load the form data
-                            this.loadFormData(data.draft.form_data);
+                            this.loadFormData(data.data.draft.form_data);
                             
                             // Set the current step
-                            this.currentStep = data.draft.current_step;
+                            this.currentStep = data.data.draft.current_step;
                             this.updateStepDisplay();
                             
                             // Update progress bars
                             this.updateProgressDisplay();
                             
                             // Show success message with progress info
-                            const progress = data.draft.progress_percentage || 0;
+                            const progress = data.data.draft.progress_percentage || 0;
                             this.showSaveStatus(`Shared draft loaded successfully! You're ${progress}% complete and can continue from Step ${this.currentStep}.`, 'success');
                             
                             // Clean up the URL
@@ -1913,8 +1940,10 @@
                             this.scrollToCurrentStep();
                             
                         } else {
-                            console.error('COB: Failed to load shared draft:', data.message);
-                            this.showSaveStatus('Failed to load shared draft: ' + (data.message || 'Unknown error'), 'error');
+                            console.error('COB: Failed to load shared draft. Response data:', data);
+                            const errorMessage = data.message || (data.data && typeof data.data === 'string' ? data.data : 'Unknown error occurred');
+                            console.error('COB: Error message:', errorMessage);
+                            this.showSaveStatus('Failed to load shared draft: ' + errorMessage, 'error');
                         }
                     } catch (e) {
                         console.error('COB: Error parsing shared draft response:', e);
@@ -2034,6 +2063,137 @@
             console.error('COB: XHR response text:', xhr.responseText);
             console.error('COB: Error details:', error);
             alert(cob_ajax.messages.submit_error);
+        }
+
+        /**
+         * Fallback copy to clipboard for older browsers
+         */
+        fallbackCopyToClipboard(text, copyBtn, originalText, originalBackground, modal) {
+            console.log('COB: Fallback copy method called');
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                console.log('COB: Fallback copy result:', successful);
+                
+                if (successful) {
+                    console.log('COB: Fallback copy successful');
+                    // Show success feedback
+                    copyBtn.text('✅ Copied!').css({
+                        'background': 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+                        'color': '#fff'
+                    });
+                    
+                    // Show tooltip
+                    this.showCopyTooltip(modal, 'Link copied to clipboard!');
+                    
+                    // Reset button after 3 seconds
+                    setTimeout(() => {
+                        copyBtn.text(originalText).css({
+                            'background': originalBackground,
+                            'color': '#000'
+                        });
+                    }, 3000);
+                } else {
+                    console.log('COB: Fallback copy failed');
+                    // Show error feedback
+                    copyBtn.text('❌ Failed').css({
+                        'background': 'linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%)',
+                        'color': '#fff'
+                    });
+                    
+                    this.showCopyTooltip(modal, 'Failed to copy link. Please try again.', 'error');
+                    
+                    setTimeout(() => {
+                        copyBtn.text(originalText).css({
+                            'background': originalBackground,
+                            'color': '#000'
+                        });
+                    }, 3000);
+                }
+            } catch (err) {
+                console.error('COB: Fallback copy failed:', err);
+                
+                // Show error feedback
+                copyBtn.text('❌ Failed').css({
+                    'background': 'linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%)',
+                    'color': '#fff'
+                });
+                
+                this.showCopyTooltip(modal, 'Failed to copy link. Please try again.', 'error');
+                
+                setTimeout(() => {
+                    copyBtn.text(originalText).css({
+                        'background': originalBackground,
+                        'color': '#000'
+                    });
+                }, 3000);
+            }
+        }
+
+        /**
+         * Show copy tooltip/alert
+         */
+        showCopyTooltip(modal, message, type = 'success') {
+            // Remove any existing tooltips
+            $('.cob-copy-tooltip').remove();
+            
+            const tooltip = $(`
+                <div class="cob-copy-tooltip" style="
+                    position: absolute;
+                    bottom: -50px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: ${type === 'success' ? 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)' : 'linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%)'};
+                    color: #fff;
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    z-index: 10004;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    animation: tooltipSlideIn 0.3s ease;
+                    white-space: nowrap;
+                ">
+                    ${message}
+                </div>
+            `);
+            
+            // Add tooltip to the copy button container
+            const copyBtnContainer = modal.find('.cob-btn-copy').parent();
+            copyBtnContainer.css('position', 'relative').append(tooltip);
+            
+            // Add CSS animation
+            if (!$('#cob-tooltip-styles').length) {
+                $('head').append(`
+                    <style id="cob-tooltip-styles">
+                        @keyframes tooltipSlideIn {
+                            from {
+                                opacity: 0;
+                                transform: translateX(-50%) translateY(10px);
+                            }
+                            to {
+                                opacity: 1;
+                                transform: translateX(-50%) translateY(0);
+                            }
+                        }
+                    </style>
+                `);
+            }
+            
+            // Remove tooltip after 3 seconds
+            setTimeout(() => {
+                tooltip.fadeOut(300, () => tooltip.remove());
+            }, 3000);
         }
     }
 

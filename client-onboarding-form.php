@@ -49,8 +49,7 @@ class ClientOnboardingForm {
         add_action('wp_ajax_cob_load_shared_draft', [$this, 'handle_load_shared_draft']);
         add_action('wp_ajax_nopriv_cob_load_shared_draft', [$this, 'handle_load_shared_draft']);
         
-        // Handle share token redirects
-        add_action('template_redirect', [$this, 'handle_share_token_redirect']);
+        // Note: Removed share token redirect handler to prevent infinite loops
         
         // Load admin functionality
         if (is_admin()) {
@@ -304,24 +303,12 @@ class ClientOnboardingForm {
 
     /**
      * Handle share token redirects to the form page
+     * Note: Removed redirect logic to prevent infinite loops
+     * The completion link should work directly on the form page
      */
     public function handle_share_token_redirect() {
-        if (isset($_GET['cob_share']) && !empty($_GET['cob_share'])) {
-            $token = sanitize_text_field($_GET['cob_share']);
-            
-            // Check if token exists in database
-            if (class_exists('COB_Database')) {
-                $draft_data = COB_Database::get_draft_by_token($token);
-                if ($draft_data) {
-                    // Get the page with the form shortcode
-                    $form_page = $this->get_form_page_url();
-                    if ($form_page) {
-                        wp_redirect($form_page . '?cob_share=' . urlencode($token));
-                        exit;
-                    }
-                }
-            }
-        }
+        // No redirect needed - the completion link should work directly
+        // The JavaScript will handle loading the draft when the page loads
     }
 
     /**

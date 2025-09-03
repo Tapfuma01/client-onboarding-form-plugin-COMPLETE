@@ -598,7 +598,7 @@ class COB_Email_Notifications {
         <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
             <div style="background-color: #1a1a1a; color: #ffffff; padding: 20px; text-align: center;">
                 <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px;">FLUX</h1>
-                <p style="margin: 10px 0 0 0; color: #9dff00; font-size: 14px; letter-spacing: 1px;">NEW CLIENT ONBOARDING SUBMISSION</p>
+                <p style="margin: 10px 0 0 0; color: #d5FD72; font-size: 14px; letter-spacing: 1px;">NEW CLIENT ONBOARDING SUBMISSION</p>
             </div>
             
             <div style="background-color: #ffffff; padding: 30px;">
@@ -615,7 +615,7 @@ class COB_Email_Notifications {
                     </tr>
                 </table>
 
-                <div style="background-color: #9dff00; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                <div style="background-color: #d5FD72; padding: 15px; border-radius: 4px; margin: 20px 0;">
                     <p style="margin: 0; color: #000; font-weight: bold;">
                         <a href="{view_submission_link}" style="color: #000; text-decoration: none;">
                             → View Full Submission Details
@@ -623,7 +623,7 @@ class COB_Email_Notifications {
                     </p>
                 </div>
 
-                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 1: CLIENT INFORMATION</h3>
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #d5FD72; padding-bottom: 10px;">STEP 1: CLIENT INFORMATION</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Project Name:</strong></td>
@@ -687,7 +687,7 @@ class COB_Email_Notifications {
                     </tr>
                 </table>
 
-                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 2: TECHNICAL INFORMATION</h3>
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #d5FD72; padding-bottom: 10px;">STEP 2: TECHNICAL INFORMATION</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                     {if:current_cms}
                     <tr>
@@ -755,7 +755,7 @@ class COB_Email_Notifications {
                     </tr>
                 </table>
 
-                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 3: REPORTING INFORMATION</h3>
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #d5FD72; padding-bottom: 10px;">STEP 3: REPORTING INFORMATION</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Main Objective:</strong></td>
@@ -835,7 +835,7 @@ class COB_Email_Notifications {
                     {/if}
                 </table>
 
-                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">STEP 4: MARKETING INFORMATION</h3>
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #d5FD72; padding-bottom: 10px;">STEP 4: MARKETING INFORMATION</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Main Objective:</strong></td>
@@ -981,7 +981,7 @@ class COB_Email_Notifications {
                     {/if}
                 </table>
 
-                <h3 style="color: #1a1a1a; border-bottom: 2px solid #9dff00; padding-bottom: 10px;">SOCIAL MEDIA ACCOUNTS</h3>
+                <h3 style="color: #1a1a1a; border-bottom: 2px solid #d5FD72; padding-bottom: 10px;">SOCIAL MEDIA ACCOUNTS</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                     {if:facebook_page_url}
                     <tr>
@@ -1006,7 +1006,7 @@ class COB_Email_Notifications {
             
             <div style="background-color: #1a1a1a; color: #888; padding: 20px; text-align: center; font-size: 12px;">
                 <p style="margin: 0;">This email was sent from {site_name} client onboarding system.</p>
-                <p style="margin: 5px 0 0 0;"><a href="{admin_dashboard_link}" style="color: #9dff00;">View Admin Dashboard</a></p>
+                <p style="margin: 5px 0 0 0;"><a href="{admin_dashboard_link}" style="color: #d5FD72;">View Admin Dashboard</a></p>
             </div>
         </div>';
     }
@@ -1019,7 +1019,7 @@ class COB_Email_Notifications {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
             <div style="background-color: #1a1a1a; color: #ffffff; padding: 20px; text-align: center;">
                 <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px;">FLUX</h1>
-                <p style="margin: 10px 0 0 0; color: #9dff00; font-size: 14px; letter-spacing: 1px;">SUBMISSION CONFIRMATION</p>
+                <p style="margin: 10px 0 0 0; color: #d5FD72; font-size: 14px; letter-spacing: 1px;">SUBMISSION CONFIRMATION</p>
             </div>
             
             <div style="background-color: #ffffff; padding: 30px;">
@@ -1030,7 +1030,7 @@ class COB_Email_Notifications {
                     Our team will review your information and get back to you within 24-48 hours.
                 </p>
 
-                <div style="background-color: #9dff00; padding: 20px; border-radius: 4px; margin: 20px 0; text-align: center;">
+                <div style="background-color: #d5FD72; padding: 20px; border-radius: 4px; margin: 20px 0; text-align: center;">
                     <h3 style="margin: 0 0 10px 0; color: #000;">Submission Details</h3>
                     <p style="margin: 0; color: #000;"><strong>Submission ID:</strong> {submission_id}</p>
                     <p style="margin: 5px 0 0 0; color: #000;"><strong>Submitted:</strong> {submission_date}</p>
@@ -1066,7 +1066,7 @@ class COB_Email_Notifications {
                     </tr>
                 </table>
 
-                <div style="background-color: #f8f9fa; padding: 20px; border-left: 3px solid #9dff00; margin: 20px 0;">
+                <div style="background-color: #f8f9fa; padding: 20px; border-left: 3px solid #d5FD72; margin: 20px 0;">
                     <h4 style="margin: 0 0 10px 0; color: #1a1a1a;">Need to Make Changes?</h4>
                     <p style="margin: 0; color: #666;">
                         If you need to update any information or have questions about your submission, 
@@ -1077,7 +1077,7 @@ class COB_Email_Notifications {
             
             <div style="background-color: #1a1a1a; color: #888; padding: 20px; text-align: center; font-size: 12px;">
                 <p style="margin: 0;">Thank you for choosing FLUX for your digital needs.</p>
-                <p style="margin: 5px 0 0 0;">Visit us at <a href="{site_url}" style="color: #9dff00;">{site_url}</a></p>
+                <p style="margin: 5px 0 0 0;">Visit us at <a href="{site_url}" style="color: #d5FD72;">{site_url}</a></p>
             </div>
         </div>';
     }
@@ -1090,7 +1090,7 @@ class COB_Email_Notifications {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
             <div style="background-color: #1a1a1a; color: #ffffff; padding: 20px; text-align: center;">
                 <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px;">FLUX</h1>
-                <p style="margin: 10px 0 0 0; color: #9dff00; font-size: 14px; letter-spacing: 1px;">TECHNICAL COORDINATION REQUIRED</p>
+                <p style="margin: 10px 0 0 0; color: #d5FD72; font-size: 14px; letter-spacing: 1px;">TECHNICAL COORDINATION REQUIRED</p>
             </div>
             
             <div style="background-color: #ffffff; padding: 30px;">
@@ -1102,7 +1102,7 @@ class COB_Email_Notifications {
                     of this project.
                 </p>
 
-                <div style="background-color: #9dff00; padding: 20px; border-radius: 4px; margin: 20px 0;">
+                <div style="background-color: #d5FD72; padding: 20px; border-radius: 4px; margin: 20px 0;">
                     <h3 style="margin: 0 0 10px 0; color: #000;">Project Information</h3>
                     <p style="margin: 0; color: #000;"><strong>Business:</strong> {business_name}</p>
                     <p style="margin: 5px 0 0 0; color: #000;"><strong>Project:</strong> {project_name}</p>
@@ -1156,7 +1156,7 @@ class COB_Email_Notifications {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
             <div style="background-color: #1a1a1a; color: #ffffff; padding: 20px; text-align: center;">
                 <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px;">FLUX</h1>
-                <p style="margin: 10px 0 0 0; color: #9dff00; font-size: 14px; letter-spacing: 1px;">REPORTING SETUP NOTIFICATION</p>
+                <p style="margin: 10px 0 0 0; color: #d5FD72; font-size: 14px; letter-spacing: 1px;">REPORTING SETUP NOTIFICATION</p>
             </div>
             
             <div style="background-color: #ffffff; padding: 30px;">
@@ -1167,7 +1167,7 @@ class COB_Email_Notifications {
                     at <strong>{business_name}</strong>. We will be setting up regular reporting based on your preferences.
                 </p>
 
-                <div style="background-color: #9dff00; padding: 20px; border-radius: 4px; margin: 20px 0;">
+                <div style="background-color: #d5FD72; padding: 20px; border-radius: 4px; margin: 20px 0;">
                     <h3 style="margin: 0 0 10px 0; color: #000;">Reporting Preferences</h3>
                     <p style="margin: 0; color: #000;"><strong>Frequency:</strong> {reporting_frequency}</p>
                     {if:key_metrics}<p style="margin: 5px 0 0 0; color: #000;"><strong>Key Metrics:</strong> {key_metrics}</p>{/if}
