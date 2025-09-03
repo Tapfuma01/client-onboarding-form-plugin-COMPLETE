@@ -538,6 +538,62 @@ input[type="file"]:focus {
     gap: 20px;
 }
 
+/* Placeholder Styling - Hide by default, show on focus */
+.cob-input::placeholder,
+.cob-textarea::placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease;
+}
+
+.cob-input:focus::placeholder,
+.cob-textarea:focus::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1 !important;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.cob-input::-webkit-input-placeholder,
+.cob-textarea::-webkit-input-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease;
+}
+
+.cob-input:focus::-webkit-input-placeholder,
+.cob-textarea:focus::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1 !important;
+}
+
+/* Firefox */
+.cob-input::-moz-placeholder,
+.cob-textarea::-moz-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease;
+}
+
+.cob-input:focus::-moz-placeholder,
+.cob-textarea:focus::-moz-placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1 !important;
+}
+
+/* IE/Edge */
+.cob-input:-ms-input-placeholder,
+.cob-textarea:-ms-input-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease;
+}
+
+.cob-input:focus:-ms-input-placeholder,
+.cob-textarea:focus:-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1 !important;
+}
+
 /* Button Styles */
 .cob-btn {
     padding: 15px 30px;
@@ -591,8 +647,8 @@ input[type="file"]:focus {
     z-index: 1000;
     background: linear-gradient(135deg, #D5FD72 0%, #c4e866 100%);
     border-radius: 50px;
-    box-shadow: 0 8px 32px rgba(213, 253, 114, 0.4);
-    padding: 0;
+    box-shadow: #D5FD72;
+    padding: 20px;
     transition: all 0.3s ease;
     transform: translateY(0);
     opacity: 1;
@@ -618,12 +674,12 @@ input[type="file"]:focus {
 }
 
 .cob-sticky-save-status.cob-success {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4);
+    background: #D5FD72;
+    box-shadow: 0 8px 32px #D5FD72;
 }
 
 .cob-sticky-save-status.cob-success:hover {
-    box-shadow: 0 12px 40px rgba(76, 175, 80, 0.6);
+    box-shadow: 0 12px 40px #D5FD72;
 }
 
 .cob-sticky-save-status.cob-error {

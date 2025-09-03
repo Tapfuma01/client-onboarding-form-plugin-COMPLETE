@@ -1930,7 +1930,7 @@
                             
                             // Show success message with progress info
                             const progress = data.data.draft.progress_percentage || 0;
-                            this.showSaveStatus(`Shared draft loaded successfully! You're ${progress}% complete and can continue from Step ${this.currentStep}.`, 'success');
+                            this.showSaveStatus(`Welcome back! You're ${progress}% complete and can continue from Step ${this.currentStep}.`, 'success');
                             
                             // Clean up the URL
                             const newUrl = window.location.pathname;

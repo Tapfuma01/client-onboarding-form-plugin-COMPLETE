@@ -1170,7 +1170,7 @@ input[type="url"] {
     right: 2rem;
     bottom: 2rem;
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.8);
+    background: #d5FD72);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     padding: 1rem 1.5rem;
